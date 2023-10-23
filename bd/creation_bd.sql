@@ -48,7 +48,7 @@ create table `Materiel`(
     ficheFDS longblob,
     qteTotale int(5),
     seuilQte int(5),
-    seuilPeremption date,
+    seuilPeremption int(5), -- nombre de jours avant la date de péremption
     datePeremption date,
     primary key (idMateriel)
 )ENGINE=InnoDB DEFAULT CHARSET=UTF8;
