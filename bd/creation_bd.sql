@@ -81,7 +81,8 @@ create table `Alerte`(
     idAlerte int(5),
     refMateriel int(5),
     commentaire varchar(20),
-    primaty key (idAlerte)
+    statut varchar(20),
+    primary key (idAlerte)
 )ENGINE=InnoDB DEFAULT CHARSET=UTF8;
 
 alter table `Utilisateur` add constraint fk_id_role foreign key (idRole) references `Role`(idRole);
