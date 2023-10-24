@@ -77,6 +77,12 @@ create table `Commander`(
     primary key (numeroCommande, idUti, refMateriel)
 )ENGINE=InnoDB DEFAULT CHARSET=UTF8;
 
+create table `Alerte`(
+    idAlerte int(5),
+    refMateriel int(5),
+    commentaire varchar(20),
+    primaty key (idAlerte)
+)ENGINE=InnoDB DEFAULT CHARSET=UTF8;
 
 alter table `Utilisateur` add constraint fk_id_role foreign key (idRole) references `Role`(idRole);
 alter table `Categorie` add constraint fk_code_domaine foreign key (codeD) references `Domaine`(codeD);
@@ -86,3 +92,4 @@ alter table `Commande` add constraint fk_id_util foreign key (idUti) references 
 alter table `Commande` add constraint fk_ref_mat foreign key (refMateriel) references `Materiel`(refMateriel);
 alter table `Commander` add constraint fk_id_uti foreign key (idUti) references `Utilisateur`(idUti);
 alter table `Commander` add constraint fk_reference_mat foreign key (refMateriel) references `Materiel`(refMateriel);
+alter table `Alerte` add constraint fk_ref_mater foreign key (refMateriel) references `Materiel`(refMateriel);
