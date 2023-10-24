@@ -86,13 +86,13 @@ create table `Commander`(
 )ENGINE=InnoDB DEFAULT CHARSET=UTF8;
 
 
-alter table `Utilisateur` add foreign key (idRole) references `Role`(idRole);
-alter table `Categorie` add foreign key (codeD) references `Domaine`(codeD);
-alter table `Materiel` add foreign key (codeD) references `Categorie`(codeD);
-alter table `Materiel` add foreign key (codeC) references `Categorie`(codeC);
+alter table `Utilisateur` add constraint fk_id_role foreign key (idRole) references `Role`(idRole);
+alter table `Categorie` add constraint fk_code_domaine foreign key (codeD) references `Domaine`(codeD);
+alter table `Materiel` add constraint fk_code_d_cat foreign key (codeD) references `Categorie`(codeD);
+alter table `Materiel` add constraint fk_code_cat foreign key (codeC) references `Categorie`(codeC);
 alter table `Materiel` add constraint fk_date_peremption foreign key (datePeremption) references `Contenir`(datePeremption);
 alter table `Contenir` add constraint fk_ref_materiel foreign key (refMateriel) references `Materiel`(refMateriel);
-alter table `Commande` add foreign key (idUti) references `Utilisateur`(idUti);
-alter table `Commande` add foreign key (refMateriel) references `Materiel`(refMateriel);
-alter table `Commander` add foreign key (idUti) references `Utilisateur`(idUti);
-alter table `Commander` add foreign key (refMateriel) references `Materiel`(refMateriel);
+alter table `Commande` add constraint fk_id_util foreign key (idUti) references `Utilisateur`(idUti);
+alter table `Commande` add constraint fk_ref_mat foreign key (refMateriel) references `Materiel`(refMateriel);
+alter table `Commander` add constraint fk_id_uti foreign key (idUti) references `Utilisateur`(idUti);
+alter table `Commander` add constraint fk_reference_mat foreign key (refMateriel) references `Materiel`(refMateriel);
