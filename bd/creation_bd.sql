@@ -45,7 +45,7 @@ create table `Materiel`(
     codeD int(5),
     codeC int(5),
     nomMateriel varchar(50),
-    precisionMateriel varchar(50),
+    rangement varchar(50),
     commentaire varchar(50),
     qteMateriel int(5),    -- quantité globale du matériel
     qteMax int(5),    -- quantité maximale stockée dans l'établissement
