@@ -47,13 +47,15 @@ create table `Materiel`(
     nomMateriel varchar(50),
     precisionMateriel varchar(50),
     commentaire varchar(50),
-    qteMateriel float(5),
+    qteMateriel int(5),    -- quantité globale du matériel
+    qteMax int(5),    -- quantité maximale stockée dans l'établissement
     unite varchar(25),
+    qteRestante float(5),
     complements varchar(350),
     ficheFDS longblob,
-    datePeremption date,
+    datePeremption date check (datePeremption > NOW()),
     seuilQte int(5),    -- à environ 25% de la quantité du produit
-    seuilPeremption int(5), -- nombre de jours avant la date de péremption
+    seuilPeremption int(3),    -- nombre de jours avant la date de péremption
     primary key (refMateriel)
 )ENGINE=InnoDB DEFAULT CHARSET=UTF8;
 
