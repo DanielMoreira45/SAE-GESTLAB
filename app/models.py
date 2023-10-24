@@ -99,3 +99,49 @@ class Alerte(db.Model):
     ref_materiel = db.Column(db.Integer, db.ForeignKey("materiel.reference"), primary_key=True)
     materiel = db.relationship("Materiel", 
                                backref=db.backref("alertes", lazy="dynamic"))
+
+
+def is_prof(user):
+    """Vérifie si l'utilisateur passé en paramètres est un professeur
+
+    Args:
+        user (Utilisateur): un utilisateur
+
+    Returns:
+        boolean: True si l'utilisateur est un professeur, False sinon
+    """
+    liste_roles = Role.query.all()
+    for role in liste_roles:
+        if role.id == user.id_role:
+            return True
+    return False
+
+def is_admin(user):
+    """Vérifie si l'utilisateur passé en paramètres est un admin
+
+    Args:
+        user (Utilisateur): un utilisateur
+
+    Returns:
+        boolean: True si l'utilisateur est un admin, False sinon
+    """
+    liste_roles = Role.query.all()
+    for role in liste_roles:
+        if role.id == user.id_role:
+            return True
+    return False
+
+def is_etablissement(user):
+    """Vérifie si l'utilisateur passé en paramètres est un établissement
+
+    Args:
+        user (Utilisateur): un utilisateur
+
+    Returns:
+        boolean: True si l'utilisateur est un établissement, False sinon
+    """
+    liste_roles = Role.query.all()
+    for role in liste_roles:
+        if role.id == user.id_role:
+            return True
+    return False
