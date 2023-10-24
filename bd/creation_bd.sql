@@ -6,8 +6,6 @@ drop table if exists `Commander`;
 drop table if exists `Commande`;
 drop table if exists `Utilisateur`;
 drop table if exists `Role`;
-alter table if exists `Contenir` drop foreign key fk_ref_materiel;
-alter table if exists `Materiel` drop foreign key fk_date_peremption;
 drop table if exists `Materiel`;
 drop table if exists `Contenir`;
 drop table if exists `Categorie`;
@@ -54,17 +52,10 @@ create table `Materiel`(
     unite varchar(25),
     complements varchar(350),
     ficheFDS longblob,
+    datePeremption date,
     seuilQte int(5),    -- à environ 25% de la quantité du produit
     seuilPeremption int(5), -- nombre de jours avant la date de péremption
-    datePeremption date,
     primary key (refMateriel)
-)ENGINE=InnoDB DEFAULT CHARSET=UTF8;
-
-create table `Contenir`(
-    datePeremption date,
-    refMateriel int(5),
-    qteDate int(5),
-    primary key (datePeremption, refMateriel)
 )ENGINE=InnoDB DEFAULT CHARSET=UTF8;
 
 create table `Commande`(
@@ -90,8 +81,6 @@ alter table `Utilisateur` add constraint fk_id_role foreign key (idRole) referen
 alter table `Categorie` add constraint fk_code_domaine foreign key (codeD) references `Domaine`(codeD);
 alter table `Materiel` add constraint fk_code_d_cat foreign key (codeD) references `Categorie`(codeD);
 alter table `Materiel` add constraint fk_code_cat foreign key (codeC) references `Categorie`(codeC);
-alter table `Materiel` add constraint fk_date_peremption foreign key (datePeremption) references `Contenir`(datePeremption);
-alter table `Contenir` add constraint fk_ref_materiel foreign key (refMateriel) references `Materiel`(refMateriel);
 alter table `Commande` add constraint fk_id_util foreign key (idUti) references `Utilisateur`(idUti);
 alter table `Commande` add constraint fk_ref_mat foreign key (refMateriel) references `Materiel`(refMateriel);
 alter table `Commander` add constraint fk_id_uti foreign key (idUti) references `Utilisateur`(idUti);
