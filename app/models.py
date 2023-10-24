@@ -91,3 +91,11 @@ class Commander(db.Model):
     materiel = db.relationship("Materiel",
                                backref=db.backref("commandes_effectuees",
                                                   lazy="dynamic"))
+
+class Alerte(db.Model):
+    __tablename__ = "alerte"
+    id = db.Column(db.Integer, primary_key=True)
+    commentaire = db.Column(db.String(150))
+    ref_materiel = db.Column(db.Integer, db.ForeignKey("materiel.reference"), primary_key=True)
+    materiel = db.relationship("Materiel", 
+                               backref=db.backref("alertes", lazy="dynamic"))

@@ -15,7 +15,7 @@ def loaddb(filename):
     data = yaml.safe_load(open(filename))
 
     # Import des modèles
-    from .models import Role, Utilisateur, Domaine, Categorie, Materiel, Commande, Commander
+    from .models import Role, Utilisateur, Domaine, Categorie, Materiel, Commande, Commander, Alerte
 
     # Création des différentes tables de notre base de données
     # {Categorie:[{code: 1, nom:"", code_domaine:1}, {...}]}
@@ -27,6 +27,7 @@ def loaddb(filename):
     liste_materiels = data["Materiel"]
     liste_commandes = data["Commande"]
     liste_commander = data["Commander"]
+    liste_alertes = data["Alerte"]
 
     for dico_role in liste_roles:
         role = Role(intitule=dico_role["intitule"])
@@ -123,4 +124,11 @@ def loaddb(filename):
                           ref_materiel=dico_commander["refMateriel"])
             db.session.add(o)
             commander[num_comm] = o
+    db.session.commit()
+
+    for dico_alertes in liste_alertes:
+        o = Alerte(id=dico_alertes["idAlerte"],
+                   commentaire=dico_alertes["commentaire"],
+                   ref_materiel=dico_alertes["refMateriel"])
+        db.session.add(o)
     db.session.commit()
