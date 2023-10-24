@@ -6,7 +6,7 @@ from .app import db
 class Role(db.Model):
     __tablename__ = "role"
     id = db.Column(db.Integer, primary_key=True)
-    nom = db.Column(db.String(100))
+    intitule = db.Column(db.String(100))
 
 
 class Utilisateur(db.Model):
@@ -29,8 +29,11 @@ class Categorie(db.Model):
     __tablename__ = "categorie"
     code = db.Column(db.Integer, primary_key=True)
     nom = db.Column(db.String(100))
-    code_domaine = db.Column(db.Integer, db.ForeignKey("domaine.code"), primary_key=True)
-    domaine = db.relationship("Domaine", backref = db.backref("categories", lazy="dynamic"))
+    code_domaine = db.Column(db.Integer, db.ForeignKey("domaine.code"))
+    domaine = db.relationship("Domaine",
+                              backref=db.backref("categories", lazy="dynamic"))
+
+    __table_args__ = (db.UniqueConstraint('code', 'code_domaine'),)
 
 
 class Materiel(db.Model):
@@ -49,7 +52,7 @@ class Materiel(db.Model):
     seuil_quantite = db.Column(db.Integer)
     seuil_peremption = db.Column(db.Integer)
     code_categorie = db.Column(db.Integer, db.ForeignKey("categorie.code"))
-    code_domaine = db.Column(db.Integer, db.ForeignKey("categorie.code"))
+    code_domaine = db.Column(db.Integer, db.ForeignKey("domaine.code"))
     categorie = db.relationship("Categorie",
                                 backref=db.backref("matériels",
                                                    lazy="dynamic"))
@@ -76,8 +79,12 @@ class Commander(db.Model):
     __tablename__ = "commander"
     numero_commande = db.Column(db.Integer, primary_key=True)
     quantite_commandee = db.Column(db.Integer)
-    id_util = db.Column(db.Integer, primary_key=True)
-    ref_materiel = db.Column(db.Integer, primary_key=True)
+    id_util = db.Column(db.Integer,
+                        db.ForeignKey("utilisateur.id"),
+                        primary_key=True)
+    ref_materiel = db.Column(db.Integer,
+                             db.ForeignKey("materiel.reference"),
+                             primary_key=True)
     utilisateur = db.relationship("Utilisateur",
                                   backref=db.backref("commandes_effectuees",
                                                      lazy="dynamic"))

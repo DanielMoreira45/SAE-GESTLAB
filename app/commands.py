@@ -1,5 +1,6 @@
+from datetime import date
 import click
-from .app import db
+from app.app import db, app
 
 @app.cli.command()
 @click.argument('filename')
@@ -28,77 +29,98 @@ def loaddb(filename):
     liste_commander = data["Commander"]
 
     for dico_role in liste_roles:
-        role = Role(nom=dico_role["nom"])
+        role = Role(intitule=dico_role["intitule"])
         db.session.add(role)
     db.session.commit()
 
     for dico_domaines in liste_domaines:
-        domaine = Domaine(nom=dico_domaines["nom"])
+        domaine = Domaine(nom=dico_domaines["nomD"])
         db.session.add(domaine)
     db.session.commit()
 
     for dico_categories in liste_categories:
-        categorie = Categorie(nom=dico_categories["nom"])
+        categorie = Categorie(code=dico_categories["codeC"],
+                              nom=dico_categories["nomC"],
+                              code_domaine=dico_categories["codeD"])
         db.session.add(categorie)
     db.session.commit()
 
     users = dict()
     for dico_users in liste_users:
-        user_name = dico_users["nom"]
+        user_name = dico_users["nomUti"]
         if user_name not in users:
-            o = Utilisateur(nom=user_name, 
-                            prenom=dico_users["prenom"], 
-                            email=dico_users["email"], 
-                            tel=dico_users["tel"], 
-                            id_role=dico_users["id_role"])
+            o = Utilisateur(nom=user_name,
+                            prenom=dico_users["prenomUti"],
+                            email=dico_users["emailUti"],
+                            tel=dico_users["telUti"],
+                            id_role=dico_users["idRole"])
             db.session.add(o)
             users[user_name] = o
     db.session.commit()
 
     materials = dict()
     for dico_materials in liste_materiels:
-        material_ref = dico_materials["nom"]
+        material_ref = dico_materials["refMateriel"]
         if material_ref not in materials:
-            o = Materiel(reference=material_ref, 
-                         nom=dico_materials["nom"], 
-                         rangement=dico_materials["rangement"],
+            date_peremption_str = dico_materials["datePeremption"]
+            date_peremption = None
+            if date_peremption_str is not None:
+                d_peremption = date_peremption_str.split("-")
+                date_peremption = date(int(d_peremption[0]),
+                                       int(d_peremption[1]),
+                                       int(d_peremption[2]))
+            o = Materiel(reference=material_ref,
+                         nom=dico_materials["nomMateriel"],
+                         rangement=dico_materials["precisionMateriel"],
                          commentaire=dico_materials["commentaire"],
-                         quantite_globale=dico_materials["quantite_globale"],
-                         quantite_max=dico_materials["quantite_max"],
+                         quantite_globale=dico_materials["qteMateriel"],
+                         quantite_max=dico_materials["qteMax"],
                          unite=dico_materials["unite"],
-                         quantite_restante=dico_materials["quantite_restante"],
+                         quantite_restante=dico_materials["qteRestante"],
                          complements=dico_materials["complements"],
-                         fiche_fds=dico_materials["fiche_fds"],
-                         date_peremption=dico_materials["date_peremption"],
-                         seuil_quantite=dico_materials["seuil_quantite"],
-                         seuil_peremption=dico_materials["seuil_peremption"],
-                         code_categorie=dico_materials["code_categorie"],
-                         code_domaine=dico_materials["code_domaine"])
+                         fiche_fds=dico_materials["ficheFDS"],
+                         date_peremption=date_peremption,
+                         seuil_quantite=dico_materials["seuilQte"],
+                         seuil_peremption=dico_materials["seuilPeremption"],
+                         code_categorie=dico_materials["codeC"],
+                         code_domaine=dico_materials["codeD"])
             db.session.add(o)
             materials[material_ref] = o
     db.session.commit()
 
     commandes = dict()
     for dico_commandes in liste_commandes:
-        num_commande = dico_commandes["numero"]
+        num_commande = dico_commandes["numeroCommande"]
         if num_commande not in commandes:
-            o = Commande(date_commande=dico_commandes["date_commande"],
-                         date_reception=dico_commandes["date_reception"],
+            date_commande_str = dico_commandes["dateCommande"]
+            date_reception_str = dico_commandes["dateReception"]
+            date_commande = None
+            date_reception = None
+            if date_peremption_str is not None:
+                d_commande = date_commande_str.split("-")
+                d_reception = date_reception_str.split("-")
+                date_commande = date(int(d_commande[0]), int(d_commande[1]),
+                                     int(d_commande[2]))
+                date_reception = date(int(d_reception[0]), int(d_reception[1]),
+                                      int(d_reception[2]))
+            o = Commande(numero=dico_commandes["numeroCommande"],
+                         date_commande=date_commande,
+                         date_reception=date_reception,
                          statut=dico_commandes["statut"],
-                         id_util=dico_commandes["id_util"],
-                         ref_materiel=dico_commandes["ref_materiel"])
+                         id_util=dico_commandes["idUti"],
+                         ref_materiel=dico_commandes["refMateriel"])
             db.session.add(o)
             commandes[num_commande] = o
     db.session.commit()
 
     commander = dict()
     for dico_commander in liste_commander:
-        num_comm = dico_commander["numero_commande"]
+        num_comm = dico_commander["numeroCommande"]
         if num_comm not in commander:
-            o = Commander(numero_commande=num_comm, 
-                          quantite_commandee=dico_commander["quantitee_commandee"],
-                          id_util=dico_commander["id_util"],
-                          ref_materiel=dico_commander["ref_materiel"])
+            o = Commander(numero_commande=num_comm,
+                          quantite_commandee=dico_commander["qteCommandee"],
+                          id_util=dico_commander["idUti"],
+                          ref_materiel=dico_commander["refMateriel"])
             db.session.add(o)
             commander[num_comm] = o
     db.session.commit()
