@@ -7,7 +7,6 @@ drop table if exists `Commande`;
 drop table if exists `Utilisateur`;
 drop table if exists `Role`;
 drop table if exists `Materiel`;
-drop table if exists `Contenir`;
 drop table if exists `Categorie`;
 drop table if exists `Domaine`;
 
