@@ -34,7 +34,7 @@ class Utilisateur(db.Model, UserMixin):
         Returns:
             boolean: True si l'utilisateur est un professeur, False sinon
         """
-        role = Role.query.filter(Role.nom == "Professeur").all()
+        role = Role.query.filter(Role.intitule == "Professeur").scalar()
         return role.id == self.id_role
 
     def is_admin(self):
@@ -46,7 +46,7 @@ class Utilisateur(db.Model, UserMixin):
         Returns:
             boolean: True si l'utilisateur est un admin, False sinon
         """
-        role = Role.query.filter(Role.nom == "Administrateur").all()
+        role = Role.query.filter(Role.intitule == "Administrateur").scalar()
         return role.id == self.id_role
 
 
@@ -59,7 +59,7 @@ class Utilisateur(db.Model, UserMixin):
         Returns:
             boolean: True si l'utilisateur est un établissement, False sinon
         """
-        role = Role.query.filter(Role.nom == "Etablissement").all()
+        role = Role.query.filter(Role.intitule == "Etablissement").scalar()
         return role.id == self.id_role
 
 
