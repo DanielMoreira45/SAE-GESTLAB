@@ -22,7 +22,8 @@ body {
 
 header h1 {
     font-family: "AgrandirWide";
-    font-size: 5em;
+    font-size: 6em;
+    margin-bottom: 0.2em;
 }
 
 .h1-yellow-part {
@@ -43,25 +44,15 @@ ul {
     font-weight: bold;
     margin-right: 20%;
     margin-left: 20%;
+    margin-bottom: 3em;
+    padding-left: 3%;
 }
 
 ul li {
-    padding-right: 10%;
-    padding-left: 10%;
+    margin-right: 10%;
+    margin-left: 10%;
 }
 
-button {
-    background-color: #ffd883;
-    border: none;
-    height: 2.5em;
-    width: 10em;
-    font-weight: bold;
-    border-radius: 0.5em;
-    font-size: 1em;
-}
-
-button:hover {
-    font-weight: bolder;
-    font-style: italic;
-    letter-spacing: 0.1em;
+ul li p {
+    text-align: left;
 }

@@ -1,13 +1,21 @@
 ul {
     display: flex;
-    /* flex-basis: 100%; */
     flex-wrap: nowrap;
 }
 
 ul li {
-    /* background-color: brown; */
     display: flex;
     flex-basis: 50%;
-    flex-grow: 1;
+    flex-grow: 0;
     flex-wrap: nowrap;
+}
+
+img {
+    flex-basis: 5%;
+    flex-grow: 0;
+}
+
+ul li p {
+    flex-basis: 60%;
+    flex-grow: 0;
 }
