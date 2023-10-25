@@ -25,6 +25,43 @@ class Utilisateur(db.Model):
     def __repr__(self):
         return "<Utilisateur (%d) %s %r>" % (self.id, self.nom, self.prenom)
 
+    def is_prof(self):
+        """Vérifie si l'utilisateur passé en paramètres est un professeur
+
+        Args:
+            user (Utilisateur): un utilisateur
+
+        Returns:
+            boolean: True si l'utilisateur est un professeur, False sinon
+        """
+        role = Role.query.filter(Role.nom == "Professeur").all()
+        return role.id == self.id_role
+
+    def is_admin(self):
+        """Vérifie si l'utilisateur passé en paramètres est un admin
+
+        Args:
+            user (Utilisateur): un utilisateur
+
+        Returns:
+            boolean: True si l'utilisateur est un admin, False sinon
+        """
+        role = Role.query.filter(Role.nom == "Administrateur").all()
+        return role.id == self.id_role
+
+
+    def is_etablissement(self):
+        """Vérifie si l'utilisateur passé en paramètres est un établissement
+
+        Args:
+            user (Utilisateur): un utilisateur
+
+        Returns:
+            boolean: True si l'utilisateur est un établissement, False sinon
+        """
+        role = Role.query.filter(Role.nom == "Etablissement").all()
+        return role.id == self.id_role
+
 
 class Domaine(db.Model):
     __tablename__ = "domaine"
@@ -127,41 +164,3 @@ class Alerte(db.Model):
 
     def __repr__(self):
         return "<Alerte (%d) %s %r>" % (self.id, self.commentaire, self.ref_materiel)
-
-
-def is_prof(user):
-    """Vérifie si l'utilisateur passé en paramètres est un professeur
-
-    Args:
-        user (Utilisateur): un utilisateur
-
-    Returns:
-        boolean: True si l'utilisateur est un professeur, False sinon
-    """
-    role = Role.query.filter(Role.nom == "Professeur").all()
-    return role.id == user.id_role
-
-def is_admin(user):
-    """Vérifie si l'utilisateur passé en paramètres est un admin
-
-    Args:
-        user (Utilisateur): un utilisateur
-
-    Returns:
-        boolean: True si l'utilisateur est un admin, False sinon
-    """
-    role = Role.query.filter(Role.nom == "Administrateur").all()
-    return role.id == user.id_role
-
-
-def is_etablissement(user):
-    """Vérifie si l'utilisateur passé en paramètres est un établissement
-
-    Args:
-        user (Utilisateur): un utilisateur
-
-    Returns:
-        boolean: True si l'utilisateur est un établissement, False sinon
-    """
-    role = Role.query.filter(Role.nom == "Etablissement").all()
-    return role.id == user.id_role
