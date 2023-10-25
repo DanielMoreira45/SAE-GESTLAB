@@ -1,0 +1,13 @@
+section ul {
+    display: flex;
+    /* flex-basis: 100%; */
+    flex-wrap: nowrap;
+}
+
+section ul li {
+    /* background-color: brown; */
+    display: flex;
+    flex-basis: 50%;
+    flex-grow: 1;
+    flex-wrap: nowrap;
+}
