@@ -1,6 +1,7 @@
 """Lien avec la Base de données"""
 
-from .app import db
+from flask_login import UserMixin
+from .app import db, login_manager
 
 
 class Role(db.Model):
@@ -164,3 +165,7 @@ class Alerte(db.Model):
 
     def __repr__(self):
         return "<Alerte (%d) %s %r>" % (self.id, self.commentaire, self.ref_materiel)
+
+@login_manager.user_loader
+def load_user(email):
+    return Utilisateur.query.get(email=email)
