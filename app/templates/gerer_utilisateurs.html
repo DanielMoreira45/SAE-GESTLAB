@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="fr">
+    <head>
+        <title>Gérer les utilisateurs</title>
+        <link rel="stylesheet" href="gerer_util.css">
+    </head>
+    <body>
+        {% extends 'base.html' %}
+        {% block head %}
+        <nav>
+            <h1>GESTLAB</h1>
+            <ul>
+                <li>Ajouter un utilisateur</li>
+                <li>Gérer les utilisateurs</li>
+            </ul>
+            <input type="button" value="Déconnexion">
+        </nav>
+        {% endblock %}
+        {% block content %}
+        <h2>Gérer les utilisateurs</h2>
+        <section class="user">
+            <ul>
+                {% for user in liste_users %}
+                <li>{{ user.nom }} {{ user.prenom }}</li>
+                {% endfor %}
+            </ul>
+        </section>
+        <section class="user_infos">
+            {% for user in liste_users %}
+            <p>Nom :</p>
+            <input type="text" value="{{user.nom}}">
+            <p>Prénom :</p>
+            <input type="text" value="{{user.prenom}}">
+            <p>Mot de passe :</p>
+            <input type="password" value="{{user.password}}">
+
+            {% if user.is_admin %}
+            <label for="role-select">Rôle :</label>
+            <select name="roles" id="role-select">
+                <option value="Administrateur">Administrateur</option>
+                <option value="Professeur">Professeur</option>
+                <option value="Etablissement">Etablissement</option>
+            </select>
+            {% endfor %}
+        </section>
+        {% endblock %}
+    </body>
+</html>
