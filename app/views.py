@@ -22,26 +22,33 @@ def ecole():
 
 
 class LoginForm(FlaskForm):
-    email = StringField('email')
+    email = StringField('Email')
     password = PasswordField('Password')
+    password_incorrect = ""
     next = HiddenField()
 
     def get_authenticated_user(self):
+        self.first_try = False
         users = Utilisateur.query.filter(Utilisateur.email==self.email.data).all()
-        print(self.email.data)
-        #users = Utilisateur.query.get(self.email.data)
         user = None
         for temp_user in users:
             if temp_user.password == self.password.data:
                 user = temp_user
-        #if user is None:
-        #    return None
         return user
+    
+    def has_content(self):
+        return self.password.data != "" or self.email.data != ""
+    
+    def show_password_incorrect(self):
+        self.password_incorrect = "Email ou mot de passe incorrect"
 
 
 @app.route("/", methods=("GET","POST",))
 def login():
     f = LoginForm()
+    if f.is_submitted():
+        if f.has_content():
+            f.show_password_incorrect()
     if not f.validate_on_submit():
         f.next.data = request.args.get("next")
     elif f.validate_on_submit():
@@ -55,4 +62,5 @@ def login():
             elif user.is_etablissement():
                 next = f.next.data or url_for("ecole")
             return redirect(next)
+
     return render_template("connexion.html", form=f)
