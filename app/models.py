@@ -1,6 +1,7 @@
 """Lien avec la Base de données"""
 
-from .app import db
+from flask_login import UserMixin
+from .app import db, login_manager
 
 
 class Role(db.Model):
@@ -12,7 +13,7 @@ class Role(db.Model):
         return "<Role (%d) %s>" % (self.id, self.intitule)
 
 
-class Utilisateur(db.Model):
+class Utilisateur(db.Model, UserMixin):
     __tablename__ = "utilisateur"
     id = db.Column(db.Integer, primary_key=True)
     nom = db.Column(db.String(100))
@@ -34,7 +35,7 @@ class Utilisateur(db.Model):
         Returns:
             boolean: True si l'utilisateur est un professeur, False sinon
         """
-        role = Role.query.filter(Role.nom == "Professeur").all()
+        role = Role.query.filter(Role.intitule == "Professeur").scalar()
         return role.id == self.id_role
 
     def is_admin(self):
@@ -46,7 +47,7 @@ class Utilisateur(db.Model):
         Returns:
             boolean: True si l'utilisateur est un admin, False sinon
         """
-        role = Role.query.filter(Role.nom == "Administrateur").all()
+        role = Role.query.filter(Role.intitule == "Administrateur").scalar()
         return role.id == self.id_role
 
 
@@ -59,7 +60,7 @@ class Utilisateur(db.Model):
         Returns:
             boolean: True si l'utilisateur est un établissement, False sinon
         """
-        role = Role.query.filter(Role.nom == "Etablissement").all()
+        role = Role.query.filter(Role.intitule == "Etablissement").scalar()
         return role.id == self.id_role
 
 
@@ -164,3 +165,7 @@ class Alerte(db.Model):
 
     def __repr__(self):
         return "<Alerte (%d) %s %r>" % (self.id, self.commentaire, self.ref_materiel)
+
+@login_manager.user_loader
+def load_user(email):
+    return Utilisateur.query.get(email=email)

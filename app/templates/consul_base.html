@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="fr">
+
+<head>
+    {% block head %}
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    {% block styles %}
+    {% endblock %}
+    <link rel="stylesheet" href="nav_base.css">
+    <title>Gest-LAB</title>
+    {% endblock %}
+</head>
+
+<body>
+    <main class="flex-shrink-0">
+        <div class="container">
+            <div>
+                <nav>
+                    <ul>
+                        {% if current_user.is_authenticated %}
+                            {% if current_user.is_admin() %}
+                            <li><a href="{{ url_for('admin_manage') }}">Gérer les utilisateur</a></li>
+                            <li><a href="{{ url_for('admin_add') }}">Ajouter un utilisateur</a></li>
+                            {% elif current_user.is_prof() %}
+                            <li><a href="{{ url_for('consult') }}">Consulter le matériel</a></li>
+                            <li><a href="{{ url_for('delivery') }}">Voir les Commandes</a></li>
+                            <li><a href="{{ url_for('new_commande') }}">Commander matériel</a></li>
+                            {% elif current_user.is_etablissement() %}
+                            <li><a href="{{ url_for('consult') }}">Consulter le matériel</a></li>
+                            <li><a href="{{ url_for('delivery') }}">Voir les Commandes</a></li>
+                            {% endif %}
+                        <li><a href="{{ url_for('logout') }}">Logout</a></li>
+                        {% else %}
+                        <li><a href="{{ url_for('login') }}">Login</a></li>
+                        {% endif %}
+                    </ul>
+                </nav>
+            </div>
+            {% block content %}
+            {% endblock %}
+        </div>
+    </main>
+</body>
+
+</html>
