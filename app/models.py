@@ -8,6 +8,9 @@ class Role(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     intitule = db.Column(db.String(100))
 
+    def __repr__(self):
+        return "<Role (%d) %s>" % (self.id, self.intitule)
+
 
 class Utilisateur(db.Model):
     __tablename__ = "utilisateur"
@@ -19,10 +22,17 @@ class Utilisateur(db.Model):
     id_role = db.Column(db.Integer, db.ForeignKey("role.id"))
     role = db.relationship("Role", backref=db.backref("utilisateurs", lazy="dynamic"))
 
+    def __repr__(self):
+        return "<Utilisateur (%d) %s %r>" % (self.id, self.nom, self.prenom)
+
+
 class Domaine(db.Model):
     __tablename__ = "domaine"
     code = db.Column(db.Integer, primary_key=True)
     nom = db.Column(db.String(100))
+
+    def __repr__(self):
+        return "<Domaine (%d) %s>" % (self.code, self.nom)
 
 
 class Categorie(db.Model):
@@ -34,6 +44,9 @@ class Categorie(db.Model):
                               backref=db.backref("categories", lazy="dynamic"))
 
     __table_args__ = (db.UniqueConstraint('code', 'code_domaine'),)
+
+    def __repr__(self):
+        return "<Categorie (%d) %s %r>" % (self.code, self.nom, self.code_domaine)
 
 
 class Materiel(db.Model):
@@ -59,6 +72,9 @@ class Materiel(db.Model):
     domaine = db.relationship("Domaine",
                               backref=db.backref("matériels", lazy="dynamic"))
 
+    def __repr__(self):
+        return "<Materiel (%d) %s %r %p %c %q>" % (self.reference, self.nom, self.rangement, self.date_peremption, self.commentaire, self.quantite_globale)
+
 
 class Commande(db.Model):
     __tablename__ = "commande"
@@ -73,6 +89,9 @@ class Commande(db.Model):
                                                      lazy="dynamic"))
     materiel = db.relationship("Materiel",
                                backref=db.backref("commandes", lazy="dynamic"))
+
+    def __repr__(self):
+        return "<Commande (%d) %s %r %p %c %d>" % (self.numero, self.date_commande, self.statut, self.date_reception, self.id_util, self.ref_materiel)
 
 
 class Commander(db.Model):
@@ -92,13 +111,22 @@ class Commander(db.Model):
                                backref=db.backref("commandes_effectuees",
                                                   lazy="dynamic"))
 
+    def __repr__(self):
+        return "<Commander (%d) %s %r %p>" % (self.numero_commande, self.quantite_commandee, self.id_util, self.ref_materiel)
+
+
 class Alerte(db.Model):
     __tablename__ = "alerte"
     id = db.Column(db.Integer, primary_key=True)
     commentaire = db.Column(db.String(150))
-    ref_materiel = db.Column(db.Integer, db.ForeignKey("materiel.reference"), primary_key=True)
-    materiel = db.relationship("Materiel", 
+    ref_materiel = db.Column(db.Integer,
+                             db.ForeignKey("materiel.reference"),
+                             primary_key=True)
+    materiel = db.relationship("Materiel",
                                backref=db.backref("alertes", lazy="dynamic"))
+
+    def __repr__(self):
+        return "<Alerte (%d) %s %r>" % (self.id, self.commentaire, self.ref_materiel)
 
 
 def is_prof(user):
@@ -110,11 +138,8 @@ def is_prof(user):
     Returns:
         boolean: True si l'utilisateur est un professeur, False sinon
     """
-    liste_roles = Role.query.all()
-    for role in liste_roles:
-        if role.id == user.id_role:
-            return True
-    return False
+    role = Role.query.filter(Role.nom == "Professeur").all()
+    return role.id == user.id_role
 
 def is_admin(user):
     """Vérifie si l'utilisateur passé en paramètres est un admin
@@ -125,11 +150,9 @@ def is_admin(user):
     Returns:
         boolean: True si l'utilisateur est un admin, False sinon
     """
-    liste_roles = Role.query.all()
-    for role in liste_roles:
-        if role.id == user.id_role:
-            return True
-    return False
+    role = Role.query.filter(Role.nom == "Administrateur").all()
+    return role.id == user.id_role
+
 
 def is_etablissement(user):
     """Vérifie si l'utilisateur passé en paramètres est un établissement
@@ -140,8 +163,5 @@ def is_etablissement(user):
     Returns:
         boolean: True si l'utilisateur est un établissement, False sinon
     """
-    liste_roles = Role.query.all()
-    for role in liste_roles:
-        if role.id == user.id_role:
-            return True
-    return False
+    role = Role.query.filter(Role.nom == "Etablissement").all()
+    return role.id == user.id_role
