@@ -1,10 +1,10 @@
-section ul {
+ul {
     display: flex;
     /* flex-basis: 100%; */
     flex-wrap: nowrap;
 }
 
-section ul li {
+ul li {
     /* background-color: brown; */
     display: flex;
     flex-basis: 50%;
