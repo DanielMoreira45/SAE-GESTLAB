@@ -40,3 +40,8 @@ def delivery():
 @app.route('/d/')
 def new_commande():
     return None #TODO
+
+@app.route("/admin/home/")
+# @login_required
+def admin_home():
+    return render_template("admin.html")
