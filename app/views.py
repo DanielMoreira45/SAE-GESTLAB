@@ -9,7 +9,7 @@ from .models import Utilisateur
 
 @app.route('/test/')
 def test():
-    user = Utilisateur.query.get(4)
+    user = Utilisateur.query.get(2)
     login_user(user)
     return render_template('test.html')
 
