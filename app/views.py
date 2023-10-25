@@ -8,20 +8,26 @@ from wtforms import StringField, HiddenField, PasswordField
 from hashlib import sha256
 
 
+@app.route("/home/")
+def home():
+    return render_template("home.html")
+
 class LoginForm(FlaskForm):
-    username = StringField('Username')
+    email = StringField('email')
     password = PasswordField('Password')
     next = HiddenField()
 
     def get_authenticated_user(self):
-        user = Utilisateur.query.get(self.username.data)
-        if user is None:
-            return None
-        m = sha256()
-        m.update(self.password.data.encode())
-        passwd = m.hexdigest()
-        return user if passwd == user.password else None
-
+        users = Utilisateur.query.filter(Utilisateur.email==self.email.data).all()
+        print(self.email.data)
+        #users = Utilisateur.query.get(self.email.data)
+        user = None
+        for temp_user in users:
+            if temp_user.password == self.password.data:
+                user = temp_user
+        #if user is None:
+        #    return None
+        return user
 
 
 @app.route("/", methods=("GET","POST",))
@@ -34,9 +40,8 @@ def login():
         user = f.get_authenticated_user()
         if user:
             login_user(user)
+            #if user.is_prof():
+            #    print("prof")
             next = f.next.data or url_for("home")
             return redirect(next)
-    return render_template(
-        "connexion.html",
-        form=f
-    )
+    return render_template("connexion.html", form=f)
