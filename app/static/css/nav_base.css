@@ -38,7 +38,7 @@ div.navigation li:not(:first-child){
 
 div.navigation a{
     text-decoration: none;
-    color: black; /*Mettre en blanc*/
+    color: white;
     font-weight: bold;
     
 }
@@ -59,7 +59,7 @@ p.Logo span.yellow-part{
 
 div.navigation li:last-child{
     position: absolute;
-    right: 2%; /*39vw*/
+    right: 2%;
 
 }
 
@@ -76,7 +76,7 @@ div.navigation li:last-child{
 }
 
 div.horizontal-line {
-    border-top: 2px solid black;
+    border-top: 2px solid white;
 }
 
 div.content{
