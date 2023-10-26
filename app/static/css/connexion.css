@@ -17,7 +17,7 @@ body {
     background-image: linear-gradient(
         to bottom,
         rgba(42, 42, 42, 0.5),
-        rgba(42, 42, 42, 0.5)), url("./images/background_connexion.png");
+        rgba(42, 42, 42, 0.5)), url("../images/background_connexion.png");
     background-repeat: no-repeat;
     background-size: cover;
     background-attachment: fixed;
@@ -53,7 +53,7 @@ div>div {
     text-align: center;
 }
 
-button {
+#mdp {
     background-color: #fbeba1;
     border-radius: 20px;
     border-color: #ffd883;
@@ -70,7 +70,7 @@ button {
     font-size:x-large;
 }
 
-button:hover {
+#mdp:hover {
     background-color: #ffd883;
 }
 
@@ -93,12 +93,12 @@ input{
     padding-right: 1em;
 }
 
-.mdp{
+#mdp, #connexion{
     background-color: transparent;
     border: none;
 }
 
-.mdp:hover{
+#mdp:hover, #connexion:hover{
     background-color: transparent;
 }
 
