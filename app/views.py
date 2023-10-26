@@ -28,7 +28,6 @@ class LoginForm(FlaskForm):
     next = HiddenField()
 
     def get_authenticated_user(self):
-        self.first_try = False
         users = Utilisateur.query.filter(Utilisateur.email==self.email.data).all()
         user = None
         for temp_user in users:
@@ -46,6 +45,10 @@ class LoginForm(FlaskForm):
 @app.route("/", methods=("GET","POST",))
 def login():
     f = LoginForm()
+
+    if request.method == "POST":
+        if request.form["submit_button"] == "mdp":
+            return render_template("bug.html")
     if f.is_submitted():
         if f.has_content():
             f.show_password_incorrect()
