@@ -7,20 +7,6 @@ from flask_wtf import FlaskForm
 from wtforms import StringField, HiddenField, PasswordField
 from hashlib import sha256
 
-
-@app.route("/prof/")
-def prof():
-    return render_template("prof.html")
-
-@app.route("/admin/")
-def admin():
-    return render_template("admin.html")
-
-@app.route("/ecole/")
-def ecole():
-    return render_template("ecole.html")
-
-
 class LoginForm(FlaskForm):
     email = StringField('Email')
     password = PasswordField('Password')
@@ -42,7 +28,7 @@ class LoginForm(FlaskForm):
         self.password_incorrect = "Email ou mot de passe incorrect"
 
 
-@app.route("/", methods=("GET","POST",))
+@app.route("/login/", methods=("GET","POST",))
 def login():
     f = LoginForm()
 
@@ -59,11 +45,48 @@ def login():
         if user:
             login_user(user)
             if user.is_prof():
-                next = f.next.data or url_for("prof")
+                next = f.next.data or url_for("prof_home")
             elif user.is_admin():
-                next = f.next.data or url_for("admin")
+                next = f.next.data or url_for("admin_home")
             elif user.is_etablissement():
-                next = f.next.data or url_for("ecole")
+                next = f.next.data or url_for("ecole_home")
             return redirect(next)
 
     return render_template("connexion.html", form=f)
+
+
+@app.route('/logout/')
+def logout():
+    return None #TODO
+
+@app.route('/a/')
+def admin_add():
+    return None #TODO
+
+@app.route('/r/')
+def admin_manage():
+    return None #TODO
+
+@app.route('/b/')
+def consult():
+    return None #TODO
+
+@app.route('/c/')
+def delivery():
+    return None #TODO
+
+@app.route('/d/')
+def new_commande():
+    return None #TODO
+
+@app.route("/prof/home/")
+def prof_home():
+    return render_template("prof.html")
+
+@app.route("/admin/home/")
+def admin_home():
+    return render_template("admin.html")
+
+@app.route("/ecole/home/")
+def ecole_home():
+    return render_template("ecole.html"
