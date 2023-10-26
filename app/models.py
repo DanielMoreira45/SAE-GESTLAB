@@ -1,8 +1,7 @@
 """Lien avec la Base de données"""
 
-from flask_login import UserMixin
 from .app import db, login_manager
-
+from flask_login import UserMixin
 
 class Role(db.Model):
     __tablename__ = "role"
@@ -19,7 +18,7 @@ class Utilisateur(db.Model, UserMixin):
     nom = db.Column(db.String(100))
     prenom = db.Column(db.String(100))
     email = db.Column(db.String(100))
-    tel = db.Column(db.String(100))
+    password = db.Column(db.String(100))
     id_role = db.Column(db.Integer, db.ForeignKey("role.id"))
     role = db.relationship("Role", backref=db.backref("utilisateurs", lazy="dynamic"))
 
@@ -168,4 +167,4 @@ class Alerte(db.Model):
 
 @login_manager.user_loader
 def load_user(email):
-    return Utilisateur.query.get(email=email)
+    return Utilisateur.query.filter(Utilisateur.email==email)
