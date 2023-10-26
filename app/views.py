@@ -27,7 +27,6 @@ class LoginForm(FlaskForm):
     def show_password_incorrect(self):
         self.password_incorrect = "Email ou mot de passe incorrect"
 
-
 @app.route("/login/", methods=("GET","POST",))
 def login():
     f = LoginForm()
