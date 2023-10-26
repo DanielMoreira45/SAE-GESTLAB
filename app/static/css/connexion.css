@@ -7,7 +7,7 @@
 div>label {
     color : black;
     text-align: left;
-    margin-left: 2rem;
+    margin-left: 2em;
 }
 
 body {
@@ -33,18 +33,18 @@ h1 {
 
 form {
     background-color: white;
-    margin-left: 40rem;
-    margin-right: 40rem;
-    border-radius: 2rem;
-    padding-bottom: 1rem;
-    padding-top: 1rem;
+    margin-left: 20em;
+    margin-right: 20em;
+    border-radius: 2em;
+    padding-bottom: 1em;
+    padding-top: 1em;
     font-size: 2em;
 }
 
 
 div {
-    margin-top: 0.5rem;
-    margin-bottom: 0.5rem;
+    margin-top: 0.5em;
+    margin-bottom: 0.5em;
     text-align: left;
 }
 
@@ -53,14 +53,14 @@ div>div {
     text-align: center;
 }
 
-#mdp {
+#Connexion {
     background-color: #fbeba1;
     border-radius: 20px;
     border-color: #ffd883;
-    padding-top: 1rem;
-    padding-bottom: 1rem;
-    padding-left: 2rem;
-    padding-right: 2rem;
+    padding-top: 1em;
+    padding-bottom: 1em;
+    padding-left: 2em;
+    padding-right: 2em;
     font-family: "AgrandirWide";
     font-size: large;
     cursor: pointer;
@@ -70,7 +70,7 @@ div>div {
     font-size:x-large;
 }
 
-#mdp:hover {
+#Connexion:hover {
     background-color: #ffd883;
 }
 
@@ -93,12 +93,14 @@ input{
     padding-right: 1em;
 }
 
-#mdp, #connexion{
+#mdp{
     background-color: transparent;
     border: none;
+    cursor: pointer;
+    font-size: large;
 }
 
-#mdp:hover, #connexion:hover{
+#mdp:hover{
     background-color: transparent;
 }
 
