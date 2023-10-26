@@ -11,7 +11,15 @@
 body{
     margin: 0px;
     padding: 0;
+    min-height: 100vh;
     font-family: "DM-Sans";
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+main{
+    flex: 1;
 }
 
 div.navigation nav{
@@ -51,6 +59,7 @@ div.navigation {
 p.Logo{
     font-size: 2em;
     margin: 0;
+    color: white;
 }
 
 p.Logo span.yellow-part{
@@ -82,3 +91,16 @@ div.horizontal-line {
 div.content{
     margin: 8px;
 }
+
+footer p {
+    font-family: "AgrandirWide";
+    font-size: 1em;
+    color: black;
+}
+
+footer {
+    bottom: 0;
+    width: 100%;
+    text-align: center;
+}
+
