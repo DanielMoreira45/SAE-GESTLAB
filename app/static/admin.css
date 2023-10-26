@@ -1,0 +1,47 @@
+body{
+    background-image: linear-gradient(
+        to bottom,
+        rgba(0,0,0,0.6),
+        rgba(0,0,0,0.6)
+    ),url("https://media.canva.com/1/image-resize/1/1600_899_100_PNG_F/czM6Ly9tZWRpYS1wcml2YXRlLmNhbnZhLmNvbS9vN3dIUS9NQUZ5RW5vN3dIUS8xL3AucG5n?osig=AAAAAAAAAAAAAAAAAAAAABRcqpV-kwDLlYtp_cU35m8g4dfitgzBk24jxm5lYFvo&exp=1698319119&x-canva-quality=screen_2x&csig=AAAAAAAAAAAAAAAAAAAAAEvO3ehrG9jYYmR4VJs328lHMmEFI8L58SSMyWUUTIow");
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+
+}
+
+#bjr-admin{
+    font-weight: 500;
+    font-size: 5em;
+    font-style: normal;
+    text-decoration: none;
+    color: white;
+}
+
+#btn-navi{
+    border-radius: 20px;
+    margin: 20px;
+    font-style: normal;
+    font-weight: 500;
+    font-size: 15px;
+    display: inline-flex;
+    align-items: center;
+    padding: 20px;
+}
+
+#btn-navi img{
+    height: 30px;
+    margin: 10px;
+}
+
+body>*{
+    text-align: center;
+}
+
+.nom-util{
+    color: #FBEBA1;
+}
+
+.container{
+    margin: 15em;
+}
