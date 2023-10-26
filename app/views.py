@@ -89,4 +89,4 @@ def admin_home():
 
 @app.route("/ecole/home/")
 def ecole_home():
-    return render_template("ecole.html"
+    return render_template("ecole.html")
