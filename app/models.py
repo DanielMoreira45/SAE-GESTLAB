@@ -1,8 +1,7 @@
 """Lien avec la Base de données"""
 
-from flask_login import UserMixin
 from .app import db, login_manager
-
+from flask_login import UserMixin
 
 class Role(db.Model):
     __tablename__ = "role"
@@ -13,13 +12,13 @@ class Role(db.Model):
         return "<Role (%d) %s>" % (self.id, self.intitule)
 
 
-class Utilisateur(db.Model):
+class Utilisateur(db.Model, UserMixin):
     __tablename__ = "utilisateur"
     id = db.Column(db.Integer, primary_key=True)
     nom = db.Column(db.String(100))
     prenom = db.Column(db.String(100))
-    email = db.Column(db.String(100))
-    tel = db.Column(db.String(100))
+    email = db.Column(db.String(100), unique=True)
+    password = db.Column(db.String(100))
     id_role = db.Column(db.Integer, db.ForeignKey("role.id"))
     role = db.relationship("Role", backref=db.backref("utilisateurs", lazy="dynamic"))
 
@@ -35,7 +34,7 @@ class Utilisateur(db.Model):
         Returns:
             boolean: True si l'utilisateur est un professeur, False sinon
         """
-        role = Role.query.filter(Role.nom == "Professeur").all()
+        role = Role.query.filter(Role.intitule == "Professeur").scalar()
         return role.id == self.id_role
 
     def is_admin(self):
@@ -47,7 +46,7 @@ class Utilisateur(db.Model):
         Returns:
             boolean: True si l'utilisateur est un admin, False sinon
         """
-        role = Role.query.filter(Role.nom == "Administrateur").all()
+        role = Role.query.filter(Role.intitule == "Administrateur").scalar()
         return role.id == self.id_role
 
 
@@ -60,8 +59,11 @@ class Utilisateur(db.Model):
         Returns:
             boolean: True si l'utilisateur est un établissement, False sinon
         """
-        role = Role.query.filter(Role.nom == "Etablissement").all()
+        role = Role.query.filter(Role.intitule == "Etablissement").scalar()
         return role.id == self.id_role
+    
+    def get_id(self):
+        return self.id
 
 
 class Domaine(db.Model):
@@ -167,5 +169,5 @@ class Alerte(db.Model):
         return "<Alerte (%d) %s %r>" % (self.id, self.commentaire, self.ref_materiel)
 
 @login_manager.user_loader
-def load_user(email):
-    return Utilisateur.query.get(email=email)
+def load_user(user_id):
+    return Utilisateur.query.get(int(user_id))
