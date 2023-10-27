@@ -81,14 +81,17 @@ def delivery():
 def new_commande():
     return None #TODO
 
+
+@app.route("/admin/home/")
+# @login_required
+def admin_home():
+    return render_template("admin.html")
+  
 @app.route("/prof/home/")
 def prof_home():
     return render_template("prof.html")
 
-@app.route("/admin/home/")
-def admin_home():
-    return render_template("admin.html")
-
 @app.route("/ecole/home/")
 def ecole_home():
     return render_template("ecole.html")
+
