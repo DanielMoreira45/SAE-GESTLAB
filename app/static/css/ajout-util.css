@@ -24,7 +24,7 @@ body{
 #formulaire{
     margin-left: auto;
     margin-right: auto;
-    width: 50%;
+    width: 45%;
     background-color: white;
     font-family: "AgrandirWide";
     border-radius: 30px;
@@ -39,8 +39,7 @@ body{
 
 .champ>*{
     margin: 1em;
-    margin-left: auto;
-    margin-right: auto;
+    flex-grow: 1;
 }
 
 #ajt{
