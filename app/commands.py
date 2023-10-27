@@ -53,7 +53,7 @@ def loaddb(filename):
             o = Utilisateur(nom=user_name,
                             prenom=dico_users["prenomUti"],
                             email=dico_users["emailUti"],
-                            tel=dico_users["telUti"],
+                            password=dico_users["password"],
                             id_role=dico_users["idRole"])
             db.session.add(o)
             users[user_name] = o

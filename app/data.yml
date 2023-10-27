@@ -4,11 +4,11 @@ Role:
   - {idRole: 3, intitule: 'Etablissement'}
 
 Utilisateur:
-  - {idUti: 1, idRole: 1, nomUti: 'Doe', prenomUti: 'John', emailUti: 'johndoe@gmail.com', telUti: '0142424242'}
-  - {idUti: 2, idRole: 2, nomUti: 'Obi', prenomUti: 'Leo', emailUti: 'leoobi@gmail.com', telUti: '0648484848'}
-  - {idUti: 3, idRole: 2, nomUti: 'Lea', prenomUti: 'Rose', emailUti: 'roselea@gmail.com', telUti: '0162626262'}
-  - {idUti: 4, idRole: 3, nomUti: 'Jr.', prenomUti: 'Tim', emailUti: 'timjr@gmail.com', telUti: '0142424242'}
-  - {idUti: 5, idRole: 3, nomUti: 'Zed', prenomUti: 'Zoey', emailUti: 'zoeyzed@gmail.com', telUti: '0142424242'}
+  - {idUti: 1, idRole: 1, nomUti: 'Doe', prenomUti: 'John', emailUti: 'johndoe@gmail.com', telUti: '0142424242', password: 'admin'}
+  - {idUti: 2, idRole: 2, nomUti: 'Obi', prenomUti: 'Leo', emailUti: 'leoobi@gmail.com', telUti: '0648484848', password: 'Password'}
+  - {idUti: 3, idRole: 2, nomUti: 'Lea', prenomUti: 'Rose', emailUti: 'roselea@gmail.com', telUti: '0162626262', password: 'Jai'}
+  - {idUti: 4, idRole: 3, nomUti: 'Jr.', prenomUti: 'Tim', emailUti: 'timjr@gmail.com', telUti: '0142424242', password: '1234'}
+  - {idUti: 5, idRole: 3, nomUti: 'Zed', prenomUti: 'Zoey', emailUti: 'zoeyzed@gmail.com', telUti: '0142424242', password: 'Dalaigre'}
 
 Domaine:
   - {codeD: 1, nomD: 'Appareillage'}
