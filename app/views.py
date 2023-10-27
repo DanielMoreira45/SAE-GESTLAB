@@ -17,8 +17,6 @@ class LoginForm(FlaskForm):
         user = Utilisateur.query.filter_by(email=self.email.data).first()
         if user and user.password == self.password.data:
             return user
-        else:
-            return None
     
     def has_content(self):
         return self.password.data != "" or self.email.data != ""
@@ -44,7 +42,8 @@ def login():
     elif f.validate_on_submit():
         user = f.get_authenticated_user()
         if user:
-            login_user(user)
+            print(login_user(user))
+            print()
             if user.is_prof():
                 next = f.next.data or url_for("prof_home")
             elif user.is_admin():
@@ -54,6 +53,7 @@ def login():
             return redirect(next)
 
     return render_template("connexion.html", form=f)
+
 
 
 @app.route('/logout/')
@@ -91,7 +91,9 @@ def admin_home():
 def prof_home():
     return render_template("prof.html")
 
-@app.route("/ecole/home/")
+@app.route("/ecole/home/", methods=("GET","POST",))
+@login_required
 def ecole_home():
+    print()
     return render_template("ecole.html")
 
