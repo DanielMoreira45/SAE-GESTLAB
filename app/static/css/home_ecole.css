@@ -22,8 +22,8 @@ h1 {
     font-size: 6em;
     color: white;
     margin-bottom: 0.2em;
-    margin-left: auto;
-    margin-right: auto;
+    flex-basis: 100%;
+    text-align: center;
     
 }
 
@@ -78,7 +78,6 @@ button {
     padding-right: 2rem;
     font-family: "AgrandirWide";
     cursor: pointer;
-    overflow: hidden;
     border: solid #ffd883;
     font-style:bold;
     font-size:x-large;

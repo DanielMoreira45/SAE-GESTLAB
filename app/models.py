@@ -61,6 +61,9 @@ class Utilisateur(db.Model, UserMixin):
         """
         role = Role.query.filter(Role.intitule == "Etablissement").scalar()
         return role.id == self.id_role
+    
+    def get_id(self):
+        return self.id
 
 
 class Domaine(db.Model):
@@ -166,5 +169,5 @@ class Alerte(db.Model):
         return "<Alerte (%d) %s %r>" % (self.id, self.commentaire, self.ref_materiel)
 
 @login_manager.user_loader
-def load_user(email):
-    return Utilisateur.query.filter(Utilisateur.email==email)
+def load_user(user_id):
+    return Utilisateur.query.get(int(user_id))

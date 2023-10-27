@@ -4,7 +4,11 @@
 <link rel="stylesheet" href="{{ url_for('static', filename='../static/css/home_ecole.css') }}">
 {% endblock %}
 {% block content %}
-    <h1 id="bjr-admin">BONJOUR <span class="nom-util">(ECOLE)</span> !</h1>
+    {% if current_user.is_authenticated %}
+    <h1 id="bjr-admin">BONJOUR <span class="nom-util">{{ current_user.nom }}</span> !</h1>
+    {% else %}
+    <h1 id="bjr-admin">BONJOUR !</h1>
+    {% endif %}
     <form class="form-horizontal" role="form" method="POST" action="{{ url_for('ecole_home') }}">
         <a href=""><button id="btn-navi"><img src="{{ url_for('static', filename='../static/images/materiel.png') }}" alt="">Consulter le matériel</button></a>
         <a href=""><button id="btn-navi"><img src="{{ url_for('static', filename='../static/images/commande.png') }}" alt="">Gérer les commandes</button></a> 
