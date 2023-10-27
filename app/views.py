@@ -1,7 +1,7 @@
 """Toute les routes et les Formulaires"""
-from .app import app
+from .app import app, db
 from flask import render_template, url_for, redirect, request
-from .models import Utilisateur    
+from .models import Utilisateur
 from flask_login import login_user
 from flask_wtf import FlaskForm
 from wtforms import StringField, HiddenField, PasswordField, SelectField, RadioField
@@ -101,3 +101,23 @@ class UtilisateurForm(FlaskForm):
     mdp = PasswordField('Mot de Passe', validators=[DataRequired()])
     role = SelectField('Rôle', choices=[(1, 'Administrateur'), (2, 'Professeur'), (3, 'Etablissement')])
     modif = RadioField('Droit de Modification', choices=[(True, 'Oui'), (False, 'Non')], validators=[DataRequired()])
+
+@app.route("/save/util/", methods=("POST",))
+def save_util():
+    f = UtilisateurForm()
+    u = Utilisateur()
+    u = Utilisateur(
+        id = 6,
+        nom = 'test',
+        prenom = 'test',
+        email = 'test',
+        password = 'test',
+        id_role = 1
+    )
+    db.session.add(u)
+    db.session.commit()
+    return redirect(url_for('admin_add'))
+    return render_template(
+        "admin.html", form=f
+    )
+    

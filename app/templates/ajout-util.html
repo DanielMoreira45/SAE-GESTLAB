@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% block content %}
     <h1 id="ajout-u">Ajouter un utilisateur</h1>
-    <form role="form" method="POST" action="" id="formulaire">
+    <form role="form" method="POST" action="{{ url_for('save_util') }}" id="formulaire">
         <div class="champ">
             <span>{{ form.nomUti.label }} <br> {{ form.nomUti(size=40, class="form-control") }}</span>
             <span>{{ form.prenomUti.label }} <br> {{ form.prenomUti(size=40, class="form-control") }}</span>
@@ -10,9 +10,8 @@
             <span>{{ form.role.label }} <br> {{ form.role(class="form-control") }}</span>
             <span>{{ form.modif.label }} <br> {{ form.modif(size=40, class="form-control") }}</span>
         </div>
-        <div id="ajt">
-            <a href=""><button>Ajouter</button></a>
-        </div>
+            <input type="submit" value="Ajouter">
+
         
     </form>
 {% endblock %}
