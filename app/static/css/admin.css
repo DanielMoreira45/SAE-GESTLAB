@@ -1,9 +1,8 @@
 body{
     background-image: linear-gradient(
         to bottom,
-        rgba(0,0,0,0.6),
-        rgba(0,0,0,0.6)
-    ),url('admin-bg.png');
+        rgba(42, 42, 42, 0.5),
+        rgba(42, 42, 42, 0.5)), url("../images/background_admin.png");
     background-size: cover;
     background-repeat: no-repeat;
     background-attachment: fixed;
@@ -43,4 +42,7 @@ body>*{
 
 .container{
     margin: 15em;
+}
+h1{
+    color: red;
 }
