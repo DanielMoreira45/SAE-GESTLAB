@@ -1,0 +1,110 @@
+@font-face {
+    font-family: "DM-Sans";
+    src: url("../font/DMSans.ttf");
+  }
+
+@font-face {
+    font-family: "AgrandirWide";
+    src: url("../font/Agrandir-Regular.otf");
+}
+
+body{
+    background-image: linear-gradient(
+        to bottom, 
+        rgba(42, 42, 42, 0.5), 
+        rgba(42, 42, 42, 0.5)), 
+        url("../images/background_util.png");
+    background-repeat: no-repeat;
+    background-size: 100%;
+    font-family: "DM-Sans";
+}
+
+h1{
+    color: white;
+    text-align: center;
+    font-size: 3em;
+}
+
+section input{
+    flex-basis: 45%;
+    flex-grow: 1;
+}
+
+.user_infos section > div{
+    display: block;
+    margin: 1.5em;
+    align-items: center;
+}
+
+.user img{
+    width: 4em;
+    height: 4em;
+}
+
+.user_infos section{
+    background-color: white;
+    padding: 1em;
+    margin: 1.5em;
+    border-radius: 16px;
+}
+
+.user {
+    height: 50vh;
+    width: 20vw;
+    overflow: auto;
+    background-color: white;
+    border-radius: 16px;
+    border: 2px white solid;
+    scroll-snap-type: y proximity;
+    scrollbar-color: #EDF0F2;
+}
+  
+.user section {
+    scroll-snap-align: start;
+}
+
+.user input:focus {
+    background-color: #EDF0F2;
+}
+
+.user::-webkit-scrollbar {
+    width: 0.7em;
+}
+
+.user::-webkit-scrollbar-thumb {
+    background: rgb(217, 217, 217);;
+    border-radius: 8px;
+  }
+
+div.user_item input{
+
+    border: none;
+    background-color: white;
+    border-radius: 8px;
+    margin: 1em;
+    padding: 1.5em;
+}
+
+div.main{
+    display: flex;
+    flex-wrap: nowrap;
+    justify-content: center;
+}
+
+#save_button{
+    background-color: rgb(255, 216, 131);
+    font-family: "AgrandirWide";
+    font-size: 1em;
+    margin-bottom: 0.2em;
+    border-radius: 9px;
+    padding: 10px;
+    border: none;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+div.user_item{
+    display: flex;
+    text-align: center;
+    align-items: center;
+}

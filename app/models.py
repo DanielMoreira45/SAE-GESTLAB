@@ -12,7 +12,7 @@ class Role(db.Model):
         return "<Role (%d) %s>" % (self.id, self.intitule)
 
 
-class Utilisateur(db.Model):
+class Utilisateur(db.Model, UserMixin):
     __tablename__ = "utilisateur"
     id = db.Column(db.Integer, primary_key=True)
     nom = db.Column(db.String(100))
@@ -61,6 +61,9 @@ class Utilisateur(db.Model):
         """
         role = Role.query.filter(Role.intitule == "Etablissement").scalar()
         return role.id == self.id_role
+
+    def get_role(self):
+        return Role.query.filter(Role.id == self.id_role).scalar()
 
 
 class Domaine(db.Model):
@@ -165,6 +168,7 @@ class Alerte(db.Model):
     def __repr__(self):
         return "<Alerte (%d) %s %r>" % (self.id, self.commentaire,
                                         self.ref_materiel)
+
 @login_manager.user_loader
 def load_user(email):
     return Utilisateur.query.get(email=email)

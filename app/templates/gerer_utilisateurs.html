@@ -1,48 +1,60 @@
-<!DOCTYPE html>
-<html lang="fr">
-    <head>
-        <title>Gérer les utilisateurs</title>
-        <link rel="stylesheet" href="gerer_util.css">
-    </head>
-    <body>
-        {% extends 'base.html' %}
-        {% block head %}
-        <nav>
-            <h1>GESTLAB</h1>
-            <ul>
-                <li>Ajouter un utilisateur</li>
-                <li>Gérer les utilisateurs</li>
-            </ul>
-            <input type="button" value="Déconnexion">
-        </nav>
-        {% endblock %}
-        {% block content %}
-        <h2>Gérer les utilisateurs</h2>
-        <section class="user">
-            <ul>
-                {% for user in liste_users %}
-                <li>{{ user.nom }} {{ user.prenom }}</li>
-                {% endfor %}
-            </ul>
-        </section>
-        <section class="user_infos">
+{% extends 'consult_base.html' %}
+{% block styles %}
+{{ super() }}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/gerer_utilisateurs.css')}}">
+{% endblock %}
+{% block content %}
+<h1>Gérer les utilisateurs</h1>
+<div class="main">
+    <div class="user">
+        <section>
             {% for user in liste_users %}
-            <p>Nom :</p>
-            <input type="text" value="{{user.nom}}">
-            <p>Prénom :</p>
-            <input type="text" value="{{user.prenom}}">
-            <p>Mot de passe :</p>
-            <input type="password" value="{{user.password}}">
-
-            {% if user.is_admin %}
-            <label for="role-select">Rôle :</label>
-            <select name="roles" id="role-select">
-                <option value="Administrateur">Administrateur</option>
-                <option value="Professeur">Professeur</option>
-                <option value="Etablissement">Etablissement</option>
-            </select>
+            <div class="user_item">
+                <img src="{{ url_for('static', filename='images/user.png') }}" alt="Un utilisateur">
+                <input type="button" value="{{user.nom}} {{user.prenom}}" class="user_bouton" id="{{ user.id }}"
+                    onclick="edit(this.id)">
+            </div>
             {% endfor %}
         </section>
-        {% endblock %}
-    </body>
-</html>
+    </div>
+    <div class="user_infos">
+        <section>
+            <div class="nom_prenom">
+                <label for="nom">Nom :</label>
+                <input id="nom" type="text" value="{{ current_user.nom }}">
+                <label for="prenom">Prénom :</label>
+                <input id="prenom" type="text" value="{{ current_user.prenom }}">
+            </div>
+            <div class="psswd_role">
+                <label for="passwd">Mot de passe :</label>
+                <input id="password" type="password" value="{{ current_user.password }}">
+                <label for="role-select">Rôle :</label>
+                <select name="roles" id="role-select">
+                    <option value="Administrateur">Administrateur</option>
+                    <option value="Professeur">Professeur</option>
+                    <option value="Etablissement">Etablissement</option>
+                </select>
+            </div>
+            <button type="submit" id="save_button">Enregistrer</button>
+        </section>
+    </div>
+</div>
+<script>
+    function edit(id) {
+        var inputNom = document.getElementById("nom");
+        var inputPrenom = document.getElementById("prenom");
+        var inputPassword = document.getElementById("password");
+        var selectRole = document.getElementById("role-select");
+
+        fetch('/get_user_info/' + id)
+            .then(response => response.json())
+            .then(data => {
+                inputNom.setAttribute('value', data.nom);
+                inputPrenom.setAttribute('value', data.prenom);
+                inputPassword.setAttribute('value', data.password);
+                selectRole.value = data.role;
+            })
+            .catch(error => console.error('Erreur : ' + error));
+    }
+</script>
+{% endblock %}
