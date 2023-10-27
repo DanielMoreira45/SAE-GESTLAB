@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% block content %}
+    <h1 id="ajout-u">Ajouter un utilisateur</h1>
+    <form role="form" method="POST" action="" id="formulaire">
+        <div class="champ">
+            <span>{{ form.nomUti.label }} <br> {{ form.nomUti(size=40, class="form-control") }}</span>
+            <span>{{ form.prenomUti.label }} <br> {{ form.prenomUti(size=40, class="form-control") }}</span>
+            <span>{{ form.emailUti.label }} <br> {{ form.emailUti(size=40, class="form-control") }}</span>
+            <span>{{ form.mdp.label }} <br> {{ form.mdp(size=40, class="form-control") }}</span>
+            <span>{{ form.telUti.label }} <br> {{ form.telUti(size=40, class="form-control") }}</span>
+            <span>{{ form.role.label }} <br> {{ form.role(class="form-control") }}</span>
+            <span>{{ form.modif.label }} <br> {{ form.modif(size=40, class="form-control") }}</span>
+        </div>
+        <div id="ajt">
+            <a href=""><button>Ajouter</button></a>
+        </div>
+        
+    </form>
+{% endblock %}

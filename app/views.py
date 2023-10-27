@@ -4,7 +4,8 @@ from flask import render_template, url_for, redirect, request
 from .models import Utilisateur    
 from flask_login import login_user
 from flask_wtf import FlaskForm
-from wtforms import StringField, HiddenField, PasswordField
+from wtforms import StringField, HiddenField, PasswordField, SelectField, RadioField
+from wtforms.validators import DataRequired
 from hashlib import sha256
 
 class LoginForm(FlaskForm):
@@ -58,9 +59,10 @@ def login():
 def logout():
     return None #TODO
 
-@app.route('/a/')
+@app.route('/ajout/util/')
 def admin_add():
-    return None #TODO
+    f = UtilisateurForm()
+    return render_template("ajout-util.html", form=f)
 
 @app.route('/r/')
 def admin_manage():
@@ -89,3 +91,14 @@ def admin_home():
 @app.route("/ecole/home/")
 def ecole_home():
     return render_template("ecole.html")
+
+class UtilisateurForm(FlaskForm):
+    idUti = HiddenField('iduti')
+    idRole = HiddenField('idrole')
+    nomUti = StringField('Nom', validators=[DataRequired()])
+    prenomUti = StringField('Prénom', validators=[DataRequired()])
+    emailUti = StringField('Email', validators=[DataRequired()])
+    mdp = PasswordField('Mot de Passe', validators=[DataRequired()])
+    telUti = StringField('Telephone', validators=[DataRequired()])
+    role = SelectField('Rôle', choices=[(1, 'Administrateur'), (2, 'Professeur'), (3, 'Etablissement')])
+    modif = RadioField('Droit de Modification', choices=[(True, 'Oui'), (False, 'Non')], validators=[DataRequired()])
