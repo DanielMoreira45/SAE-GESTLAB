@@ -54,6 +54,7 @@ def loaddb(filename):
                             prenom=dico_users["prenomUti"],
                             email=user_email,
                             password=dico_users["password"],
+                            modifications=dico_users["modifications"],
                             id_role=dico_users["idRole"])
             db.session.add(o)
             users[user_email] = o
