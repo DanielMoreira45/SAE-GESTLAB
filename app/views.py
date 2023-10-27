@@ -2,7 +2,7 @@
 from .app import app
 from flask import render_template, url_for, redirect, request
 from .models import Utilisateur    
-from flask_login import login_user
+from flask_login import login_user, user_logged_in, user_login_confirmed, confirm_login
 from flask_wtf import FlaskForm
 from wtforms import StringField, HiddenField, PasswordField
 from hashlib import sha256
@@ -54,6 +54,7 @@ def login():
     return render_template("connexion.html", form=f)
 
 
+
 @app.route('/logout/')
 def logout():
     return None #TODO
@@ -86,6 +87,7 @@ def prof_home():
 def admin_home():
     return render_template("admin.html")
 
-@app.route("/ecole/home/")
+@app.route("/ecole/home/", methods=("GET","POST",))
 def ecole_home():
-    return render_template("ecole.html")
+    print()
+    return render_template("ecole.html", prenom=user_logged_in)

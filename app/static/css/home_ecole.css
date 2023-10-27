@@ -1,0 +1,96 @@
+
+@font-face {
+    font-family: "AgrandirWide";
+    src: url("./font/Agrandir-Regular.otf");
+}
+
+
+body {
+    margin-top: 9%;
+    font-family: "AgrandirWide";
+    background-image: linear-gradient(
+        to bottom,
+        rgba(32, 32, 32, 0.5),
+        rgba(32, 32, 32, 0.5)), url("../images/background_ecole.png");
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-attachment: fixed;
+}
+
+h1 {
+    font-family: "AgrandirWide";
+    font-size: 6em;
+    color: white;
+    margin-bottom: 0.2em;
+    margin-left: auto;
+    margin-right: auto;
+    
+}
+
+form {
+    background-color: transparent;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 3em;
+    padding-bottom: 1rem;
+    padding-top: 1rem;
+    font-size: 2em;
+    text-align: center;
+    display: flex;
+    flex-wrap: nowrap;
+    flex-grow: 0;
+    flex-basis: 60%;
+}
+
+span{
+    color: rgb(255, 216, 131);
+}
+
+img{
+    height:fit-content;
+    width: fit-content;
+    flex-basis: 10%;
+    max-width: 20%;
+    margin: auto;
+    
+}
+
+a{
+    text-decoration: none;
+    flex-basis: 20%;
+    margin-left: 10%;
+    margin-right: 10%;
+    flex-grow: 1;
+    display: flex;
+    flex-wrap: nowrap;
+}
+
+
+
+button {
+    display: flex;
+    flex-wrap: nowrap;
+    background-color: #fbeba1;
+    border-radius: 20px;
+    padding-top: 1rem;
+    padding-bottom: 1rem;
+    padding-left: 2rem;
+    padding-right: 2rem;
+    font-family: "AgrandirWide";
+    cursor: pointer;
+    overflow: hidden;
+    border: solid #ffd883;
+    font-style:bold;
+    font-size:x-large;
+
+    
+}
+
+button:hover {
+    background-color: #ffd883;
+}
+
+div.content{
+    display: flex;
+    flex-wrap: wrap;
+}
