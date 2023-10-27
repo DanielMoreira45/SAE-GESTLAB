@@ -2,7 +2,7 @@
 from .app import app
 from flask import render_template, url_for, redirect, request
 from .models import Utilisateur    
-from flask_login import login_user
+from flask_login import login_required, login_user, logout_user
 from flask_wtf import FlaskForm
 from wtforms import StringField, HiddenField, PasswordField
 from hashlib import sha256
@@ -14,12 +14,11 @@ class LoginForm(FlaskForm):
     next = HiddenField()
 
     def get_authenticated_user(self):
-        users = Utilisateur.query.filter(Utilisateur.email==self.email.data).all()
-        user = None
-        for temp_user in users:
-            if temp_user.password == self.password.data:
-                user = temp_user
-        return user
+        user = Utilisateur.query.filter_by(email=self.email.data).first()
+        if user and user.password == self.password.data:
+            return user
+        else:
+            return None
     
     def has_content(self):
         return self.password.data != "" or self.email.data != ""
@@ -59,7 +58,8 @@ def login():
 
 @app.route('/logout/')
 def logout():
-    return None #TODO
+    logout_user()
+    return redirect(url_for('login'))
 
 @app.route('/a/')
 def admin_add():
@@ -83,7 +83,7 @@ def new_commande():
 
 
 @app.route("/admin/home/")
-# @login_required
+@login_required
 def admin_home():
     return render_template("admin.html")
   
