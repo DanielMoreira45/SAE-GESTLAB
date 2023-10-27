@@ -28,6 +28,16 @@ h1{
 section input{
     flex-basis: 45%;
     flex-grow: 1;
+    font-family: "DM-Sans";
+    border-radius: 16px;
+    font-size: 1em;
+}
+
+select{
+    font-family: "DM-Sans";
+    border-radius: 16px;
+    font-size: 1em;
+    padding: 0.5em;
 }
 
 .user_infos section > div{
@@ -45,7 +55,6 @@ section input{
     background-color: white;
     padding: 1em;
     margin: 1.5em;
-    border-radius: 16px;
 }
 
 .user {
@@ -53,12 +62,11 @@ section input{
     width: 20vw;
     overflow: auto;
     background-color: white;
-    border-radius: 16px;
     border: 2px white solid;
     scroll-snap-type: y proximity;
     scrollbar-color: #EDF0F2;
 }
-  
+
 .user section {
     scroll-snap-align: start;
 }
@@ -77,10 +85,8 @@ section input{
   }
 
 div.user_item input{
-
     border: none;
     background-color: white;
-    border-radius: 8px;
     margin: 1em;
     padding: 1.5em;
 }
@@ -96,8 +102,8 @@ div.main{
     font-family: "AgrandirWide";
     font-size: 1em;
     margin-bottom: 0.2em;
-    border-radius: 9px;
-    padding: 10px;
+    border-radius: 25px;
+    padding: 1em;
     border: none;
     cursor: pointer;
     font-weight: bold;
@@ -107,4 +113,13 @@ div.user_item{
     display: flex;
     text-align: center;
     align-items: center;
+}
+
+div.user_infos input{
+    padding: 0.5em;
+    margin: 0.5em;
+}
+
+label{
+    font-weight: bold;
 }

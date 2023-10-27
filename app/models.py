@@ -19,6 +19,7 @@ class Utilisateur(db.Model, UserMixin):
     prenom = db.Column(db.String(100))
     email = db.Column(db.String(100))
     password = db.Column(db.String(100))
+    modifications = db.Column(db.Boolean)
     id_role = db.Column(db.Integer, db.ForeignKey("role.id"))
     role = db.relationship("Role",
                            backref=db.backref("utilisateurs", lazy="dynamic"))
