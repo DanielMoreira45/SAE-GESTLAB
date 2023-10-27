@@ -2,7 +2,7 @@
 from .app import app
 from flask import render_template, url_for, redirect, request
 from .models import Utilisateur    
-from flask_login import login_user, login_required
+from flask_login import login_required, login_user, logout_user
 from flask_wtf import FlaskForm
 from wtforms import StringField, HiddenField, PasswordField
 from hashlib import sha256
@@ -24,10 +24,13 @@ class LoginForm(FlaskForm):
     def show_password_incorrect(self):
         self.password_incorrect = "Email ou mot de passe incorrect"
 
+@app.route("/")
+def home():
+    return render_template("test.html")
+
 @app.route("/login/", methods=("GET","POST",))
 def login():
     f = LoginForm()
-
     if request.method == "POST":
         if request.form["submit_button"] == "mdp":
             return render_template("bug.html")
@@ -55,7 +58,8 @@ def login():
 
 @app.route('/logout/')
 def logout():
-    return None #TODO
+    logout_user()
+    return redirect(url_for('login'))
 
 @app.route('/a/')
 def admin_add():
@@ -77,16 +81,19 @@ def delivery():
 def new_commande():
     return None #TODO
 
+
+@app.route("/admin/home/")
+@login_required
+def admin_home():
+    return render_template("admin.html")
+  
 @app.route("/prof/home/")
 def prof_home():
     return render_template("prof.html")
-
-@app.route("/admin/home/")
-def admin_home():
-    return render_template("admin.html")
 
 @app.route("/ecole/home/", methods=("GET","POST",))
 @login_required
 def ecole_home():
     print()
     return render_template("ecole.html")
+

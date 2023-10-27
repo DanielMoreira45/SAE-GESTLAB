@@ -1,5 +1,10 @@
 
 @font-face {
+    font-family: "DM-Sans";
+    src: url("../font/DMSans.ttf");
+  }
+
+@font-face {
     font-family: "AgrandirWide";
     src: url("./font/Agrandir-Regular.otf");
 }
@@ -7,7 +12,8 @@
 div>label {
     color : black;
     text-align: left;
-    margin-left: 2rem;
+    flex-basis: 100%;
+    margin-left: 10%;
 }
 
 body {
@@ -17,7 +23,7 @@ body {
     background-image: linear-gradient(
         to bottom,
         rgba(42, 42, 42, 0.5),
-        rgba(42, 42, 42, 0.5)), url("./images/background_connexion.png");
+        rgba(42, 42, 42, 0.5)), url("../images/background_connexion.png");
     background-repeat: no-repeat;
     background-size: cover;
     background-attachment: fixed;
@@ -28,39 +34,55 @@ h1 {
     font-size: 6em;
     margin-bottom: 0.2em;
     text-align: center;
+    flex-basis: 80%;
+    flex-grow: 1;
+    flex: 1;
+    min-width: 100%;
     
 }
 
 form {
+    display: flex;
+    flex-wrap: wrap;
+    flex-basis: 40%;
+    flex-grow: 0;
     background-color: white;
-    margin-left: 40rem;
-    margin-right: 40rem;
-    border-radius: 2rem;
-    padding-bottom: 1rem;
-    padding-top: 1rem;
+    border-radius: 2em;
+    padding-bottom: 1em;
+    padding-top: 1em;
     font-size: 2em;
+    margin-left:auto;
+    margin-right: auto;
+}
+
+form>div{
+    display: flex;
+    flex-wrap: wrap;
 }
 
 
-div {
-    margin-top: 0.5rem;
-    margin-bottom: 0.5rem;
-    text-align: left;
+main>div.content {
+    flex-basis: 80%;
+    margin-top: 0.5em;
+    margin-bottom: 0.5em;
+    display: flex;
+    flex-wrap: wrap;
 }
 
 
 div>div {
     text-align: center;
+    display: flex;
 }
 
-button {
+#Connexion {
     background-color: #fbeba1;
     border-radius: 20px;
     border-color: #ffd883;
-    padding-top: 1rem;
-    padding-bottom: 1rem;
-    padding-left: 2rem;
-    padding-right: 2rem;
+    padding-top: 0.5em;
+    padding-bottom: 0.5em;
+    padding-left: 1em;
+    padding-right: 1em;
     font-family: "AgrandirWide";
     font-size: large;
     cursor: pointer;
@@ -68,9 +90,15 @@ button {
     border: solid #ffd883;
     font-style:bold;
     font-size:x-large;
+    flex-basis: 100%;
+    margin-top: 5%;
+    margin-bottom: 5%;
+    margin-left: 30%;
+    margin-right: 30%;
+    font-weight: bold;
 }
 
-button:hover {
+#Connexion:hover {
     background-color: #ffd883;
 }
 
@@ -81,6 +109,7 @@ fieldset {
 .error {
     color: red;
     font-size: medium;
+    min-height:1.5em;
 }
 
 input{
@@ -91,17 +120,29 @@ input{
     font-size: 0.5em;
     padding-left: 1em;
     padding-right: 1em;
+    width: 50em;
+    margin-left: 10%;
+    margin-right: 10%;
 }
 
-.mdp{
+#mdp{
     background-color: transparent;
     border: none;
+    cursor: pointer;
+    font-size: large;
+    flex-basis: 100%;
+    font-family: "DM-Sans";
 }
 
-.mdp:hover{
+#mdp:hover{
     background-color: transparent;
 }
 
 form{
+    text-align: center;
+}
+
+div{
+    flex-basis: 100%;
     text-align: center;
 }
