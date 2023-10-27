@@ -38,7 +38,7 @@ body{
 }
 
 .champ>*{
-    margin: 2em;
+    margin: 1em;
     margin-left: auto;
     margin-right: auto;
 }
@@ -47,6 +47,18 @@ body{
     text-align: center;
 }
 
+#ajt button{
+    background-color: #FBEBA1;
+    font-size: 25px;
+    padding-right: 2em;
+    padding-left: 2em;
+    border-radius: 3em;
+}
+
 #modif li{
     list-style-type: none;
+}
+
+label{
+    font-size: 25px;
 }
