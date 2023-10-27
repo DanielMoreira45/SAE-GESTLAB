@@ -27,10 +27,13 @@ class LoginForm(FlaskForm):
     def show_password_incorrect(self):
         self.password_incorrect = "Email ou mot de passe incorrect"
 
+@app.route("/")
+def home():
+    return render_template("test.html")
+
 @app.route("/login/", methods=("GET","POST",))
 def login():
     f = LoginForm()
-
     if request.method == "POST":
         if request.form["submit_button"] == "mdp":
             return render_template("bug.html")

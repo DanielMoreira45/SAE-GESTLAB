@@ -72,7 +72,7 @@ div.navigation li:last-child{
 
 }
 
-#logoutButton{
+#logoutButton , #BackButton{
     background-color: rgb(255, 216, 131);
     font-family: "AgrandirWide";
     font-size: 1em;

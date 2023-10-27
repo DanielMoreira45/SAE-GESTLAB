@@ -34,7 +34,7 @@
                     {% endif %}
                     <li><button id="logoutButton">Déconnexion</button></li>
                     {% else %}
-                    <li><a href="{{ url_for('login') }}">Login</a></li>
+                    <li><button id="BackButton">Retour accueil</button></li>
                     {% endif %}
                 </ul>
             </nav>
@@ -54,6 +54,10 @@
         document.getElementById("logoutButton").addEventListener("click", function () {
             window.location.href = "{{ url_for('logout') }}";
         });
+        document.getElementById("BackButton").addEventListener("click", function () {
+            window.location.href = "{{ url_for('home') }}";
+        });
+        
     </script>
 </body>
 
