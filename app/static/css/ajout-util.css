@@ -50,6 +50,7 @@ body{
 #ajt button{
     background-color: #FBEBA1;
     font-size: 25px;
+    font-weight: bolder;
     padding-right: 2em;
     padding-left: 2em;
     border-radius: 3em;
