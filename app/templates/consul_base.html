@@ -5,42 +5,56 @@
     {% block head %}
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    {% endblock %}
     {% block styles %}
     {% endblock %}
-    <link rel="stylesheet" href="nav_base.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/nav_base.css') }}">
     <title>Gest-LAB</title>
-    {% endblock %}
 </head>
 
 <body>
-    <main class="flex-shrink-0">
-        <div class="container">
-            <div>
-                <nav>
-                    <ul>
-                        {% if current_user.is_authenticated %}
-                            {% if current_user.is_admin() %}
-                            <li><a href="{{ url_for('admin_manage') }}">Gérer les utilisateur</a></li>
-                            <li><a href="{{ url_for('admin_add') }}">Ajouter un utilisateur</a></li>
-                            {% elif current_user.is_prof() %}
-                            <li><a href="{{ url_for('consult') }}">Consulter le matériel</a></li>
-                            <li><a href="{{ url_for('delivery') }}">Voir les Commandes</a></li>
-                            <li><a href="{{ url_for('new_commande') }}">Commander matériel</a></li>
-                            {% elif current_user.is_etablissement() %}
-                            <li><a href="{{ url_for('consult') }}">Consulter le matériel</a></li>
-                            <li><a href="{{ url_for('delivery') }}">Voir les Commandes</a></li>
-                            {% endif %}
-                        <li><a href="{{ url_for('logout') }}">Logout</a></li>
-                        {% else %}
-                        <li><a href="{{ url_for('login') }}">Login</a></li>
-                        {% endif %}
-                    </ul>
-                </nav>
-            </div>
+    <header>
+        <div class="navigation">
+            <nav class="navbar">
+                <ul>
+                    <li>
+                        <p class="Logo">GEST<span class="yellow-part">LAB</span></p>
+                    </li>
+                    {% if current_user.is_authenticated %}
+                    {% if current_user.is_admin() %}
+                    <li><a href="{{ url_for('admin_manage') }}">Gérer les utilisateur</a></li>
+                    <li><a href="{{ url_for('admin_add') }}">Ajouter un utilisateur</a></li>
+                    {% elif current_user.is_prof() %}
+                    <li><a href="{{ url_for('consult') }}">Consulter le matériel</a></li>
+                    <li><a href="{{ url_for('delivery') }}">Voir les Commandes</a></li>
+                    <li><a href="{{ url_for('new_commande') }}">Commander matériel</a></li>
+                    {% elif current_user.is_etablissement() %}
+                    <li><a href="{{ url_for('consult') }}">Consulter le matériel</a></li>
+                    <li><a href="{{ url_for('delivery') }}">Voir les Commandes</a></li>
+                    {% endif %}
+                    <li><button id="logoutButton">Déconnexion</button></li>
+                    {% else %}
+                    <li><a href="{{ url_for('login') }}">Login</a></li>
+                    {% endif %}
+                </ul>
+            </nav>
+            <div class="horizontal-line"></div>
+        </div>
+    </header>
+    <main>
+        <div class="content">
             {% block content %}
             {% endblock %}
         </div>
     </main>
+    <footer>
+        <p>© 2023-2024 GESTLAB.</p>
+    </footer>
+    <script>
+        document.getElementById("logoutButton").addEventListener("click", function () {
+            window.location.href = "{{ url_for('logout') }}";
+        });
+    </script>
 </body>
 
 </html>

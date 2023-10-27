@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% block styles %}
+<link rel="stylesheet" href="{{ url_for('static', filename='admin.css') }}">
+{% endblock %}
+{% block content %}
+    <h1 id="bjr-admin">BONJOUR <span class="nom-util">(ADMIN)</span> !</h1>
+    <div>
+        <a href=""><button id="btn-navi"><img src="https://media-public.canva.com/MGw9s/MAFTfiMGw9s/1/t.png">Ajouter un utilisateur</button></a>
+        <a href=""><button id="btn-navi"><img src="https://media-public.canva.com/QyDrY/MAFKfkQyDrY/1/t.png">Gérer les utilisateurs</button></a>
+    </div>
+{% endblock %}

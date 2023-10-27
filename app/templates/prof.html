@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block styles %}
+<link rel="stylesheet" href="{{ url_for('static', filename='prof.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='prof-pos.css') }}">
+{% endblock %}
+{% block header %}
+  <h1 id="bjr-prof">Bonjour <span class="nom-util">(nom prof)</span> !</h1>
+{% endblock %}
+{% block content %}
+  <ul>
+    <li><a href=""><button id="btn-navi"><img src="https://media-public.canva.com/YPzac/MAE-SKYPzac/1/t.png">Voir les</br>commandes</button></a></li>
+    <li><a href=""><button id="btn-navi"><img src="https://media-public.canva.com/dYWYQ/MAFC5IdYWYQ/1/t.png">Commander</br>matériel</button></a></li>
+    <li><a href=""><button id="btn-navi"><img src="https://media-public.canva.com/l9xSo/MAEg3Gl9xSo/1/t.png">Consulter le</br>matériel</button></a></li>
+  </ul>
+{% endblock %}
