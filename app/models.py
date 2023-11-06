@@ -171,3 +171,13 @@ class Alerte(db.Model):
 @login_manager.user_loader
 def load_user(user_id):
     return Utilisateur.query.get(int(user_id))
+
+def search_commands(txt):
+    #print(Materiel.query.filter_by(nom = txt))
+    #print(Commande.materiel.has(nom = txt))
+    liste_materiel = []
+    for materiel in Materiel.query.all():
+        if txt in materiel.nom:
+            liste_materiel.append(materiel)
+    print(liste_materiel)
+    return Commande.query.filter(Commande.materiel in liste_materiel).all()

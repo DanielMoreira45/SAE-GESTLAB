@@ -6,10 +6,22 @@
 
 {% block content %}
     <h1>Gérer les commandes</h1>
-    <section>
+    <form class="search" role="search" method="POST">
         <input type="search" name="recherche" id="recherche" placeholder="Rechercher">
-        <input type="button" name="btn-rechercher" value="Rechercher">
-    </section>
+        <input type="submit" name="btn-rechercher" value="Rechercher">
+        <select name="domaine" id="domaine-select">
+            <option value="Domaine">Domaine</option>
+            {% for domaine in liste_domaines %}
+            <option value="{{ domaine.nom }}">{{ domaine.nom }}</option>
+            {% endfor %}
+        </select>
+        <select name="categorie" id="categorie-select">
+            <option value="Categorie">Categorie</option>
+            {% for categorie in liste_categories %}
+            <option value="{{ categorie.nom }}">{{ categorie.nom }}</option>
+            {% endfor %}
+        </select>
+    </form>
     <section>
         <section class="commands">
             {% if liste_commandes[0] is none %}

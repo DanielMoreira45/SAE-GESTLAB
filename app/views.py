@@ -1,7 +1,7 @@
 """Toute les routes et les Formulaires"""
 from .app import app
 from flask import render_template, url_for, redirect, request
-from .models import Utilisateur, Commande
+from .models import Utilisateur, Commande, Domaine, Categorie, search_commands
 from flask_login import login_required, login_user, logout_user
 from flask_wtf import FlaskForm
 from wtforms import StringField, HiddenField, PasswordField
@@ -71,11 +71,17 @@ def admin_manage():
 def consult():
     return None #TODO
 
-@app.route("/admin/commandes/<numero>")
+@app.route("/admin/commandes/<numero>", methods=("GET", "POST"))
 def delivery(numero=0):
-    liste = Commande.query.all()
-    command = liste[int(numero)-1]
-    return render_template("gerer_commandes.html", liste_commandes=liste, current_command=command)
+    liste_commandes = Commande.query.all()
+    command = liste_commandes[int(numero)-1]
+    liste_domaines = Domaine.query.all()
+    liste_categories = Categorie.query.all()
+    text = request.form.get("recherche")
+    if text != None and text != "":
+        liste_commandes = search_commands(text)
+
+    return render_template("gerer_commandes.html", liste_commandes=liste_commandes, current_command=command, liste_domaines=liste_domaines, liste_categories=liste_categories)
 
 @app.route('/d/')
 def new_commande():
