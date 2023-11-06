@@ -111,7 +111,7 @@ def save_util():
         prenom = f.prenomUti.data,
         email = f.emailUti.data,
         password = f.mdp.data,
-        id_role = 1
+        id_role = f.role.data
     )
     db.session.add(u)
     db.session.commit()
