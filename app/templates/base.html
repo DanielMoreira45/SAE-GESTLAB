@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     {% block styles %}
     {% endblock %}
-    <link rel="stylesheet" href="{{ url_for('static', filename='base.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/base.css') }}">
     <title>Gest-LAB</title>
     {% endblock %}
   </head>
@@ -24,5 +24,7 @@
     <footer>
       <p>© 2023-2024 Gestlab.</p>
     </footer>
+    {% block scripts %}
+    {% endblock %}
   </body>
 </html>
