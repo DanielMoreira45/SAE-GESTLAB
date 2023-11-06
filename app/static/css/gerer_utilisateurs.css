@@ -73,7 +73,6 @@ select{
 }
 
 .user section {
-    scroll-snap-align: start;
     border-radius: 40px;
 }
 
@@ -121,6 +120,8 @@ div.main{
     border: none;
     cursor: pointer;
     font-weight: bold;
+    display: block;
+    margin: auto;
 }
 
 div.user_item{

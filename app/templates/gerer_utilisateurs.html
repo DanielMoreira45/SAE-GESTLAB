@@ -47,13 +47,21 @@
     </div>
 </div>
 <script>
+    document.addEventListener("DOMContentLoaded", function() {
+        var firstUserButton = document.querySelector(".user_bouton");
+        if (firstUserButton) {
+            var userId = firstUserButton.getAttribute("id");
+            edit(userId);
+        }
+    });
+
     function edit(id) {
         var inputNom = document.getElementById("nom");
         var inputPrenom = document.getElementById("prenom");
         var inputPassword = document.getElementById("password");
         var selectRole = document.getElementById("role-select");
         var droitModif = document.getElementsByName("choice");
-
+        
         fetch('/get_user_info/' + id)
             .then(response => response.json())
             .then(data => {
