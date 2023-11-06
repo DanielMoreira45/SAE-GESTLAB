@@ -12,7 +12,7 @@ def loaddb(filename):
 
     # Chargement de notre jeu de données
     import yaml
-    data = yaml.safe_load(open(filename))
+    data = yaml.safe_load(open(filename, 'r', encoding='utf-8'))
 
     # Import des modèles
     from .models import Role, Utilisateur, Domaine, Categorie, Materiel, Commande, Commander, Alerte
