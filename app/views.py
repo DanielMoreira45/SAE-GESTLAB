@@ -52,3 +52,20 @@ def get_user_info(user_id):
         return jsonify(user_info)
     else:
         return jsonify({'error': 'Utilisateur non trouvé'}), 404
+
+@app.route('/update_user/<int:user_id>', methods=['POST'])
+def update_user(user_id):
+    user = Utilisateur.query.get(user_id)
+    new_nom = form.nom.data
+    new_prenom = form.prenom.data
+    new_password = form.password.data
+    new_role = form.role.data
+    new_modifications = form.modifications.data
+    if user:
+        user.nom = new_nom
+        user.prenom = new_prenom
+        user.password = new_password
+        user.role = new_role
+        user.modifications = new_modifications
+        db.session.commit()
+    return redirect(url_for('admin_manage'))
