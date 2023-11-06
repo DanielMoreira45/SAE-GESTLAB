@@ -1,7 +1,7 @@
 """Toute les routes et les Formulaires"""
 from .app import app
 from flask import render_template, url_for, redirect, request
-from .models import Utilisateur    
+from .models import Utilisateur, Commande
 from flask_login import login_required, login_user, logout_user
 from flask_wtf import FlaskForm
 from wtforms import StringField, HiddenField, PasswordField
@@ -42,8 +42,6 @@ def login():
     elif f.validate_on_submit():
         user = f.get_authenticated_user()
         if user:
-            print(login_user(user))
-            print()
             if user.is_prof():
                 next = f.next.data or url_for("prof_home")
             elif user.is_admin():
@@ -73,14 +71,15 @@ def admin_manage():
 def consult():
     return None #TODO
 
-@app.route('/c/')
-def delivery():
-    return None #TODO
+@app.route("/admin/commandes/<numero>")
+def delivery(numero=0):
+    liste = Commande.query.all()
+    command = liste[int(numero)-1]
+    return render_template("gerer_commandes.html", liste_commandes=liste, current_command=command)
 
 @app.route('/d/')
 def new_commande():
     return None #TODO
-
 
 @app.route("/admin/home/")
 @login_required
@@ -94,6 +93,5 @@ def prof_home():
 @app.route("/ecole/home/", methods=("GET","POST",))
 @login_required
 def ecole_home():
-    print()
     return render_template("ecole.html")
 

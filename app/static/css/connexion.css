@@ -60,7 +60,6 @@ form>div{
     flex-wrap: wrap;
 }
 
-
 main>div.content {
     flex-basis: 80%;
     margin-top: 0.5em;
@@ -68,7 +67,6 @@ main>div.content {
     display: flex;
     flex-wrap: wrap;
 }
-
 
 div>div {
     text-align: center;

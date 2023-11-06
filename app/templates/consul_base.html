@@ -30,7 +30,7 @@
                     <li><a href="{{ url_for('new_commande') }}">Commander matériel</a></li>
                     {% elif current_user.is_etablissement() %}
                     <li><a href="{{ url_for('consult') }}">Consulter le matériel</a></li>
-                    <li><a href="{{ url_for('delivery') }}">Voir les Commandes</a></li>
+                    <li><a href="{{ url_for('delivery') }}">Gérer les Commandes</a></li>
                     {% endif %}
                     <li><button id="logoutButton">Déconnexion</button></li>
                     {% else %}

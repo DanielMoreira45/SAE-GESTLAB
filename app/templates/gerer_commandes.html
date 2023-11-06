@@ -1,0 +1,43 @@
+{% extends "consul_base.html" %}
+{% block styles %}
+{{ super() }}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/gerer_commandes.css') }}">
+{% endblock %}
+
+{% block content %}
+    <h1>Gérer les commandes</h1>
+    <section>
+        <input type="search" name="recherche" id="recherche" placeholder="Rechercher">
+        <input type="button" name="btn-rechercher" value="Rechercher">
+    </section>
+    <section>
+        <section class="commands">
+            {% if liste_commandes[0] is none %}
+                <p>Il n'y a pas de commandes pour cette recherche</p>
+            {% else %}
+            <ul>
+                {% for command in liste_commandes %}
+                <li>
+                    <a href="/admin/commandes/{{ command.numero }}">
+                        <button>
+                            <img src="{{ url_for('static', filename='images/black_square.png') }}" alt="image commande">
+                            <p>{{ command.materiel.nom }}</p>
+                        </button>
+                    </a>
+                </li>
+                {% endfor %}
+            </ul>
+            {% endif %}
+        </section>
+        <section>
+            <h2>{{ current_command.materiel.nom }}</h2>
+            <p>Domaine : {{ current_command.materiel.domaine.nom }}</p>
+            <p>Catégorie : {{ current_command.materiel.categorie.nom }}</p>
+            <p>Statut : {{ current_command.statut }}</p>
+        </section>
+    </section>
+    <section>
+        <input type="button" value="Imprimer">
+        <input type="button" value="Valider la commande">
+    </section>
+{% endblock %}
