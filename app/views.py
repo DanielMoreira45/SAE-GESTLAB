@@ -106,7 +106,7 @@ class UtilisateurForm(FlaskForm):
 def save_util():
     f = UtilisateurForm()
     u = Utilisateur(
-        id = 6,
+        id = 1 + db.session.query(db.func.max(Utilisateur.id)).scalar(),
         nom = f.nomUti.data,
         prenom = f.prenomUti.data,
         email = f.emailUti.data,
