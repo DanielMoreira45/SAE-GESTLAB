@@ -105,6 +105,7 @@ class Materiel(db.Model):
     date_peremption = db.Column(db.Date)
     seuil_quantite = db.Column(db.Integer)
     seuil_peremption = db.Column(db.Integer)
+    image = db.Column(db.LargeBinary)
     code_categorie = db.Column(db.Integer, db.ForeignKey("categorie.code"))
     code_domaine = db.Column(db.Integer, db.ForeignKey("domaine.code"))
     categorie = db.relationship("Categorie",
