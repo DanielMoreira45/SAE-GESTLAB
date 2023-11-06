@@ -1,0 +1,15 @@
+{% extends "consul_base.html" %}
+{% block styles %}
+{{ super() }}
+
+{% endblock %}
+{% block content %}
+  <h1>Commander du matériel</h1>
+  <div class="order-block">
+    <ul>
+      <li><p>Matériel</p></li>
+      <li><p>Quantité</p></li>
+    </ul>
+    <button id="btn-order">Commander</button>
+  </div>
+{% endblock %}

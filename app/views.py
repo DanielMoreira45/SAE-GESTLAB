@@ -54,8 +54,6 @@ def login():
 
     return render_template("connexion.html", form=f)
 
-
-
 @app.route('/logout/')
 def logout():
     logout_user()
@@ -97,3 +95,7 @@ def ecole_home():
     print()
     return render_template("ecole.html")
 
+@app.route("/delivery/new/")
+@login_required
+def new_commande():
+    pass
