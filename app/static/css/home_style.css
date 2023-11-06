@@ -53,11 +53,13 @@ ul {
 
 ul li {
     margin-right: 10%;
+    margin: 0;
     margin-left: 10%;
 }
 
 ul li p {
     text-align: left;
+    min-width: 19vw;
 }
 
 button {
