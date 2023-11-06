@@ -1,9 +1,9 @@
-ul {
+main ul {
     display: flex;
     flex-wrap: wrap;
 }
 
-ul li {
+main ul li {
     flex-basis: 40%;
     flex-grow: 1;
 }

@@ -1,12 +1,15 @@
-{% extends "base.html" %}
+{% extends "consul_base.html" %}
 {% block styles %}
-<link rel="stylesheet" href="{{ url_for('static', filename='css/prof.css') }}">
-<link rel="stylesheet" href="{{ url_for('static', filename='css/prof-pos.css') }}">
-{% endblock %}
-{% block header %}
-  <h1 id="bjr-prof">Bonjour <span class="nom-util">(nom prof)</span> !</h1>
+{{ super() }}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/prof_style.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/prof_pos.css') }}">
 {% endblock %}
 {% block content %}
+  {% if current_user.is_authenticated %}
+    <h1 id="bjr-prof">Bonjour <span class="nom-util">{{ current_user.nom }}</span> !</h1>
+  {% else %}
+    <h1 id="bjr-prof">Bonjour !</h1>
+  {% endif %}
   <ul>
     <li><a href=""><button id="btn-navi"><img src="{{ url_for('static', filename='images/voir_commandes_icon.png') }}">Voir les</br>commandes</button></a></li>
     <li><a href=""><button id="btn-navi"><img src="{{ url_for('static', filename='images/commander_icon.png') }}">Commander</br>matériel</button></a></li>

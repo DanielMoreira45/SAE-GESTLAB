@@ -92,7 +92,7 @@ def prof_home():
     return render_template("prof.html")
 
 @app.route("/ecole/home/", methods=("GET","POST",))
-@login_required
+# @login_required
 def ecole_home():
     print()
     return render_template("ecole.html")

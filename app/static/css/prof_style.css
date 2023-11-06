@@ -12,8 +12,12 @@ body{
     background-size: cover;
     background-repeat: no-repeat;
     background-attachment: fixed;
-    text-align: center;
+    /* text-align: center; */
     margin-top: 10em;
+}
+
+main {
+    text-align: center;
 }
 
 #bjr-prof{
@@ -48,8 +52,9 @@ body{
     color: #FBEBA1;
 }
 
-ul {
+main ul {
     margin: auto;
     width: 45em;
     padding: 10px;
+    list-style: none;
 }
