@@ -34,6 +34,13 @@
                     <option value="Professeur">Professeur</option>
                     <option value="Etablissement">Etablissement</option>
                 </select>
+                <label class="droits_modif">Droits de modification</label>
+                <div class="button_modify">
+                    <input type="radio" name="choice" id="yes_choice">
+                    <label for="yes_choice">Oui</label>
+                    <input type="radio" name="choice" id="no_choice">
+                    <label for="no_choice">Non</label>
+                </div>
             </div>
             <button type="submit" id="save_button">Enregistrer</button>
         </section>
@@ -45,14 +52,23 @@
         var inputPrenom = document.getElementById("prenom");
         var inputPassword = document.getElementById("password");
         var selectRole = document.getElementById("role-select");
+        var droitModif = document.getElementsByName("choice");
 
         fetch('/get_user_info/' + id)
             .then(response => response.json())
             .then(data => {
-                inputNom.setAttribute('value', data.nom);
-                inputPrenom.setAttribute('value', data.prenom);
-                inputPassword.setAttribute('value', data.password);
+                inputNom.value = data.nom;
+                inputPrenom.value = data.prenom;
+                inputPassword.value = data.password;
                 selectRole.value = data.role;
+                if (data.modifications === true){
+                    var droit = document.getElementById("yes_choice");
+                    droit.checked = true;
+                }
+                else{
+                    var droit = document.getElementById("no_choice");
+                    droit.checked = true;
+                }
             })
             .catch(error => console.error('Erreur : ' + error));
     }

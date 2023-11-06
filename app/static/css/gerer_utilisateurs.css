@@ -1,7 +1,7 @@
 @font-face {
     font-family: "DM-Sans";
     src: url("../font/DMSans.ttf");
-  }
+}
 
 @font-face {
     font-family: "AgrandirWide";
@@ -47,14 +47,15 @@ select{
 }
 
 .user img{
-    width: 4em;
-    height: 4em;
+    width: 6em;
+    height: 6em;
 }
 
-.user_infos section{
+.user_infos section {
     background-color: white;
     padding: 1em;
     margin: 1.5em;
+    border-radius: 40px;
 }
 
 .user {
@@ -65,10 +66,15 @@ select{
     border: 2px white solid;
     scroll-snap-type: y proximity;
     scrollbar-color: #EDF0F2;
+    border-top-left-radius: 40px;
+    border-bottom-left-radius: 40px;
+    border-top-right-radius: 25px;
+    border-bottom-right-radius: 25px;
 }
 
 .user section {
     scroll-snap-align: start;
+    border-radius: 40px;
 }
 
 .user input:focus {
@@ -77,6 +83,14 @@ select{
 
 .user::-webkit-scrollbar {
     width: 0.7em;
+}
+
+.user::-webkit-scrollbar-thumb:hover{
+    background-color: #ABABAB;
+}
+
+.user::-webkit-scrollbar-thumb:active{
+    background-color: grey;
 }
 
 .user::-webkit-scrollbar-thumb {
@@ -122,4 +136,17 @@ div.user_infos input{
 
 label{
     font-weight: bold;
+}
+
+.droits_modif{
+    display: block;
+    text-align: center;
+    padding: 1em;
+}
+
+.button_modify{
+    text-align: center;
+    align-items: center;
+    padding: 1em;
+
 }

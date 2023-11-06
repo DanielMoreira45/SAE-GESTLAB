@@ -46,7 +46,8 @@ def get_user_info(user_id):
             'nom': user.nom,
             'prenom': user.prenom,
             'role': role_user.intitule,
-            'password': user.password
+            'password': user.password,
+            'modifications': user.modifications
         }
         return jsonify(user_info)
     else:
