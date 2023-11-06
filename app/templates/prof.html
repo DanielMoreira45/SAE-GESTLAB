@@ -11,8 +11,8 @@
     <h1 id="bjr-prof">Bonjour !</h1>
   {% endif %}
   <ul>
-    <li><a href=""><button id="btn-navi"><img src="{{ url_for('static', filename='images/voir_commandes_icon.png') }}">Voir les</br>commandes</button></a></li>
-    <li><a href=""><button id="btn-navi"><img src="{{ url_for('static', filename='images/commander_icon.png') }}">Commander</br>matériel</button></a></li>
-    <li><a href=""><button id="btn-navi"><img src="{{ url_for('static', filename='images/voir_materiel_icon.png') }}">Consulter le</br>matériel</button></a></li>
+    <li><a href=""><button id="btn-navi"><img src="{{ url_for('static', filename='images/voir_commandes_icon.png') }}" alt="Icone voir commandes">Voir les</br>commandes</button></a></li>
+    <li><a href="{{ url_for('new_commande') }}"><button id="btn-navi"><img src="{{ url_for('static', filename='images/commander_icon.png') }}" alt="Icone commander">Commander</br>matériel</button></a></li>
+    <li><a href="{{ url_for('consult') }}"><button id="btn-navi"><img src="{{ url_for('static', filename='images/voir_materiel_icon.png') }}" alt="Icone voir matériel">Consulter le</br>matériel</button></a></li>
   </ul>
 {% endblock %}
