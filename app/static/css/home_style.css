@@ -49,9 +49,15 @@ ul {
     margin-left: 20%;
     margin-bottom: 3em;
     padding-left: 3%;
+    display: flex;
+    flex-wrap: nowrap;
 }
 
 ul li {
+    display: flex;
+    flex-basis: 50%;
+    flex-grow: 0;
+    flex-wrap: nowrap;
     margin-right: 10%;
     margin: 0;
     margin-left: 10%;
@@ -60,6 +66,13 @@ ul li {
 ul li p {
     text-align: left;
     min-width: 19vw;
+    flex-basis: 60%;
+    flex-grow: 0;
+}
+
+img {
+    flex-basis: 5%;
+    flex-grow: 0;
 }
 
 button {
