@@ -105,19 +105,14 @@ class UtilisateurForm(FlaskForm):
 @app.route("/save/util/", methods=("POST",))
 def save_util():
     f = UtilisateurForm()
-    u = Utilisateur()
     u = Utilisateur(
         id = 6,
-        nom = 'test',
-        prenom = 'test',
-        email = 'test',
-        password = 'test',
+        nom = f.nomUti.data,
+        prenom = f.prenomUti.data,
+        email = f.emailUti.data,
+        password = f.mdp.data,
         id_role = 1
     )
     db.session.add(u)
     db.session.commit()
     return redirect(url_for('admin_add'))
-    return render_template(
-        "admin.html", form=f
-    )
-    
