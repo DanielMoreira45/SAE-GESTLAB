@@ -86,6 +86,7 @@ def delivery():
     #tests pour filtrer les résultats
     text = request.form.get("recherche")
     if text != None and text != "":
+        print("test")
         liste_commandes = search_commands(text, liste_commandes)
 
     domaine = request.form.get("domaine")
@@ -112,7 +113,8 @@ def get_command_info(numero):
             'numero': command.numero,
             'nom': command.materiel.nom,
             'domaine': command.materiel.domaine.nom,
-            'categorie': command.materiel.categorie.nom
+            'categorie': command.materiel.categorie.nom,
+            'statut': command.statut
         }
         return jsonify(command_info)
     else:
@@ -135,4 +137,6 @@ def prof_home():
 @login_required
 def ecole_home():
     return render_template("ecole.html")
+
+
 
