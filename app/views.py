@@ -80,9 +80,9 @@ def consult():
 def delivery():
     return None #TODO
 
-@app.route('/d/')
+@app.route("/delivery/new/")
 def new_commande():
-    return None #TODO
+    return render_template("new_commande.html")
 
 
 @app.route("/admin/home/")
@@ -100,11 +100,6 @@ def prof_home():
 def ecole_home():
     print()
     return render_template("ecole.html")
-
-@app.route("/delivery/new/")
-@login_required
-def new_commande():
-    pass
 
 class UtilisateurForm(FlaskForm):
     idUti = HiddenField('iduti')
