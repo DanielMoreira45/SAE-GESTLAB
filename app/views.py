@@ -1,10 +1,13 @@
 """Toute les routes et les Formulaires"""
-from .app import app
+from .app import app, db
 from flask import render_template, url_for, redirect, request
+from .models import Utilisateur
+from flask_login import login_user
 from .models import Utilisateur    
 from flask_login import login_required, login_user, logout_user
 from flask_wtf import FlaskForm
-from wtforms import StringField, HiddenField, PasswordField
+from wtforms import StringField, HiddenField, PasswordField, SelectField, RadioField
+from wtforms.validators import DataRequired
 from hashlib import sha256
 
 class LoginForm(FlaskForm):
@@ -61,9 +64,11 @@ def logout():
     logout_user()
     return redirect(url_for('login'))
 
-@app.route('/a/')
+@app.route('/admin/manage/add/')
+# @login_required
 def admin_add():
-    return None #TODO
+    f = UtilisateurForm()
+    return render_template("ajout-util.html", form=f)
 
 @app.route('/r/')
 def admin_manage():
@@ -98,3 +103,27 @@ def ecole_home():
     print()
     return render_template("ecole.html")
 
+class UtilisateurForm(FlaskForm):
+    idUti = HiddenField('iduti')
+    idRole = HiddenField('idrole')
+    nomUti = StringField('Nom', validators=[DataRequired()])
+    prenomUti = StringField('Prénom', validators=[DataRequired()])
+    emailUti = StringField('Email', validators=[DataRequired()])
+    mdp = PasswordField('Mot de Passe', validators=[DataRequired()])
+    role = SelectField('Rôle', choices=[(1, 'Administrateur'), (2, 'Professeur'), (3, 'Etablissement')])
+    modif = RadioField('Droit de Modification', choices=[(True, 'Oui'), (False, 'Non')], validators=[DataRequired()])
+
+@app.route("/save/util/", methods=("POST",))
+def save_util():
+    f = UtilisateurForm()
+    u = Utilisateur(
+        id = 1 + db.session.query(db.func.max(Utilisateur.id)).scalar(),
+        nom = f.nomUti.data,
+        prenom = f.prenomUti.data,
+        email = f.emailUti.data,
+        password = f.mdp.data,
+        id_role = f.role.data
+    )
+    db.session.add(u)
+    db.session.commit()
+    return redirect(url_for('admin_add'))
