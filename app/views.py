@@ -88,6 +88,7 @@ def admin_home():
     return render_template("admin.html")
   
 @app.route("/prof/home/")
+@login_required
 def prof_home():
     return render_template("prof.html")
 
