@@ -13,9 +13,18 @@
     {% endif %}
 
 <div>
-    <a href=""><button id="btn-navi"><img src="https://media-public.canva.com/QyDrY/MAFKfkQyDrY/1/t.png">Gérer les
-        utilisateurs</button></a>
-    <a href=""><button id="btn-navi"><img src="https://media-public.canva.com/MGw9s/MAFTfiMGw9s/1/t.png">Ajouter un
-            utilisateur</button></a>
+    <button id="buttonGestion"><img src="https://media-public.canva.com/QyDrY/MAFKfkQyDrY/1/t.png">Gérer les
+        utilisateurs</button>
+    <button id="buttonAjout"><img src="https://media-public.canva.com/MGw9s/MAFTfiMGw9s/1/t.png">Ajouter un
+            utilisateur</button>
 </div>
+{% endblock %}
+{% block scripts %}
+<script>
+if (buttonAjout) {
+    buttonAjout.addEventListener("click", function () {
+        window.location.href = "{{ url_for('admin_add') }}";
+    });
+}
+</script>
 {% endblock %}

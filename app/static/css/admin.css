@@ -16,7 +16,7 @@ body{
     color: white;
 }
 
-#btn-navi{
+#buttonAjout, #buttonGestion{
     border-radius: 20px;
     margin: 20px;
     font-style: normal;
@@ -25,9 +25,10 @@ body{
     display: inline-flex;
     align-items: center;
     padding: 20px;
+    cursor: pointer;
 }
 
-#btn-navi img{
+#buttonAjout img, #buttonGestion img{
     height: 30px;
     margin: 10px;
 }
