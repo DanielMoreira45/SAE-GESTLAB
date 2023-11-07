@@ -1,7 +1,7 @@
 """Toute les routes et les Formulaires"""
 from .app import app
 from flask import render_template, url_for, redirect, request
-from .models import Utilisateur    
+from .models import Materiel, Utilisateur, Domaine, Categorie
 from flask_login import login_required, login_user, logout_user
 from flask_wtf import FlaskForm
 from wtforms import StringField, HiddenField, PasswordField
@@ -69,9 +69,14 @@ def admin_add():
 def admin_manage():
     return None #TODO
 
-@app.route('/b/')
+@app.route('/consult/')
+@login_required
 def consult():
-    return None #TODO
+    domaines = Domaine.query.all()
+    categories = Categorie.query.all()
+    materiels = Materiel.query.all()
+    current = Materiel.query.first()
+    return render_template("consultation.html", domaines=domaines, categories=categories, materiels=materiels, current_mat=current)
 
 @app.route('/c/')
 def delivery():

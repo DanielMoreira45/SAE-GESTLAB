@@ -1,5 +1,6 @@
 """Lien avec la Base de données"""
 
+from base64 import b64encode
 from .app import db, login_manager
 from flask_login import UserMixin
 
@@ -104,6 +105,7 @@ class Materiel(db.Model):
     date_peremption = db.Column(db.Date)
     seuil_quantite = db.Column(db.Integer)
     seuil_peremption = db.Column(db.Integer)
+    image = db.Column(db.LargeBinary)
     code_categorie = db.Column(db.Integer, db.ForeignKey("categorie.code"))
     code_domaine = db.Column(db.Integer, db.ForeignKey("domaine.code"))
     categorie = db.relationship("Categorie",
@@ -111,6 +113,15 @@ class Materiel(db.Model):
                                                    lazy="dynamic"))
     domaine = db.relationship("Domaine",
                               backref=db.backref("matériels", lazy="dynamic"))
+
+    def get_image(self):
+        if self.image is not None:
+            return b64encode(self.image).decode("utf-8")
+        else:
+            default_image_path = "static/images/black_square.png"
+            with open(default_image_path, 'rb') as f:
+                default_image_data = f.read()
+            return b64encode(default_image_data).decode("utf-8")
 
     def __repr__(self):
         return "<Materiel (%d) %s %r %p %c %q>" % (self.reference, self.nom, self.rangement, self.date_peremption, self.commentaire, self.quantite_globale)
@@ -170,4 +181,4 @@ class Alerte(db.Model):
 
 @login_manager.user_loader
 def load_user(user_id):
-    return Utilisateur.query.get(int(user_id))
+    return Utilisateur.query.get(user_id)

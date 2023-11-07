@@ -1,0 +1,123 @@
+
+@font-face {
+    font-family: "AgrandirWide";
+    src: url("./font/Agrandir-Regular.otf");
+}
+
+
+body {
+    margin-top: 9%;
+    font-family: "AgrandirWide";
+    background-image: linear-gradient(
+        to bottom,
+        rgba(32, 32, 32, 0.5),
+        rgba(32, 32, 32, 0.5)), url("../images/background_consulation_Mat.png");
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-attachment: fixed;
+}
+
+h1{
+    color: white;
+}
+
+div.search{
+    display: flex;
+    flex-wrap: nowrap;
+}
+
+div.description{
+    padding: 1px;
+    margin-bottom: 2vh;
+    background-color: white;
+    margin-left: 1rem;
+    max-width: 60vw;
+    border: none;
+    border-radius: 9px;
+}
+div.description h2{
+    margin-left: 1rem;
+}
+div.description div {
+    display: flex;
+    flex-wrap: wrap;
+    margin: 1rem;
+}
+
+div.description div label{
+    flex-grow: 1;
+    margin: 0.5em 1em;
+    flex-basis: 28%;
+}
+
+div.liste_mat{
+    height: 40vh;
+    width: 30vw;
+    overflow: auto;
+    background-color: white;
+    border: 2px white solid;
+    scroll-snap-type: y proximity;
+    scrollbar-color: #EDF0F2;
+    border-top-left-radius: 40px;
+    border-bottom-left-radius: 40px;
+    border-top-right-radius: 25px;
+    border-bottom-right-radius: 25px;
+}
+div.liste_mat h2{
+    margin-left: 1rem;
+    font-size: large;
+}
+div.info {
+    display: flex;
+    flex-wrap: nowrap;
+    margin: 1rem;
+}
+
+
+div.info img{
+    width: 6em;
+    height: 6em;
+}
+
+div.liste_mat::-webkit-scrollbar {
+    width: 0.7em;
+}
+
+div.liste_mat::-webkit-scrollbar-thumb:hover{
+    background-color: #ABABAB;
+}
+
+div.liste_mat::-webkit-scrollbar-thumb:active{
+    background-color: grey;
+}
+
+div.liste_mat::-webkit-scrollbar-thumb {
+    background: rgb(217, 217, 217);;
+    border-radius: 8px;
+}
+
+#buttonModifier, #buttonSupp, #buttonImprimer, #buttonFDS, #searchButton{
+    background-color: rgb(255, 216, 131);
+    font-family: "AgrandirWide";
+    font-size: 0.8em;
+    margin-bottom: 0.2em;
+    border-radius: 9px;
+    padding: 10px;
+    border: none;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+#buttonAdd{
+    margin-top: 1vh;
+    height: 5vh;
+    width: 30vw;
+    border-radius: 4px;
+    border: none;
+}
+
+div.button{
+    margin-left: 1em;
+    display: flex;
+    justify-content: space-around;
+}

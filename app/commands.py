@@ -1,5 +1,6 @@
 from datetime import date
 import click
+import os
 from app.app import db, app
 
 @app.cli.command()
@@ -70,6 +71,16 @@ def loaddb(filename):
                 date_peremption = date(int(d_peremption[0]),
                                        int(d_peremption[1]),
                                        int(d_peremption[2]))
+            image = dico_materials["image"]
+            if image:
+                pathtest = os.path.join("static", "images", image)
+                if os.path.isfile(pathtest):
+                    with open(pathtest, "rb") as image_file:
+                        image_data = image_file.read()
+                else:
+                    image_data = None
+            else:
+                image_data = None
             o = Materiel(reference=material_ref,
                          nom=dico_materials["nomMateriel"],
                          rangement=dico_materials["precisionMateriel"],
@@ -83,6 +94,7 @@ def loaddb(filename):
                          date_peremption=date_peremption,
                          seuil_quantite=dico_materials["seuilQte"],
                          seuil_peremption=dico_materials["seuilPeremption"],
+                         image=image_data,
                          code_categorie=dico_materials["codeC"],
                          code_domaine=dico_materials["codeD"])
             db.session.add(o)
