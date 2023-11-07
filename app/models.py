@@ -17,7 +17,7 @@ class Utilisateur(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
     nom = db.Column(db.String(100))
     prenom = db.Column(db.String(100))
-    email = db.Column(db.String(100))
+    email = db.Column(db.String(100), unique=True)
     password = db.Column(db.String(100))
     modifications = db.Column(db.Boolean)
     id_role = db.Column(db.Integer, db.ForeignKey("role.id"))

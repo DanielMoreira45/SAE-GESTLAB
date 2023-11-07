@@ -11,40 +11,41 @@
             {% for user in liste_users %}
             <div class="user_item">
                 <img src="{{ url_for('static', filename='images/user.png') }}" alt="Un utilisateur">
-                <input type="button" value="{{user.nom}} {{user.prenom}}" class="user_bouton" id="{{ user.id }}"
+                <input type="button" value="{{ user.nom }} {{ user.prenom }}" class="user_bouton" id="{{ user.id }}"
                     onclick="edit(this.id)">
             </div>
             {% endfor %}
         </section>
     </div>
-    <div class="user_infos">
+    <form action="{{ url_for('update_user') }}" role="form" method="POST" class="user_infos">
         <section>
             <div class="nom_prenom">
+                <input type="hidden" value="{{ current_user.id }}" name="id" id="id">
                 <label for="nom">Nom :</label>
-                <input id="nom" type="text" value="{{ current_user.nom }}">
+                <input name="nom" id="nom" type="text" value="{{ current_user.nom }}">
                 <label for="prenom">Prénom :</label>
-                <input id="prenom" type="text" value="{{ current_user.prenom }}">
+                <input name="prenom" id="prenom" type="text" value="{{ current_user.prenom }}">
             </div>
             <div class="psswd_role">
-                <label for="passwd">Mot de passe :</label>
-                <input id="password" type="password" value="{{ current_user.password }}">
+                <label for="password">Mot de passe :</label>
+                <input name="password" id="password" type="password" value="{{ current_user.password }}">
                 <label for="role-select">Rôle :</label>
-                <select name="roles" id="role-select">
-                    <option value="Administrateur">Administrateur</option>
-                    <option value="Professeur">Professeur</option>
-                    <option value="Etablissement">Etablissement</option>
+                <select name="id_role" id="id_role">
+                    {% for role in roles %}
+                    <option value="{{ role.id }}">{{ role.intitule }}</option>
+                    {% endfor %}
                 </select>
                 <label class="droits_modif">Droits de modification</label>
                 <div class="button_modify">
-                    <input type="radio" name="choice" id="yes_choice">
+                    <input type="radio" name="modifications" id="yes_choice" value="True">
                     <label for="yes_choice">Oui</label>
-                    <input type="radio" name="choice" id="no_choice">
+                    <input type="radio" name="modifications" id="no_choice" value="False">
                     <label for="no_choice">Non</label>
                 </div>
             </div>
             <button type="submit" id="save_button">Enregistrer</button>
         </section>
-    </div>
+    </form>
 </div>
 <script>
     document.addEventListener("DOMContentLoaded", function() {
@@ -56,26 +57,38 @@
     });
 
     function edit(id) {
+        var inputId = document.getElementById("id");
         var inputNom = document.getElementById("nom");
         var inputPrenom = document.getElementById("prenom");
         var inputPassword = document.getElementById("password");
-        var selectRole = document.getElementById("role-select");
-        var droitModif = document.getElementsByName("choice");
-        
+        var roleSelect = document.getElementById("id_role");
+        var droitModif = document.getElementsByName("modifications");
+
         fetch('/get_user_info/' + id)
             .then(response => response.json())
             .then(data => {
+                inputId.value = data.id;
                 inputNom.value = data.nom;
                 inputPrenom.value = data.prenom;
                 inputPassword.value = data.password;
-                selectRole.value = data.role;
-                if (data.modifications === true){
-                    var droit = document.getElementById("yes_choice");
-                    droit.checked = true;
+                roleSelect.innerHTML = '';
+                for (const role of ["Administrateur", "Professeur", "Etablissement"]) {
+                    var option = document.createElement("option");
+                    option.value = role;
+                    option.text = role;
+                    if (role === data.role_name) {
+                        option.selected = true;
+                    }
+                    roleSelect.appendChild(option);
                 }
-                else{
-                    var droit = document.getElementById("no_choice");
-                    droit.checked = true;
+                var droitui = document.getElementById("yes_choice");
+                var droitno = document.getElementById("no_choice");
+                if (data.modifications === true) {
+                    droitui.checked = true;
+                    droitno.checked = false;
+                } else {
+                    droitui.checked = false;
+                    droitno.checked = true;
                 }
             })
             .catch(error => console.error('Erreur : ' + error));

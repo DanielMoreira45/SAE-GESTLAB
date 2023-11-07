@@ -16,25 +16,31 @@ body{
         url("../images/background_util.png");
     background-repeat: no-repeat;
     background-size: 100%;
-    font-family: "DM-Sans";
+    font-family: "AgrandirWide";
 }
 
 h1{
+    font-family: "AgrandirWide";
     color: white;
     text-align: center;
     font-size: 3em;
 }
 
+section{
+    font-family: "AgrandirWide";
+}
+
 section input{
     flex-basis: 45%;
     flex-grow: 1;
-    font-family: "DM-Sans";
+    font-family: "AgrandirWide";
     border-radius: 16px;
     font-size: 1em;
+    padding: 0.5em;
 }
 
 select{
-    font-family: "DM-Sans";
+    font-family: "AgrandirWide";
     border-radius: 16px;
     font-size: 1em;
     padding: 0.5em;
@@ -70,6 +76,10 @@ select{
     border-bottom-left-radius: 40px;
     border-top-right-radius: 25px;
     border-bottom-right-radius: 25px;
+}
+
+.user_bouton {
+    font-size: large;
 }
 
 .user section {
@@ -149,5 +159,4 @@ label{
     text-align: center;
     align-items: center;
     padding: 1em;
-
 }
