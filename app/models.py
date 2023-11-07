@@ -124,6 +124,7 @@ class Commande(db.Model):
     date_commande = db.Column(db.Date)
     date_reception = db.Column(db.Date)
     statut = db.Column(db.String(100))
+    quantite_commandee = db.Column(db.Integer)
     id_util = db.Column(db.Integer, db.ForeignKey("utilisateur.id"), primary_key=True)
     ref_materiel = db.Column(db.Integer, db.ForeignKey("materiel.reference"), primary_key=True)
     utilisateur = db.relationship("Utilisateur",
@@ -134,27 +135,6 @@ class Commande(db.Model):
 
     def __repr__(self):
         return "<Commande (%d) %s %r %p %c %d>" % (self.numero, self.date_commande, self.statut, self.date_reception, self.id_util, self.ref_materiel)
-
-
-class Commander(db.Model):
-    __tablename__ = "commander"
-    numero_commande = db.Column(db.Integer, primary_key=True)
-    quantite_commandee = db.Column(db.Integer)
-    id_util = db.Column(db.Integer,
-                        db.ForeignKey("utilisateur.id"),
-                        primary_key=True)
-    ref_materiel = db.Column(db.Integer,
-                             db.ForeignKey("materiel.reference"),
-                             primary_key=True)
-    utilisateur = db.relationship("Utilisateur",
-                                  backref=db.backref("commandes_effectuees",
-                                                     lazy="dynamic"))
-    materiel = db.relationship("Materiel",
-                               backref=db.backref("commandes_effectuees",
-                                                  lazy="dynamic"))
-
-    def __repr__(self):
-        return "<Commander (%d) %s %r %p>" % (self.numero_commande, self.quantite_commandee, self.id_util, self.ref_materiel)
 
 
 class Alerte(db.Model):
