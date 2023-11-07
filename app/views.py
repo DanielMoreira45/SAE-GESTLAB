@@ -59,7 +59,8 @@ def login():
 def logout():
     return None #TODO
 
-@app.route('/ajout/util/')
+@app.route('/admin/manage/add/')
+# @login_required
 def admin_add():
     f = UtilisateurForm()
     return render_template("ajout-util.html", form=f)
