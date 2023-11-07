@@ -77,6 +77,7 @@ def delivery():
     liste_commandes = Commande.query.all()
     command = liste_commandes[0]
     liste_domaines = Domaine.query.all()
+    print(len(liste_domaines))
     liste_categories = Categorie.query.all()
     liste_statuts = []
     for commande in liste_commandes:
@@ -114,7 +115,10 @@ def get_command_info(numero):
             'nom': command.materiel.nom,
             'domaine': command.materiel.domaine.nom,
             'categorie': command.materiel.categorie.nom,
-            'statut': command.statut
+            'statut': command.statut,
+            #'quantite': command.quantite_commandee,
+            #'unite': command.materiel.unite,
+            'user': command.utilisateur.nom
         }
         return jsonify(command_info)
     else:

@@ -49,9 +49,14 @@
     <section class="right">
         <div class="materiel">
             <h2><label id="nom"></label></h2>
-            <label for="statut" id="statut"></label>
-            <label for="domaine" id="domaine"></label>
-            <label for="categorie" id="categorie"></label>
+            <img src="{{ url_for('static', filename='images/black_square.png') }}" alt="image commande">
+            <div class="les_labels">
+                <label for="statut" id="statut"></label>
+                <label for="domaine" id="domaine"></label>
+                <label for="categorie" id="categorie"></label>
+                <label for="quantite" id="quantite"></label>
+                <label for="user" id="user"></label>
+            </div>
         </div>
         <div class="action_buttons">
             <input type="button" class="yellow-button" value="Imprimer" onclick="print()">
@@ -72,8 +77,9 @@
             var labelNom = document.getElementById("nom");
             var labelDomaine = document.getElementById("domaine");
             var labelCategorie = document.getElementById("categorie");
-            var labelStatut = document.getElementById("statut")
-            
+            var labelStatut = document.getElementById("statut");
+            var labelQuantite = document.getElementById("quantite");
+            var labelUser = document.getElementById("user");
             
             fetch('/get_command_info/' + id)
                 .then(response => response.json())
@@ -81,7 +87,10 @@
                     labelNom.textContent = data.nom;
                     labelDomaine.textContent = "Domaine : "+data.domaine;
                     labelCategorie.textContent = "Catégorie : "+data.categorie;  
-                    labelStatut.textContent = "Statut : "+data.statut     ;             
+                    labelStatut.textContent = "Statut : "+data.statut;   
+                    //labelQuantite.textContent = "Quantité commandée : "+data.quantite+" "+data.unite;
+                    labelUser.textContent = "Commande effectuée par "+data.user;
+
                 })
                 .catch(error => console.error('Erreur : ' + error));  
         }
