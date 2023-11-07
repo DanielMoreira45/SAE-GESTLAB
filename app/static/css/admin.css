@@ -1,0 +1,48 @@
+body{
+    background-image: linear-gradient(
+        to bottom,
+        rgba(42, 42, 42, 0.5),
+        rgba(42, 42, 42, 0.5)), url("../images/background_admin.png");
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+}
+
+#bjr-admin{
+    font-weight: 500;
+    font-size: 5em;
+    font-style: normal;
+    text-decoration: none;
+    color: white;
+}
+
+#btn-navi{
+    border-radius: 20px;
+    margin: 20px;
+    font-style: normal;
+    font-weight: 500;
+    font-size: 15px;
+    display: inline-flex;
+    align-items: center;
+    padding: 20px;
+}
+
+#btn-navi img{
+    height: 30px;
+    margin: 10px;
+}
+
+body>*{
+    text-align: center;
+}
+
+.nom-util{
+    color: #FBEBA1;
+}
+
+.container{
+    margin: 15em;
+}
+h1{
+    color: red;
+}

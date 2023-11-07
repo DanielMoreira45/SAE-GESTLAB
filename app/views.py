@@ -3,6 +3,8 @@ from .app import app, db
 from flask import render_template, url_for, redirect, request
 from .models import Utilisateur
 from flask_login import login_user
+from .models import Utilisateur    
+from flask_login import login_required, login_user, logout_user
 from flask_wtf import FlaskForm
 from wtforms import StringField, HiddenField, PasswordField, SelectField, RadioField
 from wtforms.validators import DataRequired
@@ -15,12 +17,9 @@ class LoginForm(FlaskForm):
     next = HiddenField()
 
     def get_authenticated_user(self):
-        users = Utilisateur.query.filter(Utilisateur.email==self.email.data).all()
-        user = None
-        for temp_user in users:
-            if temp_user.password == self.password.data:
-                user = temp_user
-        return user
+        user = Utilisateur.query.filter_by(email=self.email.data).first()
+        if user and user.password == self.password.data:
+            return user
     
     def has_content(self):
         return self.password.data != "" or self.email.data != ""
@@ -28,10 +27,13 @@ class LoginForm(FlaskForm):
     def show_password_incorrect(self):
         self.password_incorrect = "Email ou mot de passe incorrect"
 
+@app.route("/")
+def home():
+    return render_template("home.html")
+
 @app.route("/login/", methods=("GET","POST",))
 def login():
     f = LoginForm()
-
     if request.method == "POST":
         if request.form["submit_button"] == "mdp":
             return render_template("bug.html")
@@ -43,7 +45,8 @@ def login():
     elif f.validate_on_submit():
         user = f.get_authenticated_user()
         if user:
-            login_user(user)
+            print(login_user(user))
+            print()
             if user.is_prof():
                 next = f.next.data or url_for("prof_home")
             elif user.is_admin():
@@ -55,9 +58,11 @@ def login():
     return render_template("connexion.html", form=f)
 
 
+
 @app.route('/logout/')
 def logout():
-    return None #TODO
+    logout_user()
+    return redirect(url_for('login'))
 
 @app.route('/admin/manage/add/')
 # @login_required
@@ -81,16 +86,20 @@ def delivery():
 def new_commande():
     return None #TODO
 
+
+@app.route("/admin/home/")
+@login_required
+def admin_home():
+    return render_template("admin.html")
+  
 @app.route("/prof/home/")
 def prof_home():
     return render_template("prof.html")
 
-@app.route("/admin/home/")
-def admin_home():
-    return render_template("admin.html")
-
-@app.route("/ecole/home/")
+@app.route("/ecole/home/", methods=("GET","POST",))
+@login_required
 def ecole_home():
+    print()
     return render_template("ecole.html")
 
 class UtilisateurForm(FlaskForm):
