@@ -122,8 +122,8 @@ class Commande(db.Model):
     date_commande = db.Column(db.Date)
     date_reception = db.Column(db.Date)
     statut = db.Column(db.String(100))
-    id_util = db.Column(db.Integer, db.ForeignKey("utilisateur.id"), primary_key=True)
-    ref_materiel = db.Column(db.Integer, db.ForeignKey("materiel.reference"), primary_key=True)
+    id_util = db.Column(db.Integer, db.ForeignKey("utilisateur.id"))
+    ref_materiel = db.Column(db.Integer, db.ForeignKey("materiel.reference"))
     utilisateur = db.relationship("Utilisateur",
                                   backref=db.backref("commandes",
                                                      lazy="dynamic"))
@@ -172,12 +172,34 @@ class Alerte(db.Model):
 def load_user(user_id):
     return Utilisateur.query.get(int(user_id))
 
-def search_commands(txt):
-    #print(Materiel.query.filter_by(nom = txt))
-    #print(Commande.materiel.has(nom = txt))
+def search_commands(txt, commandes):
     liste_materiel = []
     for materiel in Materiel.query.all():
-        if txt in materiel.nom:
+        if txt.upper() in materiel.nom.upper():
             liste_materiel.append(materiel)
-    print(liste_materiel)
-    return Commande.query.filter(Commande.materiel in liste_materiel).all()
+    liste_commandes = []
+    for commande in commandes:
+        if commande.materiel in liste_materiel:
+            liste_commandes.append(commande)
+    return liste_commandes
+
+def commandes_par_domaine(domaine, commandes):
+    liste_commandes = []
+    for commande in commandes:
+        if commande.materiel.domaine.nom == domaine:
+            liste_commandes.append(commande)
+    return liste_commandes
+
+def commandes_par_categorie(categorie, commandes):
+    liste_commandes = []
+    for commande in commandes:
+        if commande.materiel.categorie.nom == categorie:
+            liste_commandes.append(commande)
+    return liste_commandes
+
+def commandes_par_statut(statut, commandes):
+    liste_commandes = []
+    for commande in commandes:
+        if commande.statut == statut:
+            liste_commandes.append(commande)
+    return liste_commandes

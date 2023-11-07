@@ -67,7 +67,7 @@ li{
     list-style: none;
 }
 
-a>button{
+section button{
     border-radius: 3em;
     border: solid white;
     height: 15em;
@@ -82,9 +82,10 @@ a>button{
     flex-wrap: nowrap;
     align-items: center;
     background-color: white;
+    text-decoration: none;
 }
 
-a>button:hover{
+section button:hover{
     background-color: rgb(236, 236, 236);
 }
 
@@ -93,10 +94,6 @@ img{
     width: fit-content;
     flex-basis: 10%;
     max-width: 20%;
-}
-
-a{
-    text-decoration: none;
 }
 
 p{

@@ -7,49 +7,77 @@
 {% block content %}
     <h1>Gérer les commandes</h1>
     <form class="search" role="search" method="POST">
-        <input type="search" name="recherche" id="recherche" placeholder="Rechercher">
+        <input type="search" name="search" id="recherche" placeholder="Rechercher">
         <input type="submit" name="btn-rechercher" value="Rechercher">
         <select name="domaine" id="domaine-select">
-            <option value="Domaine">Domaine</option>
+            <option value="Domaine">-- Domaine --</option>
             {% for domaine in liste_domaines %}
-            <option value="{{ domaine.nom }}">{{ domaine.nom }}</option>
+                <option value="{{ domaine.nom }}">{{ domaine.nom }}</option>
             {% endfor %}
         </select>
         <select name="categorie" id="categorie-select">
-            <option value="Categorie">Categorie</option>
+            <option value="Categorie">-- Categorie --</option>
             {% for categorie in liste_categories %}
-            <option value="{{ categorie.nom }}">{{ categorie.nom }}</option>
+                <option value="{{ categorie.nom }}">{{ categorie.nom }}</option>
+            {% endfor %}
+        </select>
+        <select name="statut" id="statut-select">
+            <option value="Statut">-- Statut --</option>
+            {% for statut in liste_statuts %}
+                <option value="{{ statut }}">{{ statut }}</option>
             {% endfor %}
         </select>
     </form>
     <section>
         <section class="commands">
-            {% if liste_commandes[0] is none %}
+            {% if liste_commandes is none %}
                 <p>Il n'y a pas de commandes pour cette recherche</p>
             {% else %}
             <ul>
                 {% for command in liste_commandes %}
                 <li>
-                    <a href="/admin/commandes/{{ command.numero }}">
-                        <button>
-                            <img src="{{ url_for('static', filename='images/black_square.png') }}" alt="image commande">
-                            <p>{{ command.materiel.nom }}</p>
-                        </button>
-                    </a>
+                    <button id="{{ command.numero }}" class="command_button" onclick="edit(this.id)">
+                        <img src="{{ url_for('static', filename='images/black_square.png') }}" alt="image commande">
+                        <p>{{ command.materiel.nom }}</p>
+                    </button>
                 </li>
                 {% endfor %}
             </ul>
             {% endif %}
         </section>
         <section>
-            <h2>{{ current_command.materiel.nom }}</h2>
-            <p>Domaine : {{ current_command.materiel.domaine.nom }}</p>
-            <p>Catégorie : {{ current_command.materiel.categorie.nom }}</p>
-            <p>Statut : {{ current_command.statut }}</p>
+            <h2><label id="nom"></label></h2>
+            <label for="domaine" id="domaine"></label>
+            <label for="categorie" id="categorie"></label>
         </section>
     </section>
     <section>
-        <input type="button" value="Imprimer">
+        <input type="button" value="Imprimer" onclick="print()">
         <input type="button" value="Valider la commande">
     </section>
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            var firstCommandButton = document.querySelector(".command_button");
+            if (firstCommandButton) {
+                var commandRef = firstCommandButton.getAttribute("id");
+                edit(commandRef);
+            }
+        });
+    
+        function edit(id) {
+            var labelNom = document.getElementById("nom");
+            var labelDomaine = document.getElementById("domaine");
+            var labelCategorie = document.getElementById("categorie");
+            
+            
+            fetch('/get_command_info/' + id)
+                .then(response => response.json())
+                .then(data => {
+                    labelNom.textContent = data.nom;
+                    labelDomaine.textContent = data.domaine;
+                    labelCategorie.textContent = data.categorie;                    
+                })
+                .catch(error => console.error('Erreur : ' + error));  
+        }
+    </script>
 {% endblock %}

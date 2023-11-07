@@ -1,7 +1,7 @@
 """Toute les routes et les Formulaires"""
 from .app import app
-from flask import render_template, url_for, redirect, request
-from .models import Utilisateur, Commande, Domaine, Categorie, search_commands
+from flask import render_template, url_for, redirect, request, jsonify
+from .models import Utilisateur, Commande, Domaine, Categorie, search_commands, commandes_par_domaine, commandes_par_categorie, commandes_par_statut
 from flask_login import login_required, login_user, logout_user
 from flask_wtf import FlaskForm
 from wtforms import StringField, HiddenField, PasswordField
@@ -71,17 +71,52 @@ def admin_manage():
 def consult():
     return None #TODO
 
-@app.route("/admin/commandes/<numero>", methods=("GET", "POST"))
-def delivery(numero=0):
+@app.route("/admin/commandes/", methods=("GET", "POST"))
+def delivery():
+    #initialisation des listes
     liste_commandes = Commande.query.all()
-    command = liste_commandes[int(numero)-1]
+    command = liste_commandes[0]
     liste_domaines = Domaine.query.all()
     liste_categories = Categorie.query.all()
+    liste_statuts = []
+    for commande in liste_commandes:
+        if commande.statut not in liste_statuts:
+            liste_statuts.append(commande.statut)
+
+    #tests pour filtrer les résultats
     text = request.form.get("recherche")
     if text != None and text != "":
-        liste_commandes = search_commands(text)
+        liste_commandes = search_commands(text, liste_commandes)
 
-    return render_template("gerer_commandes.html", liste_commandes=liste_commandes, current_command=command, liste_domaines=liste_domaines, liste_categories=liste_categories)
+    domaine = request.form.get("domaine")
+    if domaine != None and domaine != "Domaine":
+        liste_commandes = commandes_par_domaine(domaine, liste_commandes)
+
+    categorie = request.form.get("categorie")
+    if categorie != None and categorie != "Categorie":
+        liste_commandes = commandes_par_categorie(categorie, liste_commandes)
+    
+    statut = request.form.get("statut")
+    if statut != None and statut != "Statut":
+        liste_commandes = commandes_par_statut(statut, liste_commandes)
+
+    if len(liste_commandes) == 0:
+        liste_commandes = None
+    return render_template("gerer_commandes.html",liste_statuts=liste_statuts, liste_commandes=liste_commandes, liste_domaines=liste_domaines, liste_categories=liste_categories, current_command=command)
+
+@app.route("/get_command_info/<int:numero>", methods=["GET"])
+def get_command_info(numero):
+    command = Commande.query.get(numero)
+    if command:
+        command_info = {
+            'numero': command.numero,
+            'nom': command.materiel.nom,
+            'domaine': command.materiel.domaine.nom,
+            'categorie': command.materiel.categorie.nom
+        }
+        return jsonify(command_info)
+    else:
+        return jsonify({'error': 'Commande non trouvé'}), 404
 
 @app.route('/d/')
 def new_commande():
