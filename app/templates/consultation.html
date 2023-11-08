@@ -4,66 +4,155 @@
 <link rel="stylesheet" href="{{ url_for('static', filename='css/consultation.css') }}">
 {% endblock %}
 {% block content %}
-    {% if current_user.is_authenticated %}
-    <h1>Consulter le matériel</h1>
+{% if current_user.is_authenticated %}
+{% if current_user.is_prof %}
+<h1>Consulter le matériel</h1>
+<form action="recherche" role="search" method="post">
+    <input type="search" name="search" id="search" placeholder="Recherche" oninput="change()">
+    <select name="Domaine" id="Domaine" onchange="change()">
+        <option value="">Domaine</option>
+        {% for domaine in domaines %}
+        <option value="{{ domaine.code }}">{{ domaine.nom }}</option>
+        {% endfor %}
+    </select>
+    <select name="Catégorie" id="Categorie" onchange="change()">
+        <option value="">Categorie</option>
+        {% for categorie in categories %}
+        <option value="{{ categorie.code }}">{{ categorie.nom }}</option>
+        {% endfor %}
+    </select>
+    <button type="reset" id="searchButton">reset</button>
+    <!-- recherche pas fonctionnel -->
+</form>
+<div class="info">
     <div>
-        <div class="recherche">
-            <input type="search" name="search" id="search">
-            <select name="Domaine" id="Domaine">
-                <option value="null"></option>
-                {% for domaine in domaines %}
-                <option value="{{ domaine.id }}">{{ domaine.nom }}</option>
+        <div class="liste_mat">
+            <ul id="materielsList">
+                {% for materiel in materiels %}
+                <li>
+                    <div class="item_mat">
+                        <img src="data:image/png;base64,{{ materiel.get_image() }}" alt="{{ materiel.nom }}">
+                        <h2 id="{{ materiel.reference }}" onclick="edit(this.id)">{{ materiel.nom }}</h2>
+                    </div>
+                </li>
                 {% endfor %}
-            </select>
-            <select name="Catégorie" id="Categorie">
-                <option value="null"></option>
-                {% for categorie in categories %}
-                <option value="{{ categorie.id }}">{{ categorie.nom }}</option>
-                {% endfor %}
-            </select>
-            <button id="searchButton">Rechercher</button>
-            <!-- recherche plus les autre -->
+            </ul>
         </div>
-        <div class="info">
-            <div>
-                <div class="liste_mat">
-                    <ul>
-                    {% for materiel in materiels %}
-                        <li>
-                            <div>
-                                <img src="data:image/png;base64,{{ materiel.get_image() }}" alt="{{ materiel.nom }}">
-                                <h2>"{{ materiel.nom }}"</h2>
-                            </div>
-                        </li>
-                    {% endfor %}
-                    </ul>
-                </div>
-                <button id="buttonAdd" type="button">Ajouter du Materiel</button>
-            </div>
-            <div>
-                <div class="description">
-                    <h2>{{ current_mat.nom }}</h2>
-                    <div>
-                        <label>Domaine : {{ current_mat.domaine.nom }}</label>
-                        <label>Categorie : {{ current_mat.categorie.nom }}</label>
-                        <label>Reference : {{ current_mat.reference }}</label>
-                        <label>Quantité restante : {{ current_mat.quantite_restante }}</label>
-                        <label>Quantité totale : {{ current_mat.quantite_globale }}</label>
-                    </div>
-                    <div>
-                        <!-- <img src="" alt=""> -->
-                        <p>{{ current_mat.complements }}</p>
-                    </div>
-
-                </div>
-                <div class="button">
-                    <button id="buttonModifier">Modifier</button>
-                    <button id="buttonSupp">Supprimer</button>
-                    <button id="buttonImprimer">Imprimer</button>
-                    <button id="buttonFDS">Voir FDS</button>
-                </div>
-            </div>
+        <div>
+            {% if current_user.modifications == True %}
+            <button id="buttonAdd" type="button">Ajouter du Materiel</button>
+            {% endif %}
         </div>
     </div>
-    {% endif %}
+    <div>
+        <div class="description">
+            <h2 id="nom">{{ current_mat.nom }}</h2>
+            <div class="chiffre">
+                <label id="domaine">Domaine : {{ current_mat.domaine.nom }}</label>
+                <label id="categorie">Categorie : {{ current_mat.categorie.nom }}</label>
+                <label id="reference">Reference : {{ current_mat.reference }}</label>
+                {% if current_mat.domaine.nom == "Produits Chimiques" %}
+                <label id="quantiteR">Quantité restante : {{ current_mat.quantite_restante }}</label>
+                {% endif %}
+                <label id="quantiteT">Quantité totale : {{ current_mat.quantite_globale }}</label>
+            </div>
+            <div class="textu">
+                <img id="image" src="data:image/png;base64,{{ current_mat.get_image() }}" alt="{{ current_mat.nom }}">
+                <p id="complements">{{ current_mat.complements }}</p>
+            </div>
+
+        </div>
+        <div class="button">
+            {% if current_user.modifications == True %}
+            <button id="buttonModifier">Modifier</button>
+            <button id="buttonSupp">Supprimer</button>
+            {% endif %}
+            <button id="buttonImprimer">Imprimer</button>
+            <button id="buttonFDS">Voir FDS</button>
+        </div>
+    </div>
+</div>
+<script>
+
+    function change(){
+        const searchQuery = document.getElementById('search').value;
+        const selectedDomaine = document.getElementById('Domaine').value;
+        const selectedCategorie = document.getElementById('Categorie').value;
+
+        // Envoyer une requête Ajax pour mettre à jour la liste de matériaux
+        fetch(`/consult/recherche?search=${searchQuery}&domaine=${selectedDomaine}&categorie=${selectedCategorie}`)
+            .then(response => response.json())
+            .then(data => {
+                data2 = data['materiels'];
+                const materielsList = document.getElementById('materielsList');
+                materielsList.innerHTML = "";
+                data2.forEach(material => {
+                    const materialItem = document.createElement('li');
+
+                    const div = document.createElement('div');
+                    div.classList.add('item_mat');
+
+                    const img = document.createElement('img');
+                    img.src = "data:image/png;base64," + material.image;
+                    img.alt = material.nom;
+                    const h2 = document.createElement('h2');
+                    h2.id = material.reference;
+                    h2.onclick = function() { edit(this.id) };
+                    h2.textContent = material.nom;
+                    
+                    div.appendChild(img);
+                    div.appendChild(h2);
+                    materialItem.appendChild(div);
+                    materielsList.appendChild(materialItem);
+            });
+        })
+        .catch(error => console.error('Erreur : ' + error));
+    }
+
+    function edit(id) {
+        var labelNom = document.getElementById("nom");
+        var labelDomaine = document.getElementById("domaine");
+        var labelCategorie = document.getElementById("categorie");
+        var labelReference = document.getElementById("reference");
+        var labelQuanR = document.getElementById("quantiteR");
+        var labelQuanT = document.getElementById("quantiteT");
+        var labelComplements = document.getElementById("complements");
+        var labelImage = document.getElementById("image");
+
+        if (labelQuanR) {
+            fetch('/get_info_Materiel/' + id)
+                .then(response => response.json())
+                .then(data => {
+                    labelNom.textContent = data.nom;
+                    labelDomaine.textContent = "Domaine : " + data.domaine;
+                    labelCategorie.textContent = "Catégorie : " + data.categorie;
+                    labelQuanT.textContent = "Quantité totale : " + data.quantite_global;
+                    labelReference.textContent = "Reference : " + data.reference;
+                    labelQuanR.textContent = "Quantité restante : " + data.quantite_restante;
+                    labelComplements.textContent = data.complements;
+                    labelImage.src = "data:image/png;base64," + data.image;
+                    labelImage.alt = data.nom;
+
+                })
+                .catch(error => console.error('Erreur : ' + error));
+        } else {
+            fetch('/get_info_Materiel/' + id)
+                .then(response => response.json())
+                .then(data => {
+                    labelNom.textContent = data.nom;
+                    labelDomaine.textContent = "Domaine : " + data.domaine;
+                    labelCategorie.textContent = "Catégorie : " + data.categorie;
+                    labelQuanT.textContent = "Quantité totale : " + data.quantite_global;
+                    labelReference.textContent = "Reference : " + data.reference;
+                    labelComplements.textContent = data.complements;
+                    labelImage.src = "data:image/png;base64," + data.image;
+
+                })
+                .catch(error => console.error('Erreur : ' + error));
+        }
+
+    }
+</script>
+{% endif %}
+{% endif %}
 {% endblock %}
