@@ -1,7 +1,7 @@
 """Toute les routes et les Formulaires"""
 from .app import app
 from flask import render_template, url_for, redirect, request, jsonify
-from .models import Utilisateur, Commande, Domaine, Categorie, Materiel, search_commands, commandes_par_domaine, commandes_par_categorie, commandes_par_statut
+from .models import Utilisateur, Commande, Domaine, Categorie, Materiel, filter_commands
 from flask_login import login_required, login_user, logout_user
 from flask_wtf import FlaskForm
 from wtforms import StringField, HiddenField, PasswordField
@@ -82,28 +82,6 @@ def delivery():
     for commande in liste_commandes:
         if commande.statut not in liste_statuts:
             liste_statuts.append(commande.statut)
-
-    #tests pour filtrer les résultats
-    '''
-    text = request.form.get("recherche")
-    if text != None and text != "":
-        print("test")
-        liste_commandes = search_commands(text, liste_commandes)
-
-    domaine = request.form.get("domaine")
-    if domaine != None and domaine != "Domaine":
-        liste_commandes = commandes_par_domaine(domaine, liste_commandes)
-
-    categorie = request.form.get("categorie")
-    if categorie != None and categorie != "Categorie":
-        liste_commandes = commandes_par_categorie(categorie, liste_commandes)
-    
-    statut = request.form.get("statut")
-    if statut != None and statut != "Statut":
-        liste_commandes = commandes_par_statut(statut, liste_commandes)
-
-    if len(liste_commandes) == 0:
-        liste_commandes = None'''
     return render_template("gerer_commandes.html",liste_statuts=liste_statuts, liste_commandes=liste_commandes, liste_domaines=liste_domaines, liste_categories=liste_categories, current_command=command)
 
 @app.route("/get_command_info/<int:numero>,<string:json>", methods=["GET"])
@@ -127,17 +105,12 @@ def get_command_info(numero, json):
     else:
         return jsonify({'error': 'Commande non trouvé'}), 404
     
-@app.route("/search/<string:value>,<string:id>", methods=["GET"])
-def search(value, id):
-    value = value[:len(value)-1]
-    print(value[:len(value)-1])
-    print("test1234"[:2])
-    print("test", value=="")
+@app.route("/search/<string:recherche>,<string:domaine>,<string:categorie>,<string:statut>", methods=["GET"])
+def search(recherche, domaine, categorie, statut):
     liste_commandes = Commande.query.all()
-    if id == "recherche":
-        liste_commandes = search_commands(value, liste_commandes)
-    print(len(liste_commandes))
-    
+    recherche = recherche[:len(recherche)-1]
+    liste_commandes = filter_commands(recherche, domaine, categorie, statut, liste_commandes)
+
     liste_commandes2 = []
     for commande in liste_commandes:
         liste_commandes2.append(get_command_info(commande.numero, False))
@@ -164,4 +137,11 @@ def ecole_home():
     return render_template("ecole.html")
 
 
-
+'''            {% for command in liste_commandes %}
+            <li>
+                <button id="{{ command.numero }}" class="command_button" onclick="edit(this.id)">
+                    <img src="{{ url_for('static', filename='images/black_square.png') }}" alt="image commande">
+                    <p>{{ command.materiel.nom }}</p>
+                </button>
+            </li>
+            {% endfor %}'''

@@ -8,26 +8,26 @@
     <h1>Gérer les commandes</h1>
     <section class="search_buttons">
         <form class="search" role="search" method="POST">
-            <input type="search" name="recherche" id="recherche" placeholder="Rechercher" oninput="search(this.value + ' ', this.id)">
+            <input type="search" name="recherche" id="recherche" placeholder="Rechercher" oninput="search()">
             <select name="domaine" id="domaine-select">
-                <option value="Domaine">-- Domaine --</option>
+                <option id="domaine" value="Domaine" onclick="search()">-- Domaine --</option>
                 {% for domaine in liste_domaines %}
-                    <option id="domaine" value="{{ domaine.nom }}" onclick="search(this.value, this.id)">{{ domaine.nom }}</option>
+                    <option id="domaine" value="{{ domaine.nom }}" onclick="search()">{{ domaine.nom }}</option>
                 {% endfor %}
             </select>
             <select name="categorie" id="categorie-select">
-                <option value="Categorie">-- Categorie --</option>
+                <option id="categorie" value="Categorie" onclick="search()">-- Categorie --</option>
                 {% for categorie in liste_categories %}
-                    <option id="categorie" value="{{ categorie.nom }}" onclick="search(this.value, this.id)">{{ categorie.nom }}</option>
+                    <option id="categorie" value="{{ categorie.nom }}" onclick="search()">{{ categorie.nom }}</option>
                 {% endfor %}
             </select>
             <select name="statut" id="statut-select">
-                <option value="Statut">-- Statut --</option>
+                <option id="statut" value="Statut" onclick="search()">-- Statut --</option>
                 {% for statut in liste_statuts %}
-                    <option id="statut" value="{{ statut }}" onclick="search(this.value, this.id)">{{ statut }}</option>
+                    <option id="statut" value="{{ statut }}" onclick="search()">{{ statut }}</option>
                 {% endfor %}
             </select>
-            <input type="submit" name="btn-rechercher" value="Rechercher" class="yellow-button">
+            <input type="submit" name="btn-reset" value="reset" class="yellow-button">
         </form>
     </section>
     <section class="commands">
@@ -94,9 +94,12 @@
                 .catch(error => console.error('Erreur : ' + error));  
         }
 
-    function search(value, id){
-        
-        fetch('/search/' + value +','+ id)
+    function search(){
+        recherche = document.getElementById("recherche").value
+        domaine = document.getElementById("domaine-select").value
+        categorie = document.getElementById("categorie-select").value
+        statut = document.getElementById("statut-select").value
+        fetch('/search/'+recherche+' ,'+domaine+','+categorie+','+statut)
             .then(response => response.json())
             .then(data => {  
                 var liste_commandes_search = data.liste;

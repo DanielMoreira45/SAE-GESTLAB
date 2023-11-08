@@ -4,7 +4,7 @@ from .app import db, login_manager
 from flask_login import UserMixin
 
 class Role(db.Model):
-    __tablename__ = "role"
+    __tabame__ = "role"
     id = db.Column(db.Integer, primary_key=True)
     intitule = db.Column(db.String(100))
 
@@ -172,34 +172,18 @@ class Alerte(db.Model):
 def load_user(user_id):
     return Utilisateur.query.get(int(user_id))
 
-def search_commands(txt, commandes):
+def filter_commands(txt, domaine, categorie, statut, commandes):
     liste_materiel = []
     for materiel in Materiel.query.all():
         if txt.upper() in materiel.nom.upper():
             liste_materiel.append(materiel)
     liste_commandes = []
+    
     for commande in commandes:
         if commande.materiel in liste_materiel:
-            liste_commandes.append(commande)
-    return liste_commandes
+            if commande.materiel.domaine.nom == domaine or domaine == "Domaine":
+                if commande.materiel.categorie.nom == categorie or categorie == "Categorie":
+                    if commande.statut == statut or statut == "Statut":
+                        liste_commandes.append(commande)
 
-def commandes_par_domaine(domaine, commandes):
-    liste_commandes = []
-    for commande in commandes:
-        if commande.materiel.domaine.nom == domaine:
-            liste_commandes.append(commande)
-    return liste_commandes
-
-def commandes_par_categorie(categorie, commandes):
-    liste_commandes = []
-    for commande in commandes:
-        if commande.materiel.categorie.nom == categorie:
-            liste_commandes.append(commande)
-    return liste_commandes
-
-def commandes_par_statut(statut, commandes):
-    liste_commandes = []
-    for commande in commandes:
-        if commande.statut == statut:
-            liste_commandes.append(commande)
     return liste_commandes
