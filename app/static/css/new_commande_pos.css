@@ -1,0 +1,26 @@
+.order-form {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.form-group {
+    flex-basis: 69%;
+    flex-grow: 0;
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.form-group + .form-group {
+    flex-basis: 30%;
+    flex-grow: 0;
+}
+
+.materiel, .quantity {
+    flex-basis: 100%;
+    flex-grow: 1;
+}
+
+.form-group + .form-group + .form-group {
+    flex-basis: 100%;
+    flex-grow: 1;
+}
