@@ -55,6 +55,7 @@ p{
     margin-left: 5%;
     flex-basis: 100%;
     text-align: left;
+    color: black;
 }
 
 .search_buttons{
@@ -176,5 +177,8 @@ input:hover, button:hover, select:hover{
 .les_labels{
     display: flex;
     flex-wrap: wrap;
-    
+}
+
+#recherche:hover{
+    cursor: vertical-text;
 }

@@ -1,7 +1,7 @@
 """Toute les routes et les Formulaires"""
 from .app import app
 from flask import render_template, url_for, redirect, request, jsonify
-from .models import Utilisateur, Commande, Domaine, Categorie, search_commands, commandes_par_domaine, commandes_par_categorie, commandes_par_statut
+from .models import Utilisateur, Commande, Domaine, Categorie, Materiel, search_commands, commandes_par_domaine, commandes_par_categorie, commandes_par_statut
 from flask_login import login_required, login_user, logout_user
 from flask_wtf import FlaskForm
 from wtforms import StringField, HiddenField, PasswordField
@@ -76,15 +76,15 @@ def delivery():
     #initialisation des listes
     liste_commandes = Commande.query.all()
     command = liste_commandes[0]
-    liste_domaines = Domaine.query.all()
-    print(len(liste_domaines))
-    liste_categories = Categorie.query.all()
+    liste_domaines = Domaine.query.order_by(Domaine.nom).all()
+    liste_categories = Categorie.query.distinct(Categorie.nom).order_by(Categorie.nom).all()
     liste_statuts = []
     for commande in liste_commandes:
         if commande.statut not in liste_statuts:
             liste_statuts.append(commande.statut)
 
     #tests pour filtrer les résultats
+    '''
     text = request.form.get("recherche")
     if text != None and text != "":
         print("test")
@@ -103,13 +103,14 @@ def delivery():
         liste_commandes = commandes_par_statut(statut, liste_commandes)
 
     if len(liste_commandes) == 0:
-        liste_commandes = None
+        liste_commandes = None'''
     return render_template("gerer_commandes.html",liste_statuts=liste_statuts, liste_commandes=liste_commandes, liste_domaines=liste_domaines, liste_categories=liste_categories, current_command=command)
 
-@app.route("/get_command_info/<int:numero>", methods=["GET"])
-def get_command_info(numero):
+@app.route("/get_command_info/<int:numero>,<string:json>", methods=["GET"])
+def get_command_info(numero, json):
     command = Commande.query.get(numero)
     if command:
+        print("tedst")
         command_info = {
             'numero': command.numero,
             'nom': command.materiel.nom,
@@ -120,9 +121,26 @@ def get_command_info(numero):
             #'unite': command.materiel.unite,
             'user': command.utilisateur.nom
         }
-        return jsonify(command_info)
+        if json == "True":
+            return jsonify(command_info)
+        else:
+            return command_info
     else:
         return jsonify({'error': 'Commande non trouvé'}), 404
+    
+@app.route("/search/<string:value>,<string:id>", methods=["GET"])
+def search(value, id):
+    liste_commandes = Commande.query.all()
+    if id == "recherche":
+        liste_commandes = search_commands(value, liste_commandes)
+        print(len(liste_commandes))
+    
+    liste_commandes2 = []
+    for commande in liste_commandes:
+        liste_commandes2.append(get_command_info(commande.numero, False))
+    #return render_template("gerer_commandes.html", liste_commandes_search=liste_commandes)
+    return jsonify({'liste':liste_commandes2})
+
 
 @app.route('/d/')
 def new_commande():

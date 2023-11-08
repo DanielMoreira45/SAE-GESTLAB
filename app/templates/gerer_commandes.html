@@ -8,23 +8,23 @@
     <h1>Gérer les commandes</h1>
     <section class="search_buttons">
         <form class="search" role="search" method="POST">
-            <input type="search" name="recherche" id="recherche" placeholder="Rechercher">
+            <input type="search" name="recherche" id="recherche" placeholder="Rechercher" oninput="search(this.value, this.id)">
             <select name="domaine" id="domaine-select">
                 <option value="Domaine">-- Domaine --</option>
                 {% for domaine in liste_domaines %}
-                    <option value="{{ domaine.nom }}">{{ domaine.nom }}</option>
+                    <option id="domaine" value="{{ domaine.nom }}" onclick="search(this.value, this.id)">{{ domaine.nom }}</option>
                 {% endfor %}
             </select>
             <select name="categorie" id="categorie-select">
                 <option value="Categorie">-- Categorie --</option>
                 {% for categorie in liste_categories %}
-                    <option value="{{ categorie.nom }}">{{ categorie.nom }}</option>
+                    <option id="categorie" value="{{ categorie.nom }}" onclick="search(this.value, this.id)">{{ categorie.nom }}</option>
                 {% endfor %}
             </select>
             <select name="statut" id="statut-select">
                 <option value="Statut">-- Statut --</option>
                 {% for statut in liste_statuts %}
-                    <option value="{{ statut }}">{{ statut }}</option>
+                    <option id="statut" value="{{ statut }}" onclick="search(this.value, this.id)">{{ statut }}</option>
                 {% endfor %}
             </select>
             <input type="submit" name="btn-rechercher" value="Rechercher" class="yellow-button">
@@ -34,12 +34,13 @@
         {% if liste_commandes is none %}
             <p>Il n'y a pas de commandes pour cette recherche</p>
         {% else %}
-        <ul>
+        <ul id="liste">
             {% for command in liste_commandes %}
             <li>
                 <button id="{{ command.numero }}" class="command_button" onclick="edit(this.id)">
                     <img src="{{ url_for('static', filename='images/black_square.png') }}" alt="image commande">
                     <p>{{ command.materiel.nom }}</p>
+                    
                 </button>
             </li>
             {% endfor %}
@@ -51,9 +52,9 @@
             <h2><label id="nom"></label></h2>
             <img src="{{ url_for('static', filename='images/black_square.png') }}" alt="image commande">
             <div class="les_labels">
-                <label for="statut" id="statut"></label>
-                <label for="domaine" id="domaine"></label>
-                <label for="categorie" id="categorie"></label>
+                <label for="statut" id="label-statut"></label>
+                <label for="domaine" id="label-domaine"></label>
+                <label for="categorie" id="label-categorie"></label>
                 <label for="quantite" id="quantite"></label>
                 <label for="user" id="user"></label>
             </div>
@@ -75,13 +76,13 @@
     
         function edit(id) {
             var labelNom = document.getElementById("nom");
-            var labelDomaine = document.getElementById("domaine");
-            var labelCategorie = document.getElementById("categorie");
-            var labelStatut = document.getElementById("statut");
+            var labelDomaine = document.getElementById("label-domaine");
+            var labelCategorie = document.getElementById("label-categorie");
+            var labelStatut = document.getElementById("label-statut");
             var labelQuantite = document.getElementById("quantite");
             var labelUser = document.getElementById("user");
             
-            fetch('/get_command_info/' + id)
+            fetch('/get_command_info/' + id + ",True")
                 .then(response => response.json())
                 .then(data => {
                     labelNom.textContent = data.nom;
@@ -90,9 +91,40 @@
                     labelStatut.textContent = "Statut : "+data.statut;   
                     //labelQuantite.textContent = "Quantité commandée : "+data.quantite+" "+data.unite;
                     labelUser.textContent = "Commande effectuée par "+data.user;
-
                 })
                 .catch(error => console.error('Erreur : ' + error));  
         }
+
+    function search(value, id){
+        
+        fetch('/search/' + value +','+ id)
+            .then(response => response.json())
+            .then(data => {  
+                var liste_commandes_search = data.liste;
+                var ul = document.getElementById("liste")
+                ul.innerHTML = "";
+                liste_commandes_search.forEach(function(commande) {
+                    var li = document.createElement("li");
+                    var button = document.createElement("button")
+                    button.id = commande.numero
+                    button.className = "command_button"
+                    button.onclick = function () {
+                        edit(this.id);
+                    }
+                    var p = document.createElement("p");
+                    p.textContent = commande.nom;
+                    var image = document.createElement("img");
+                    image.src = "{{ url_for('static', filename='images/black_square.png') }}";
+                    image.alt = "image commande";
+                    button.appendChild(image);
+                    button.appendChild(p)
+                    li.appendChild(button)
+                    ul.appendChild(li);
+
+                    
+                });
+            })
+            .catch(error => console.error('Erreur : ' + error));  
+    }
     </script>
 {% endblock %}
