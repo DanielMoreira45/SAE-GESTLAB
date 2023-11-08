@@ -110,7 +110,6 @@ def delivery():
 def get_command_info(numero, json):
     command = Commande.query.get(numero)
     if command:
-        print("tedst")
         command_info = {
             'numero': command.numero,
             'nom': command.materiel.nom,
@@ -130,10 +129,14 @@ def get_command_info(numero, json):
     
 @app.route("/search/<string:value>,<string:id>", methods=["GET"])
 def search(value, id):
+    value = value[:len(value)-1]
+    print(value[:len(value)-1])
+    print("test1234"[:2])
+    print("test", value=="")
     liste_commandes = Commande.query.all()
     if id == "recherche":
         liste_commandes = search_commands(value, liste_commandes)
-        print(len(liste_commandes))
+    print(len(liste_commandes))
     
     liste_commandes2 = []
     for commande in liste_commandes:

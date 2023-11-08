@@ -8,7 +8,7 @@
     <h1>Gérer les commandes</h1>
     <section class="search_buttons">
         <form class="search" role="search" method="POST">
-            <input type="search" name="recherche" id="recherche" placeholder="Rechercher" oninput="search(this.value, this.id)">
+            <input type="search" name="recherche" id="recherche" placeholder="Rechercher" oninput="search(this.value + ' ', this.id)">
             <select name="domaine" id="domaine-select">
                 <option value="Domaine">-- Domaine --</option>
                 {% for domaine in liste_domaines %}
@@ -40,7 +40,6 @@
                 <button id="{{ command.numero }}" class="command_button" onclick="edit(this.id)">
                     <img src="{{ url_for('static', filename='images/black_square.png') }}" alt="image commande">
                     <p>{{ command.materiel.nom }}</p>
-                    
                 </button>
             </li>
             {% endfor %}
@@ -119,9 +118,7 @@
                     button.appendChild(image);
                     button.appendChild(p)
                     li.appendChild(button)
-                    ul.appendChild(li);
-
-                    
+                    ul.appendChild(li);  
                 });
             })
             .catch(error => console.error('Erreur : ' + error));  
