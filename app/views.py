@@ -3,12 +3,13 @@ from .app import app, db
 from flask import render_template, url_for, redirect, request
 from .models import Utilisateur
 from flask_login import login_user
-from .models import Utilisateur    
-from flask_login import login_required, login_user, logout_user
+from .models import Utilisateur, Materiel, Commande, Commander, get_liste_materiel
+from flask_login import login_required, login_user, logout_user, current_user
 from flask_wtf import FlaskForm
-from wtforms import StringField, HiddenField, PasswordField, SelectField, RadioField
+from wtforms import StringField, HiddenField, PasswordField, SelectField, RadioField, IntegerField
 from wtforms.validators import DataRequired
 from hashlib import sha256
+# from SQLAlchemy import func
 
 class LoginForm(FlaskForm):
     email = StringField('Email')
@@ -80,10 +81,38 @@ def consult():
 def delivery():
     return None #TODO
 
+class CommandeForm(FlaskForm):
+    materiel = SelectField('Matériel', choices=get_liste_materiel())
+    quantity = IntegerField("Quantité", default=1)
+
 @app.route("/delivery/new/")
 def new_commande():
-    return render_template("new_commande.html")
+    f = CommandeForm()
+    return render_template("new_commande.html", form=f)
+    # return render_template("new_commande.html", materiel_list=Materiel.get_liste_materiel())
 
+@app.route("/delivery/new/save", methods=("POST",))
+def save_new_commande():
+    f = CommandeForm()
+    commande = Commande(
+        numero = 1 + db.session.query(db.func.max(Commande.numero)).scalar(),
+        date_commande = None,
+        date_reception = None,
+        statut = "Non validée",
+        id_util = flask_login.current_user.id,
+        ref_materiel = f.materiel.data
+    )
+    commander = Commander(
+        numero_commande = 1 + db.session.query(db.func.max(Commander.numero_commande)).scalar(),
+        quantite_commandee = f.quantity.data,
+        id_util = flask_login.current_user.id,
+        ref_materiel = f.materiel.data
+    )
+    db.session.add(commande)
+    db.session.commit()
+    db.session.add(commander)
+    db.session.commit()
+    return redirect(url_for('admin_add'))
 
 @app.route("/admin/home/")
 @login_required

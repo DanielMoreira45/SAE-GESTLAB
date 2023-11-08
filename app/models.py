@@ -171,3 +171,11 @@ class Alerte(db.Model):
 @login_manager.user_loader
 def load_user(user_id):
     return Utilisateur.query.get(int(user_id))
+
+def get_liste_materiel():
+    liste_mat = []
+    # print(Materiel.query.all())
+    # materiel_query = Materiel.query.get_all()
+    # for mat in materiel_query:
+    #     liste_mat.append((mat.reference, mat.nom))
+    return liste_mat
