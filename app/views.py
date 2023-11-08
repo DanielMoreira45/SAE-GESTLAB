@@ -7,9 +7,9 @@ from .models import Utilisateur, Materiel, Commande, Commander, get_liste_materi
 from flask_login import login_required, login_user, logout_user, current_user
 from flask_wtf import FlaskForm
 from wtforms import StringField, HiddenField, PasswordField, SelectField, RadioField, IntegerField
-from wtforms.validators import DataRequired
+from wtforms.validators import DataRequired, NumberRange
 from hashlib import sha256
-# from SQLAlchemy import func
+from datetime import datetime
 
 class LoginForm(FlaskForm):
     email = StringField('Email')
@@ -82,37 +82,43 @@ def delivery():
     return None #TODO
 
 class CommandeForm(FlaskForm):
-    materiel = SelectField('Matériel', choices=get_liste_materiel())
-    quantity = IntegerField("Quantité", default=1)
+    id_util = HiddenField('id-util')
+    ref_mat = HiddenField('ref-mat')
+    with app.app_context():
+        choix_materiel = get_liste_materiel()
+        # choix_materiel.insert(0, ("", "-- Choisir le matériel --"))
+        materiel_field = SelectField('Matériel', choices=choix_materiel)
+        quantity_field = IntegerField("Quantité", validators=[DataRequired(), NumberRange(1, 1000)], default=1)
 
 @app.route("/delivery/new/")
+@login_required
 def new_commande():
     f = CommandeForm()
+    print(current_user.id)
     return render_template("new_commande.html", form=f)
-    # return render_template("new_commande.html", materiel_list=Materiel.get_liste_materiel())
 
 @app.route("/delivery/new/save", methods=("POST",))
 def save_new_commande():
     f = CommandeForm()
     commande = Commande(
         numero = 1 + db.session.query(db.func.max(Commande.numero)).scalar(),
-        date_commande = None,
+        date_commande = datetime.utcnow(),
         date_reception = None,
         statut = "Non validée",
-        id_util = flask_login.current_user.id,
-        ref_materiel = f.materiel.data
+        id_util = current_user.id,
+        ref_materiel = f.materiel_field.data[0]
     )
     commander = Commander(
         numero_commande = 1 + db.session.query(db.func.max(Commander.numero_commande)).scalar(),
-        quantite_commandee = f.quantity.data,
-        id_util = flask_login.current_user.id,
-        ref_materiel = f.materiel.data
+        quantite_commandee = f.quantity_field.data,
+        id_util = current_user.id,
+        ref_materiel = f.materiel_field.data
     )
     db.session.add(commande)
     db.session.commit()
     db.session.add(commander)
     db.session.commit()
-    return redirect(url_for('admin_add'))
+    return redirect(url_for('new_commande'))
 
 @app.route("/admin/home/")
 @login_required

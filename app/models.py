@@ -1,6 +1,6 @@
 """Lien avec la Base de données"""
 
-from .app import db, login_manager
+from .app import app, db, login_manager
 from flask_login import UserMixin
 
 class Role(db.Model):
@@ -174,8 +174,8 @@ def load_user(user_id):
 
 def get_liste_materiel():
     liste_mat = []
-    # print(Materiel.query.all())
-    # materiel_query = Materiel.query.get_all()
-    # for mat in materiel_query:
-    #     liste_mat.append((mat.reference, mat.nom))
+    # # print(Materiel.query.all())
+    materiel_query = Materiel.query.all()
+    for mat in materiel_query:
+        liste_mat.append((mat.reference, mat.nom))
     return liste_mat

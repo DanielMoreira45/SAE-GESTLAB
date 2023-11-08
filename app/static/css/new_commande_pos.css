@@ -15,7 +15,7 @@
     flex-grow: 0;
 }
 
-.materiel, .quantity {
+.materiel-label, .quantity-label {
     flex-basis: 100%;
     flex-grow: 1;
 }

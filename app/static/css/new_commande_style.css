@@ -43,12 +43,12 @@ main h1{
     width: 30em;
 }
 
-main label {
+.materiel-label, .quantity-label {
     font-family: "AgrandirWide";
-    font-size: 1.35em;
+    font-size: 1.8em;
 }
 
-#materiel, #quantity {
+#materiel_field, #quantity_field {
     background-color: white;
     height: 38px;
     border: 0.1em solid black;
@@ -58,15 +58,15 @@ main label {
     font-size: 1em;
 }
 
-#materiel {
+#materiel_field {
     width: 17.3em;
 }
 
-#quantity {
+#quantity_field {
     width: 6em;
 }
 
-#commander {
+#commander_bouton {
     font-family: "DM-Sans";
     background-color: #ffd883;
     border: none;
@@ -79,7 +79,7 @@ main label {
     margin: auto;
 }
 
-#commander:hover {
+#commander_bouton:hover {
     background-color: #edb742;
 }
 
