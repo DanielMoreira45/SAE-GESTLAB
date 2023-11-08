@@ -83,10 +83,22 @@ main h1{
     background-color: #edb742;
 }
 
-.form-group + .form-group + .form-group {
+#block-bouton {
     margin-top: 2em;
 }
 
 main {
     margin-top: 4em;
+}
+
+.error {
+    color: red;
+    font-size: medium;
+    min-height: 1.5em;
+    margin: auto;
+    font-weight: bold;
+}
+
+#block-msg {
+    padding-top: 1em;
 }

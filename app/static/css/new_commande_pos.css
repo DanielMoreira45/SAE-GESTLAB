@@ -10,7 +10,7 @@
     flex-wrap: wrap;
 }
 
-.form-group + .form-group {
+#block-quantite {
     flex-basis: 30%;
     flex-grow: 0;
 }
@@ -20,7 +20,12 @@
     flex-grow: 1;
 }
 
-.form-group + .form-group + .form-group {
+#block-bouton {
+    flex-basis: 100%;
+    flex-grow: 1;
+}
+
+#block-msg {
     flex-basis: 100%;
     flex-grow: 1;
 }
