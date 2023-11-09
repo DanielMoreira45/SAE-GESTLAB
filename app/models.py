@@ -174,7 +174,6 @@ def load_user(user_id):
 
 def get_liste_materiel():
     liste_mat = []
-    # # print(Materiel.query.all())
     materiel_query = Materiel.query.all()
     for mat in materiel_query:
         liste_mat.append((mat.reference, mat.nom))

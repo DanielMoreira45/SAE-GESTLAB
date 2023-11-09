@@ -7,7 +7,7 @@ from .models import Utilisateur, Materiel, Commande, Commander, get_liste_materi
 from flask_login import login_required, login_user, logout_user, current_user
 from flask_wtf import FlaskForm
 from wtforms import StringField, HiddenField, PasswordField, SelectField, RadioField, IntegerField
-from wtforms.validators import DataRequired, NumberRange, NoneOf
+from wtforms.validators import DataRequired, NumberRange
 from hashlib import sha256
 from datetime import datetime
 
