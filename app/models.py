@@ -152,5 +152,5 @@ class Alerte(db.Model):
                                         self.ref_materiel)
 
 @login_manager.user_loader
-def load_user(email):
-    return Utilisateur.query.get(email=email)
+def load_user(user_id):
+    return Utilisateur.query.get(user_id)

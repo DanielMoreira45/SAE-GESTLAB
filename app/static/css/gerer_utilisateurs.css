@@ -60,13 +60,15 @@ select{
 .user_infos section {
     background-color: white;
     padding: 1em;
-    margin: 1.5em;
+    margin-left: 1.5em;
+    height: 51.5vh;
+    width: 40vw;
     border-radius: 40px;
 }
 
 .user {
-    height: 50vh;
-    width: 20vw;
+    height: 55vh;
+    width: 25vw;
     overflow: auto;
     background-color: white;
     border: 2px white solid;
@@ -152,7 +154,7 @@ label{
 .droits_modif{
     display: block;
     text-align: center;
-    padding: 1em;
+    padding-top: 3em;
 }
 
 .button_modify{

@@ -41,12 +41,15 @@ def new_commande():
 
 @app.route("/admin/manage/")
 # @login_required
-def admin_manage():
-    user = Utilisateur.query.get(1)
+def admin_manage(user_id=1):
+    user = Utilisateur.query.get(user_id)
     login_user(user)
     liste = Utilisateur.query.all()
     roles = Role.query.all()
-    return render_template("gerer_utilisateurs.html", liste_users=liste, roles=roles)
+    return render_template("gerer_utilisateurs.html",
+                           liste_users=liste,
+                           roles=roles,
+                           current_user_selected=user)
 
 @app.route("/get_user_info/<int:user_id>", methods=['GET'])
 def get_user_info(user_id):
@@ -70,8 +73,6 @@ def get_user_info(user_id):
 def update_user():
     les_roles = {'Administrateur': 1, 'Professeur': 2, 'Etablissement': 3}
     f = UserForm()
-    f.id_role.choices = [(1, 'Administrateur'), (2, 'Professeur'),
-                         (3, 'Etablissement')]
     user_modified = Utilisateur.query.get(f.id.data)
     user_modified.nom = f.nom.data
     user_modified.prenom = f.prenom.data

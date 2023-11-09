@@ -12,7 +12,7 @@
             <div class="user_item">
                 <img src="{{ url_for('static', filename='images/user.png') }}" alt="Un utilisateur">
                 <input type="button" value="{{ user.nom }} {{ user.prenom }}" class="user_bouton" id="{{ user.id }}"
-                    onclick="edit(this.id)">
+                    onclick="edit(this.id)" autofocus>
             </div>
             {% endfor %}
         </section>
@@ -20,27 +20,38 @@
     <form action="{{ url_for('update_user') }}" role="form" method="POST" class="user_infos">
         <section>
             <div class="nom_prenom">
-                <input type="hidden" value="{{ current_user.id }}" name="id" id="id">
+                <input type="hidden" value="{{ current_user_selected.id }}" name="id" id="id">
                 <label for="nom">Nom :</label>
-                <input name="nom" id="nom" type="text" value="{{ current_user.nom }}">
+                <input name="nom" id="nom" type="text" value="{{ current_user_selected.nom }}">
                 <label for="prenom">Prénom :</label>
-                <input name="prenom" id="prenom" type="text" value="{{ current_user.prenom }}">
+                <input name="prenom" id="prenom" type="text" value="{{ current_user_selected.prenom }}">
             </div>
             <div class="psswd_role">
                 <label for="password">Mot de passe :</label>
-                <input name="password" id="password" type="password" value="{{ current_user.password }}">
+                <input name="password" id="password" type="password" value="{{ current_user_selected.password }}">
                 <label for="role-select">Rôle :</label>
                 <select name="id_role" id="id_role">
                     {% for role in roles %}
+                    {% if current_user_selected.id_role == role.id %}
+                    <option value="{{ role.id }}" selected>{{ role.intitule }}</option>
+                    {% else %}
                     <option value="{{ role.id }}">{{ role.intitule }}</option>
+                    {% endif %}
                     {% endfor %}
                 </select>
                 <label class="droits_modif">Droits de modification</label>
                 <div class="button_modify">
-                    <input type="radio" name="modifications" id="yes_choice" value="True">
+                    {% if current_user_selected.modifications == True %}
+                    <input type="radio" name="modifications" id="yes_choice" value="True" checked>
                     <label for="yes_choice">Oui</label>
                     <input type="radio" name="modifications" id="no_choice" value="False">
                     <label for="no_choice">Non</label>
+                    {% else %}
+                    <input type="radio" name="modifications" id="yes_choice" value="True">
+                    <label for="yes_choice">Oui</label>
+                    <input type="radio" name="modifications" id="no_choice" value="False" checked>
+                    <label for="no_choice">Non</label>
+                    {% endif %}
                 </div>
             </div>
             <button type="submit" id="save_button">Enregistrer</button>
@@ -48,14 +59,6 @@
     </form>
 </div>
 <script>
-    document.addEventListener("DOMContentLoaded", function() {
-        var firstUserButton = document.querySelector(".user_bouton");
-        if (firstUserButton) {
-            var userId = firstUserButton.getAttribute("id");
-            edit(userId);
-        }
-    });
-
     function edit(id) {
         var inputId = document.getElementById("id");
         var inputNom = document.getElementById("nom");
@@ -81,14 +84,12 @@
                     }
                     roleSelect.appendChild(option);
                 }
-                var droitui = document.getElementById("yes_choice");
-                var droitno = document.getElementById("no_choice");
                 if (data.modifications === true) {
-                    droitui.checked = true;
-                    droitno.checked = false;
+                    var droit = document.getElementById("yes_choice");
+                    droit.checked = true;
                 } else {
-                    droitui.checked = false;
-                    droitno.checked = true;
+                    var droit = document.getElementById("no_choice");
+                    droit.checked = true;
                 }
             })
             .catch(error => console.error('Erreur : ' + error));
