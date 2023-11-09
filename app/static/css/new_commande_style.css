@@ -81,6 +81,7 @@ main h1{
 
 #commander_bouton:hover {
     background-color: #edb742;
+    cursor: pointer;
 }
 
 #block-bouton {
@@ -97,8 +98,4 @@ main {
     min-height: 1.5em;
     margin: auto;
     font-weight: bold;
-}
-
-#block-msg {
-    padding-top: 1em;
 }
