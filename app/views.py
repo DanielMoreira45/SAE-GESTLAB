@@ -114,8 +114,12 @@ def search(recherche, domaine, categorie, statut):
     liste_commandes2 = []
     for commande in liste_commandes:
         liste_commandes2.append(get_command_info(commande.numero, False))
-    #return render_template("gerer_commandes.html", liste_commandes_search=liste_commandes)
-    return jsonify({'liste':liste_commandes2})
+    
+    liste_categorie = []
+    for categorie in Categorie.query.all():
+        if categorie.domaine.nom == domaine or domaine == "Domaine":
+            liste_categorie.append(categorie.nom)
+    return jsonify({'liste_commandes':liste_commandes2, 'liste_categories':liste_categorie})
 
 
 @app.route('/d/')
@@ -137,11 +141,7 @@ def ecole_home():
     return render_template("ecole.html")
 
 
-'''            {% for command in liste_commandes %}
-            <li>
-                <button id="{{ command.numero }}" class="command_button" onclick="edit(this.id)">
-                    <img src="{{ url_for('static', filename='images/black_square.png') }}" alt="image commande">
-                    <p>{{ command.materiel.nom }}</p>
-                </button>
-            </li>
-            {% endfor %}'''
+'''{% for categorie in liste_categories %}
+                    <option id="categorie" value="{{ categorie.nom }}" onclick="search()">{{ categorie.nom }}</option>
+                {% endfor %}
+                '''

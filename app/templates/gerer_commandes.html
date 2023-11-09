@@ -17,9 +17,6 @@
             </select>
             <select name="categorie" id="categorie-select">
                 <option id="categorie" value="Categorie" onclick="search()">-- Categorie --</option>
-                {% for categorie in liste_categories %}
-                    <option id="categorie" value="{{ categorie.nom }}" onclick="search()">{{ categorie.nom }}</option>
-                {% endfor %}
             </select>
             <select name="statut" id="statut-select">
                 <option id="statut" value="Statut" onclick="search()">-- Statut --</option>
@@ -66,11 +63,14 @@
     </section>
     <script>
         document.addEventListener("DOMContentLoaded", function() {
+            console.log("")
             var firstCommandButton = document.querySelector(".command_button");
             if (firstCommandButton) {
                 var commandRef = firstCommandButton.getAttribute("id");
                 edit(commandRef);
             }
+            search();
+            
         });
     
         function edit(id) {
@@ -97,12 +97,13 @@
     function search(){
         recherche = document.getElementById("recherche").value
         domaine = document.getElementById("domaine-select").value
-        categorie = document.getElementById("categorie-select").value
+        categorie_selected = document.getElementById("categorie-select").value
         statut = document.getElementById("statut-select").value
-        fetch('/search/'+recherche+' ,'+domaine+','+categorie+','+statut)
+        fetch('/search/'+recherche+' ,'+domaine+','+categorie_selected+','+statut)
             .then(response => response.json())
             .then(data => {  
-                var liste_commandes_search = data.liste;
+
+                var liste_commandes_search = data.liste_commandes;
                 var ul = document.getElementById("liste")
                 ul.innerHTML = "";
                 liste_commandes_search.forEach(function(commande) {
@@ -123,6 +124,27 @@
                     li.appendChild(button)
                     ul.appendChild(li);  
                 });
+                document.getElementById("categorie-select").innerHTML = "";
+                var option = document.createElement("option");
+                option.id = "categorie";
+                option.value = "Categorie";
+                option.textContent = "-- Categorie --";
+                option.onclick = function () {
+                    search();
+                }
+                document.getElementById("categorie-select").appendChild(option);
+                data.liste_categories.forEach(function(categorie){
+                    console.log(categorie)
+                    var option = document.createElement("option");
+                    option.id = "categorie";
+                    option.value = categorie;
+                    option.textContent = categorie;
+                    option.onclick = function () {
+                        search();
+                    }
+                    document.getElementById("categorie-select").appendChild(option);
+                });
+                document.getElementById("categorie-select").value = categorie_selected
             })
             .catch(error => console.error('Erreur : ' + error));  
     }
