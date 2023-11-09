@@ -74,24 +74,18 @@
 </div>
 <script>
 
-function change() {
-        console.log('aled');
+    function change() {
         const searchQuery = document.getElementById('search').value;
         const selectedDomaine = document.getElementById('Domaine').value;
         const selectedCategorie = document.getElementById('Categorie').value;
-
+        
         fetch(`/get_categories?domaine=${selectedDomaine}`)
             .then(response => response.json())
             .then(data => {
-                console.log("data : ", data);
                 dataCategories = data.categories;
                 const CatList = document.getElementById('Categorie');
                 CatList.innerHTML = "";
 
-                const optionC = document.createElement('option');
-                optionC.value = "";
-                optionC.textContent = "Categorie";
-                optionC.selected = true;
                 CatList.appendChild(optionC);
                 dataCategories.forEach(categorie => {
                     const option = document.createElement('option');
@@ -101,17 +95,16 @@ function change() {
                         option.selected = true;
                     }
                     CatList.appendChild(option);
-                });
-                
+                });                
+                ListeMateriauxMAJ();
             })
             .catch(error => console.error('Erreur : ' + error));
-        ListeMateriauxMAJ(selectedCategorie);
     }
 
-    function ListeMateriauxMAJ(selectedCategorie) {
+    function ListeMateriauxMAJ() {
         const searchQuery = document.getElementById('search').value;
         const selectedDomaine = document.getElementById('Domaine').value;
-
+        const selectedCategorie = document.getElementById('Categorie').value;
         // Envoyer une requête Ajax pour mettre à jour la liste de matériaux
         fetch(`/consult/recherche?search=${searchQuery}&domaine=${selectedDomaine}&categorie=${selectedCategorie}`)
             .then(response => response.json())
@@ -141,9 +134,6 @@ function change() {
             })
             .catch(error => console.error('Erreur : ' + error));
     }
-
-
-    
 
     function edit(id) {
         var labelNom = document.getElementById("nom");
