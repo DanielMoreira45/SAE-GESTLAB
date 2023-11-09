@@ -87,6 +87,13 @@ class Categorie(db.Model):
 
     __table_args__ = (db.UniqueConstraint('code', 'code_domaine'),)
 
+    def serialize(self):
+        return {
+            'codeC': self.code,
+            'nom': self.nom,
+            'codeD': self.code_domaine,
+        }
+
     def __repr__(self):
         return "<Categorie (%d) %s %r>" % (self.code, self.nom, self.code_domaine)
 

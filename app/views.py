@@ -43,8 +43,6 @@ def login():
     elif f.validate_on_submit():
         user = f.get_authenticated_user()
         if user:
-            print(login_user(user))
-            print()
             if user.is_prof():
                 next = f.next.data or url_for("prof_home")
             elif user.is_admin():
@@ -81,12 +79,10 @@ def consult():
 
 @app.route('/consult/recherche')
 def update_materials():
-    domaines = Domaine.query.order_by(Domaine.nom).all()
     categories = Categorie.query.order_by(Categorie.nom).all()
     selected_domaine = request.args.get('domaine')
     selected_categorie = request.args.get('categorie')
     search = request.args.get('search')
-
     liste_materiel = Materiel.query.order_by(Materiel.nom).all()
 
     if (selected_categorie):        
@@ -94,17 +90,22 @@ def update_materials():
     
     if (selected_domaine):
         liste_materiel = [materiel for materiel in liste_materiel if materiel.code_domaine == int(selected_domaine)]
-    
+       
     if (search):
-        print("search")
-        print(search)
+        liste_materiel = [materiel for materiel in liste_materiel if search.lower() in materiel.nom.lower()]
     
-    liste_temp = []
-    for materiel in liste_materiel:
-        liste_temp.append(materiel.serialize())
-    liste_materiel = liste_temp
-
+    liste_materiel = [materiel.serialize() for materiel in liste_materiel]
+    
     return jsonify({'materiels': liste_materiel})
+
+@app.route('/get_categories')
+def get_categories():
+    selected_domaine = request.args.get('domaine')
+    categories = Categorie.query.order_by(Categorie.nom).all()
+    if (selected_domaine):
+        categories = [categorie for categorie in categories if categorie.code_domaine == int(selected_domaine)]
+    categories = [categorie.serialize() for categorie in categories]
+    return jsonify({'categories': categories})
 
 @app.route('/c/')
 def delivery():
@@ -127,7 +128,6 @@ def prof_home():
 @app.route("/ecole/home/", methods=("GET","POST",))
 @login_required
 def ecole_home():
-    print()
     return render_template("ecole.html")
 
 @app.route("/get_info_Materiel/<int:reference>", methods=["GET"])

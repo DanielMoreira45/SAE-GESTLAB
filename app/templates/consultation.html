@@ -74,19 +74,52 @@
 </div>
 <script>
 
-    function change(){
+function change() {
+        console.log('aled');
         const searchQuery = document.getElementById('search').value;
         const selectedDomaine = document.getElementById('Domaine').value;
         const selectedCategorie = document.getElementById('Categorie').value;
+
+        fetch(`/get_categories?domaine=${selectedDomaine}`)
+            .then(response => response.json())
+            .then(data => {
+                console.log("data : ", data);
+                dataCategories = data.categories;
+                const CatList = document.getElementById('Categorie');
+                CatList.innerHTML = "";
+
+                const optionC = document.createElement('option');
+                optionC.value = "";
+                optionC.textContent = "Categorie";
+                optionC.selected = true;
+                CatList.appendChild(optionC);
+                dataCategories.forEach(categorie => {
+                    const option = document.createElement('option');
+                    option.value = categorie.codeC;
+                    option.textContent = categorie.nom;
+                    if (option.value == selectedCategorie) {
+                        option.selected = true;
+                    }
+                    CatList.appendChild(option);
+                });
+                
+            })
+            .catch(error => console.error('Erreur : ' + error));
+        ListeMateriauxMAJ(selectedCategorie);
+    }
+
+    function ListeMateriauxMAJ(selectedCategorie) {
+        const searchQuery = document.getElementById('search').value;
+        const selectedDomaine = document.getElementById('Domaine').value;
 
         // Envoyer une requête Ajax pour mettre à jour la liste de matériaux
         fetch(`/consult/recherche?search=${searchQuery}&domaine=${selectedDomaine}&categorie=${selectedCategorie}`)
             .then(response => response.json())
             .then(data => {
-                data2 = data['materiels'];
+                dataMateriels = data.materiels;
                 const materielsList = document.getElementById('materielsList');
                 materielsList.innerHTML = "";
-                data2.forEach(material => {
+                dataMateriels.forEach(material => {
                     const materialItem = document.createElement('li');
 
                     const div = document.createElement('div');
@@ -97,17 +130,20 @@
                     img.alt = material.nom;
                     const h2 = document.createElement('h2');
                     h2.id = material.reference;
-                    h2.onclick = function() { edit(this.id) };
+                    h2.onclick = function () { edit(this.id) };
                     h2.textContent = material.nom;
-                    
+
                     div.appendChild(img);
                     div.appendChild(h2);
                     materialItem.appendChild(div);
                     materielsList.appendChild(materialItem);
-            });
-        })
-        .catch(error => console.error('Erreur : ' + error));
+                });
+            })
+            .catch(error => console.error('Erreur : ' + error));
     }
+
+
+    
 
     function edit(id) {
         var labelNom = document.getElementById("nom");
@@ -119,37 +155,24 @@
         var labelComplements = document.getElementById("complements");
         var labelImage = document.getElementById("image");
 
-        if (labelQuanR) {
-            fetch('/get_info_Materiel/' + id)
-                .then(response => response.json())
-                .then(data => {
-                    labelNom.textContent = data.nom;
-                    labelDomaine.textContent = "Domaine : " + data.domaine;
-                    labelCategorie.textContent = "Catégorie : " + data.categorie;
-                    labelQuanT.textContent = "Quantité totale : " + data.quantite_global;
-                    labelReference.textContent = "Reference : " + data.reference;
+
+        fetch('/get_info_Materiel/' + id)
+            .then(response => response.json())
+            .then(data => {
+                labelNom.textContent = data.nom;
+                labelDomaine.textContent = "Domaine : " + data.domaine;
+                labelCategorie.textContent = "Catégorie : " + data.categorie;
+                labelQuanT.textContent = "Quantité totale : " + data.quantite_global;
+                labelReference.textContent = "Reference : " + data.reference;
+                if (labelQuanR) {
                     labelQuanR.textContent = "Quantité restante : " + data.quantite_restante;
-                    labelComplements.textContent = data.complements;
-                    labelImage.src = "data:image/png;base64," + data.image;
-                    labelImage.alt = data.nom;
+                }
+                labelComplements.textContent = data.complements;
+                labelImage.src = "data:image/png;base64," + data.image;
+                labelImage.alt = data.nom;
 
-                })
-                .catch(error => console.error('Erreur : ' + error));
-        } else {
-            fetch('/get_info_Materiel/' + id)
-                .then(response => response.json())
-                .then(data => {
-                    labelNom.textContent = data.nom;
-                    labelDomaine.textContent = "Domaine : " + data.domaine;
-                    labelCategorie.textContent = "Catégorie : " + data.categorie;
-                    labelQuanT.textContent = "Quantité totale : " + data.quantite_global;
-                    labelReference.textContent = "Reference : " + data.reference;
-                    labelComplements.textContent = data.complements;
-                    labelImage.src = "data:image/png;base64," + data.image;
-
-                })
-                .catch(error => console.error('Erreur : ' + error));
-        }
+            })
+            .catch(error => console.error('Erreur : ' + error));
 
     }
 </script>
