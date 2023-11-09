@@ -140,8 +140,11 @@ def prof_home():
 def ecole_home():
     return render_template("ecole.html")
 
-
-'''{% for categorie in liste_categories %}
-                    <option id="categorie" value="{{ categorie.nom }}" onclick="search()">{{ categorie.nom }}</option>
-                {% endfor %}
-                '''
+'''                    var option = document.createElement("option");
+                    option.id = "categorie";
+                    option.value = "Categorie";
+                    option.textContent = "-- Categorie --";
+                    option.onclick = function () {
+                        search();
+                    }
+                    document.getElementById("categorie-select").appendChild(option);'''

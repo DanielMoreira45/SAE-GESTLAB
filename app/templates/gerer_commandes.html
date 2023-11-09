@@ -63,7 +63,6 @@
     </section>
     <script>
         document.addEventListener("DOMContentLoaded", function() {
-            console.log("")
             var firstCommandButton = document.querySelector(".command_button");
             if (firstCommandButton) {
                 var commandRef = firstCommandButton.getAttribute("id");
@@ -94,59 +93,56 @@
                 .catch(error => console.error('Erreur : ' + error));  
         }
 
-    function search(){
-        recherche = document.getElementById("recherche").value
-        domaine = document.getElementById("domaine-select").value
-        categorie_selected = document.getElementById("categorie-select").value
-        statut = document.getElementById("statut-select").value
-        fetch('/search/'+recherche+' ,'+domaine+','+categorie_selected+','+statut)
-            .then(response => response.json())
-            .then(data => {  
+        function search(){
+            recherche = document.getElementById("recherche").value
+            domaine = document.getElementById("domaine-select").value
+            categorie_selected = document.getElementById("categorie-select").value
+            statut = document.getElementById("statut-select").value
+            fetch('/search/'+recherche+' ,'+domaine+','+categorie_selected+','+statut)
+                .then(response => response.json())
+                .then(data => {  
 
-                var liste_commandes_search = data.liste_commandes;
-                var ul = document.getElementById("liste")
-                ul.innerHTML = "";
-                liste_commandes_search.forEach(function(commande) {
-                    var li = document.createElement("li");
-                    var button = document.createElement("button")
-                    button.id = commande.numero
-                    button.className = "command_button"
-                    button.onclick = function () {
-                        edit(this.id);
+                    var liste_commandes_search = data.liste_commandes;
+                    var ul = document.getElementById("liste")
+                    ul.innerHTML = "";
+                    liste_commandes_search.forEach(function(commande) {
+                        var li = document.createElement("li");
+                        var button = document.createElement("button")
+                        button.id = commande.numero
+                        button.className = "command_button"
+                        button.onclick = function () {
+                            edit(this.id);
+                        }
+                        var p = document.createElement("p");
+                        p.textContent = commande.nom;
+                        var image = document.createElement("img");
+                        image.src = "{{ url_for('static', filename='images/black_square.png') }}";
+                        image.alt = "image commande";
+                        button.appendChild(image);
+                        button.appendChild(p)
+                        li.appendChild(button)
+                        ul.appendChild(li);  
+                    });
+                    document.getElementById("categorie-select").innerHTML = '<option id="categorie" value="Categorie" onclick="search()">-- Categorie --</option>';
+                    data.liste_categories.forEach(function(categorie){
+                        var option = document.createElement("option");
+                        option.id = "categorie";
+                        option.value = categorie;
+                        option.textContent = categorie;
+                        option.onclick = function () {
+                            search();
+                        }
+                        document.getElementById("categorie-select").appendChild(option);
+                    });
+                    if (data.liste_categories.includes(categorie_selected)){
+                        document.getElementById("categorie-select").value = categorie_selected;
                     }
-                    var p = document.createElement("p");
-                    p.textContent = commande.nom;
-                    var image = document.createElement("img");
-                    image.src = "{{ url_for('static', filename='images/black_square.png') }}";
-                    image.alt = "image commande";
-                    button.appendChild(image);
-                    button.appendChild(p)
-                    li.appendChild(button)
-                    ul.appendChild(li);  
-                });
-                document.getElementById("categorie-select").innerHTML = "";
-                var option = document.createElement("option");
-                option.id = "categorie";
-                option.value = "Categorie";
-                option.textContent = "-- Categorie --";
-                option.onclick = function () {
-                    search();
-                }
-                document.getElementById("categorie-select").appendChild(option);
-                data.liste_categories.forEach(function(categorie){
-                    console.log(categorie)
-                    var option = document.createElement("option");
-                    option.id = "categorie";
-                    option.value = categorie;
-                    option.textContent = categorie;
-                    option.onclick = function () {
-                        search();
+                    else{
+                        document.getElementById("categorie-select").value = "Categorie";
                     }
-                    document.getElementById("categorie-select").appendChild(option);
-                });
-                document.getElementById("categorie-select").value = categorie_selected
-            })
-            .catch(error => console.error('Erreur : ' + error));  
-    }
+                })
+                .catch(error => console.error('Erreur : ' + error));  
+            
+        }
     </script>
 {% endblock %}
