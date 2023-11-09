@@ -85,7 +85,7 @@ class CommandeForm(FlaskForm):
     with app.app_context():
         choix_materiel = get_liste_materiel()
         choix_materiel.insert(0, ("", "-- Choisir le matériel --"))
-        materiel_field = SelectField('Matériel', choices=choix_materiel, validators=[DataRequired("Merci de sélectionner une option.")], default="default")
+        materiel_field = SelectField('Matériel', choices=choix_materiel, validators=[DataRequired("Merci de sélectionner une option.")], default="")
         quantity_field = IntegerField("Quantité", validators=[DataRequired(), NumberRange(1, 1000)], default=1)
 
 @app.route("/delivery/new/")
