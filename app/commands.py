@@ -27,7 +27,6 @@ def loaddb(filename):
     liste_categories = data["Categorie"]
     liste_materiels = data["Materiel"]
     liste_commandes = data["Commande"]
-    # liste_commander = data["Commander"]
     liste_alertes = data["Alerte"]
 
     for dico_role in liste_roles:
@@ -122,22 +121,11 @@ def loaddb(filename):
                          date_reception=date_reception,
                          statut=dico_commandes["statut"],
                          id_util=dico_commandes["idUti"],
+                         quantite_commandee=dico_commandes["qteCommandee"],
                          ref_materiel=dico_commandes["refMateriel"])
             db.session.add(o)
             commandes[num_commande] = o
     db.session.commit()
-
-    # commander = dict()
-    # for dico_commander in liste_commander:
-    #     num_comm = dico_commander["numeroCommande"]
-    #     if num_comm not in commander:
-    #         o = Commander(numero_commande=num_comm,
-    #                       quantite_commandee=dico_commander["qteCommandee"],
-    #                       id_util=dico_commander["idUti"],
-    #                       ref_materiel=dico_commander["refMateriel"])
-    #         db.session.add(o)
-    #         commander[num_comm] = o
-    # db.session.commit()
 
     for dico_alertes in liste_alertes:
         o = Alerte(id=dico_alertes["idAlerte"],

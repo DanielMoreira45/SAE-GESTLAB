@@ -87,18 +87,11 @@ Materiel:
 
 
 Commande:
-  - {numeroCommande: 1, dateCommande: '2023-10-23', dateReception: '2023-10-30', statut: 'Livrée', idUti: 2, refMateriel: 1}
-  - {numeroCommande: 2, dateCommande: '2023-10-23', dateReception: '2023-10-30', statut: 'Livrée', idUti: 2, refMateriel: 2}
-  - {numeroCommande: 3, dateCommande: '2023-10-25', dateReception: '2023-11-25', statut: 'En cours', idUti: 3, refMateriel: 14}
-  - {numeroCommande: 4, dateCommande: '2023-10-25', dateReception: '2023-11-25', statut: 'En cours', idUti: 2, refMateriel: 18}
-  - {numeroCommande: 5, dateCommande: '2023-10-27', dateReception: '2023-11-23', statut: 'En cours', idUti: 3, refMateriel: 33}
-
-Commander:
-  - {numeroCommande: 1, idUti: 2, refMateriel: 1, qteCommandee: 10}
-  - {numeroCommande: 2, idUti: 2, refMateriel: 2, qteCommandee: 10}
-  - {numeroCommande: 3, idUti: 3, refMateriel: 14, qteCommandee: 10}
-  - {numeroCommande: 4, idUti: 2, refMateriel: 18, qteCommandee: 10}
-  - {numeroCommande: 5, idUti: 3, refMateriel: 33, qteCommandee: 10}
+  - {numeroCommande: 1, dateCommande: '2023-10-23', dateReception: '2023-10-30', statut: 'Livrée', idUti: 2, refMateriel: 1, qteCommandee: 10}
+  - {numeroCommande: 2, dateCommande: '2023-10-23', dateReception: '2023-10-30', statut: 'Livrée', idUti: 2, refMateriel: 2, qteCommandee: 10}
+  - {numeroCommande: 3, dateCommande: '2023-10-25', dateReception: '2023-11-25', statut: 'En cours', idUti: 3, refMateriel: 14, qteCommandee: 10}
+  - {numeroCommande: 4, dateCommande: '2023-10-25', dateReception: '2023-11-25', statut: 'En cours', idUti: 2, refMateriel: 18, qteCommandee: 10}
+  - {numeroCommande: 5, dateCommande: '2023-10-27', dateReception: '2023-11-23', statut: 'En cours', idUti: 3, refMateriel: 33, qteCommandee: 10}
 
 Alerte:
   - {idAlerte: 1, refMateriel: 25, commentaire: 'Alerte de quantité'}
