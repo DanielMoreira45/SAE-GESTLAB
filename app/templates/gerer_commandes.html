@@ -8,20 +8,20 @@
     <h1>Gérer les commandes</h1>
     <section class="search_buttons">
         <form class="search" role="search" method="POST">
-            <input type="search" name="recherche" id="recherche" placeholder="Rechercher" oninput="search()">
+            <input type="search" name="recherche" id="recherche" placeholder="Rechercher" oninput="update_categorie()">
             <select name="domaine" id="domaine-select">
-                <option id="domaine" value="Domaine" onclick="search()">-- Domaine --</option>
+                <option id="domaine" value="Domaine" onclick="update_categorie()">-- Domaine --</option>
                 {% for domaine in liste_domaines %}
-                    <option id="domaine" value="{{ domaine.nom }}" onclick="search()">{{ domaine.nom }}</option>
+                    <option id="domaine" value="{{ domaine.nom }}" onclick="update_categorie()">{{ domaine.nom }}</option>
                 {% endfor %}
             </select>
             <select name="categorie" id="categorie-select">
-                <option id="categorie" value="Categorie" onclick="search()">-- Categorie --</option>
+                <option id="categorie" value="Categorie" onclick="update_categorie()">-- Categorie --</option>
             </select>
             <select name="statut" id="statut-select">
-                <option id="statut" value="Statut" onclick="search()">-- Statut --</option>
+                <option id="statut" value="Statut" onclick="update_categorie()">-- Statut --</option>
                 {% for statut in liste_statuts %}
-                    <option id="statut" value="{{ statut }}" onclick="search()">{{ statut }}</option>
+                    <option id="statut" value="{{ statut }}" onclick="update_categorie()">{{ statut }}</option>
                 {% endfor %}
             </select>
             <input type="submit" name="btn-reset" value="reset" class="yellow-button">
@@ -68,7 +68,7 @@
                 var commandRef = firstCommandButton.getAttribute("id");
                 edit(commandRef);
             }
-            search();
+            update_categorie();
             
         });
     
@@ -101,7 +101,6 @@
             fetch('/search/'+recherche+' ,'+domaine+','+categorie_selected+','+statut)
                 .then(response => response.json())
                 .then(data => {  
-
                     var liste_commandes_search = data.liste_commandes;
                     var ul = document.getElementById("liste")
                     ul.innerHTML = "";
@@ -122,8 +121,20 @@
                         button.appendChild(p)
                         li.appendChild(button)
                         ul.appendChild(li);  
+                        
                     });
-                    document.getElementById("categorie-select").innerHTML = '<option id="categorie" value="Categorie" onclick="search()">-- Categorie --</option>';
+                })
+        }
+
+        function update_categorie(){
+            recherche = document.getElementById("recherche").value
+            domaine = document.getElementById("domaine-select").value
+            categorie_selected = document.getElementById("categorie-select").value
+            statut = document.getElementById("statut-select").value
+            fetch('/search/'+recherche+' ,'+domaine+','+categorie_selected+','+statut)
+                .then(response => response.json())
+                .then(data => {  
+                    document.getElementById("categorie-select").innerHTML = '<option id="categorie" value="Categorie" onclick="update_categorie()">-- Categorie --</option>';
                     data.liste_categories.forEach(function(categorie){
                         var option = document.createElement("option");
                         option.id = "categorie";
@@ -140,6 +151,7 @@
                     else{
                         document.getElementById("categorie-select").value = "Categorie";
                     }
+                    search()
                 })
                 .catch(error => console.error('Erreur : ' + error));  
             
