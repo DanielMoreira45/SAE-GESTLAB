@@ -168,7 +168,7 @@ def get_categories():
     return jsonify({'categories': categories})
 
 
-@app.route("/admin/commandes/", methods=("GET", "POST"))
+@app.route("/ecole/commandes/", methods=("GET", "POST"))
 def delivery():
     liste_commandes = Commande.query.all()
     liste_domaines = Domaine.query.order_by(Domaine.nom).all()
@@ -189,8 +189,8 @@ def get_command_info(numero, json):
             'domaine': command.materiel.domaine.nom,
             'categorie': command.materiel.categorie.nom,
             'statut': command.statut,
-            #'quantite': command.quantite_commandee,
-            #'unite': command.materiel.unite,
+            'quantite': command.quantite_commandee,
+            'unite': command.materiel.unite,
             'user': command.utilisateur.nom
         }
         if json == "True":

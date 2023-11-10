@@ -90,7 +90,9 @@
                     labelDomaine.textContent = "Domaine : "+data.domaine;
                     labelCategorie.textContent = "Catégorie : "+data.categorie;  
                     labelStatut.textContent = "Statut : "+data.statut;   
-                    //labelQuantite.textContent = "Quantité commandée : "+data.quantite+" "+data.unite;
+                    if (data.unite == null){
+                        labelQuantite.textContent = "Quantité commandée : "+data.quantite
+                    } else {labelQuantite.textContent = "Quantité commandée : "+data.quantite+" "+data.unite;}
                     labelUser.textContent = "Commande effectuée par "+data.user;
                     
                     if (data.statut == "A valider"){

@@ -160,8 +160,8 @@ class Commande(db.Model):
     date_reception = db.Column(db.Date)
     statut = db.Column(db.String(100))
     quantite_commandee = db.Column(db.Integer)
-    id_util = db.Column(db.Integer, db.ForeignKey("utilisateur.id"), primary_key=True)
-    ref_materiel = db.Column(db.Integer, db.ForeignKey("materiel.reference"), primary_key=True)
+    id_util = db.Column(db.Integer, db.ForeignKey("utilisateur.id"))
+    ref_materiel = db.Column(db.Integer, db.ForeignKey("materiel.reference"))
     utilisateur = db.relationship("Utilisateur",
                                   backref=db.backref("commandes",
                                                      lazy="dynamic"))
