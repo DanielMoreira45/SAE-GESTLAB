@@ -39,7 +39,7 @@ div.description{
     margin-bottom: 2vh;
     background-color: white;
     margin-left: 1rem;
-    max-width: 60vw;
+    width: 50vw;
     border: none;
     border-radius: 9px;
 }
@@ -171,9 +171,10 @@ div.item_mat h2{
 #Categorie, #Domaine{
     border-radius: 4px;
     border: none;
-    font-size: 3vh;
+    font-size: 2vh;
     height: 5vh;
     width: 13vw;
+    margin: 0 0.5vh;
 }
 div.recherche {
     display: flex;
@@ -208,4 +209,15 @@ div.recherche>*{
 #Categorie>option, #Domaine>option{
     border-radius: 5px;
     border: none;
+}
+
+#search{
+    display: flex;
+    align-items: center;
+    justify-content: space-evenly;
+    width: 72vw;
+}
+
+#search::placeholder{
+    font-size: 1.2rem;
 }
