@@ -144,18 +144,24 @@ def update_materials():
     selected_categorie = request.args.get('categorie')
     search = request.args.get('search')
     liste_materiel = Materiel.query.order_by(Materiel.nom).all()
-
+    print(1)
+    print(liste_materiel)
     if (selected_categorie):        
         liste_materiel = [materiel for materiel in liste_materiel if materiel.code_categorie == int(selected_categorie)]
-    
+    print(2)
+    print(liste_materiel)
     if (selected_domaine):
         liste_materiel = [materiel for materiel in liste_materiel if materiel.code_domaine == int(selected_domaine)]
-       
+    print(3)
+    print(liste_materiel)
     if (search):
+        print('ok')
         liste_materiel = [materiel for materiel in liste_materiel if search.lower() in materiel.nom.lower()]
-    
+    print("4" + search)
+    print(liste_materiel)
     liste_materiel = [materiel.serialize() for materiel in liste_materiel]
-    
+    print(5)
+    print(len(liste_materiel))
     return jsonify({'materiels': liste_materiel})
 
 @app.route('/get_categories')

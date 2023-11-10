@@ -8,7 +8,7 @@
 {% if current_user.is_prof %}
 <h1>Consulter le matériel</h1>
 <form id="search" action="recherche" role="search" method="post">
-    <input type="search" name="search" id="search" placeholder="Rechercher un matériel ..." oninput="change()">
+    <input type="search" name="search" id="searchinput" placeholder="Rechercher un matériel ..." oninput="change()">
     <select name="Domaine" id="Domaine" onchange="change()">
         <option value="">Domaine</option>
         {% for domaine in domaines %}
@@ -60,7 +60,6 @@
                 <img id="image" src="data:image/png;base64,{{ current_mat.get_image() }}" alt="{{ current_mat.nom }}">
                 <p id="complements">{{ current_mat.complements }}</p>
             </div>
-
         </div>
         <div class="button">
             {% if current_user.modifications == True %}
@@ -75,7 +74,8 @@
 <script>
 
     function change() {
-        const searchQuery = document.getElementById('search').value;
+        console.log("change");
+        const searchQuery = document.getElementById('searchinput').value;
         const selectedDomaine = document.getElementById('Domaine').value;
         const selectedCategorie = document.getElementById('Categorie').value;
         
@@ -107,13 +107,15 @@
     }
 
     function ListeMateriauxMAJ() {
-        const searchQuery = document.getElementById('search').value;
+        const searchQuery = document.getElementById('searchinput').value;
         const selectedDomaine = document.getElementById('Domaine').value;
         const selectedCategorie = document.getElementById('Categorie').value;
+        console.log("aled");
         // Envoyer une requête Ajax pour mettre à jour la liste de matériaux
         fetch(`/consult/recherche?search=${searchQuery}&domaine=${selectedDomaine}&categorie=${selectedCategorie}`)
             .then(response => response.json())
             .then(data => {
+                console.log("data materiaux :", data);
                 dataMateriels = data.materiels;
                 const materielsList = document.getElementById('materielsList');
                 materielsList.innerHTML = "";
