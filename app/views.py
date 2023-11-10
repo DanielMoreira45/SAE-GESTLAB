@@ -92,7 +92,7 @@ def admin_add():
 def admin_manage(user_id=1):
     user = Utilisateur.query.get(user_id)
     login_user(user)
-    liste = Utilisateur.query.all()
+    liste = Utilisateur.query.order_by(Utilisateur.nom).all()
     roles = Role.query.all()
     return render_template("gerer_utilisateurs.html", liste_users=liste, roles=roles, current_user_selected=user)
 
@@ -144,18 +144,16 @@ def update_materials():
     selected_categorie = request.args.get('categorie')
     search = request.args.get('search')
     liste_materiel = Materiel.query.order_by(Materiel.nom).all()
-
     if (selected_categorie):        
         liste_materiel = [materiel for materiel in liste_materiel if materiel.code_categorie == int(selected_categorie)]
-    
+
     if (selected_domaine):
         liste_materiel = [materiel for materiel in liste_materiel if materiel.code_domaine == int(selected_domaine)]
-       
+
     if (search):
         liste_materiel = [materiel for materiel in liste_materiel if search.lower() in materiel.nom.lower()]
-    
+
     liste_materiel = [materiel.serialize() for materiel in liste_materiel]
-    
     return jsonify({'materiels': liste_materiel})
 
 @app.route('/get_categories')

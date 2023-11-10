@@ -9,8 +9,8 @@
     {% else %}
     <h1 id="bjr-admin">BONJOUR !</h1>
     {% endif %}
-    <form class="form-horizontal" role="form" method="POST" action="{{ url_for('ecole_home') }}">
-        <a href=""><button id="btn-navi"><img src="{{ url_for('static', filename='../static/images/materiel.png') }}" alt="">Consulter le matériel</button></a>
-        <a href="{{ url_for('delivery') }}"><button id="btn-navi"><img src="{{ url_for('static', filename='../static/images/commande.png') }}" alt="">Gérer les commandes</button></a> 
-    </form>
+    <div class="boutons">
+        <a href="{{ url_for('consult') }}"><button id="btn-navi"><img src="{{ url_for('static', filename='../static/images/materiel.png') }}" alt="">Consulter le matériel</button></a>
+        <a href=""><button id="btn-navi"><img src="{{ url_for('static', filename='../static/images/commande.png') }}" alt="Icone voir matériel">Gérer les commandes</button></a> 
+    </div>
 {% endblock %}
