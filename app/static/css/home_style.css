@@ -16,17 +16,21 @@ body {
     background-size: cover;
     background-repeat: no-repeat;
     background-attachment: fixed;
-    margin-top: 12%;
     font-family: "DM-Sans";
     background-color: black;
     color: white;
     text-align: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    height: 100vh;
 }
 
 header h1 {
     font-family: "AgrandirWide";
     font-size: 6em;
     margin-bottom: 0.2em;
+    margin-top: 0;
 }
 
 .h1-yellow-part {
