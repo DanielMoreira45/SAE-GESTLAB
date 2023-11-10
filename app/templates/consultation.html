@@ -7,8 +7,8 @@
 {% if current_user.is_authenticated %}
 {% if current_user.is_prof %}
 <h1>Consulter le matériel</h1>
-<form action="recherche" role="search" method="post">
-    <input type="search" name="search" id="search" placeholder="Recherche" oninput="change()">
+<form id="search" action="recherche" role="search" method="post">
+    <input type="search" name="search" id="search" placeholder="Rechercher un matériel ..." oninput="change()">
     <select name="Domaine" id="Domaine" onchange="change()">
         <option value="">Domaine</option>
         {% for domaine in domaines %}
