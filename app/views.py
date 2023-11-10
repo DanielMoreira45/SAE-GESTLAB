@@ -1,5 +1,5 @@
 """Toute les routes et les Formulaires"""
-from .app import app
+from .app import app, db
 from flask import render_template, url_for, redirect, request, jsonify
 from .models import Utilisateur, Commande, Domaine, Categorie, Materiel, filter_commands
 from flask_login import login_required, login_user, logout_user
@@ -73,16 +73,14 @@ def consult():
 
 @app.route("/admin/commandes/", methods=("GET", "POST"))
 def delivery():
-    #initialisation des listes
     liste_commandes = Commande.query.all()
-    command = liste_commandes[0]
     liste_domaines = Domaine.query.order_by(Domaine.nom).all()
     liste_categories = Categorie.query.distinct(Categorie.nom).order_by(Categorie.nom).all()
     liste_statuts = []
     for commande in liste_commandes:
         if commande.statut not in liste_statuts:
             liste_statuts.append(commande.statut)
-    return render_template("gerer_commandes.html",liste_statuts=liste_statuts, liste_commandes=liste_commandes, liste_domaines=liste_domaines, liste_categories=liste_categories, current_command=command)
+    return render_template("gerer_commandes.html",liste_statuts=liste_statuts, liste_commandes=liste_commandes, liste_domaines=liste_domaines, liste_categories=liste_categories)
 
 @app.route("/get_command_info/<int:numero>,<string:json>", methods=["GET"])
 def get_command_info(numero, json):
@@ -121,6 +119,20 @@ def search(recherche, domaine, categorie, statut):
             liste_categorie.append(categorie.nom)
     return jsonify({'liste_commandes':liste_commandes2, 'liste_categories':liste_categorie})
 
+@app.route("/validate/<string:validee>,<string:id>")
+def validate(validee, id):
+    id = id[21:]
+    commande = Commande.query.get(id)
+    if eval(validee):
+        if commande.statut == "En cours":
+            commande.statut = "Livrée"
+        else:
+            commande.statut = "En cours"
+    else:
+        commande.statut = "Annulée"
+    db.session.commit()
+    return jsonify({'id':id})
+
 
 @app.route('/d/')
 def new_commande():
@@ -140,11 +152,3 @@ def prof_home():
 def ecole_home():
     return render_template("ecole.html")
 
-'''                    var option = document.createElement("option");
-                    option.id = "categorie";
-                    option.value = "Categorie";
-                    option.textContent = "-- Categorie --";
-                    option.onclick = function () {
-                        search();
-                    }
-                    document.getElementById("categorie-select").appendChild(option);'''

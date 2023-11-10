@@ -48,6 +48,7 @@
             <h2><label id="nom"></label></h2>
             <img src="{{ url_for('static', filename='images/black_square.png') }}" alt="image commande">
             <div class="les_labels">
+                <label for="numero" id="label-numero"></label>
                 <label for="statut" id="label-statut"></label>
                 <label for="domaine" id="label-domaine"></label>
                 <label for="categorie" id="label-categorie"></label>
@@ -57,8 +58,8 @@
         </div>
         <div class="action_buttons">
             <input type="button" class="yellow-button" value="Imprimer" onclick="print()">
-            <input type="button" class="annuler" value="Annuler la commande">
-            <input type="button" class="valider" value="Valider la commande">
+            <input type="button" class="annuler" id="annuler" value="Annuler la commande" onclick="validate('False')">
+            <input type="button" class="valider" id="valider" value="Valider la commande" onclick="validate('True')">
         </div>
     </section>
     <script>
@@ -71,9 +72,10 @@
             update_categorie();
             
         });
-    
+
         function edit(id) {
             var labelNom = document.getElementById("nom");
+            var labelNumero = document.getElementById("label-numero")
             var labelDomaine = document.getElementById("label-domaine");
             var labelCategorie = document.getElementById("label-categorie");
             var labelStatut = document.getElementById("label-statut");
@@ -84,11 +86,27 @@
                 .then(response => response.json())
                 .then(data => {
                     labelNom.textContent = data.nom;
+                    labelNumero.textContent = "Numéro de commande : "+id
                     labelDomaine.textContent = "Domaine : "+data.domaine;
                     labelCategorie.textContent = "Catégorie : "+data.categorie;  
                     labelStatut.textContent = "Statut : "+data.statut;   
                     //labelQuantite.textContent = "Quantité commandée : "+data.quantite+" "+data.unite;
                     labelUser.textContent = "Commande effectuée par "+data.user;
+                    
+                    if (data.statut == "A valider"){
+                        document.getElementById("valider").value = "Valider la commande";
+                        document.getElementById("annuler").disabled = false;
+                        document.getElementById("valider").disabled = false;
+                    }
+                    else if (data.statut == "En cours"){
+                        document.getElementById("valider").value = "Commande livrée";
+                        document.getElementById("valider").disabled = false;
+                        document.getElementById("annuler").disabled = true;
+                    }
+                    else{
+                        document.getElementById("annuler").disabled = true;
+                        document.getElementById("valider").disabled = true;
+                    }
                 })
                 .catch(error => console.error('Erreur : ' + error));  
         }
@@ -121,7 +139,6 @@
                         button.appendChild(p)
                         li.appendChild(button)
                         ul.appendChild(li);  
-                        
                     });
                 })
         }
@@ -153,8 +170,17 @@
                     }
                     search()
                 })
-                .catch(error => console.error('Erreur : ' + error));  
-            
+                .catch(error => console.error('Erreur : ' + error));     
+        }
+
+        function validate(validee){
+            var id = document.getElementById("label-numero").textContent
+            fetch('/validate/'+validee+','+id)
+            .then(response => response.json())
+            .then(data => {
+                edit(data.id)
+            })
+            .catch(error => console.errot('Erreur : ' + error))
         }
     </script>
 {% endblock %}
