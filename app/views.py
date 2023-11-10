@@ -1,9 +1,9 @@
 """Toute les routes et les Formulaires"""
+
 from .app import app, db
-from flask import render_template, url_for, redirect, request
-from .models import Utilisateur
-from flask_login import login_user
-from .models import Utilisateur, Materiel, Commande, Commander, get_liste_materiel
+from .models import Materiel, Utilisateur, Domaine, Categorie, Role, Commande
+
+from flask import jsonify, render_template, url_for, redirect, request
 from flask_login import login_required, login_user, logout_user, current_user
 from flask_wtf import FlaskForm
 from wtforms import StringField, HiddenField, PasswordField, SelectField, RadioField, IntegerField
@@ -28,6 +28,26 @@ class LoginForm(FlaskForm):
     def show_password_incorrect(self):
         self.password_incorrect = "Email ou mot de passe incorrect"
 
+# Permet la modification de l'utilisateur
+class UserForm(FlaskForm):
+    id = HiddenField('id')
+    nom = StringField('nom', validators=[DataRequired()])
+    prenom = StringField('prenom', validators=[DataRequired()])
+    password = PasswordField('password', validators=[DataRequired()])
+    id_role = SelectField('role', validators=[DataRequired()], choices=[(1, 'Administrateur'), (2, 'Professeur'), (3, 'Etablissement')])
+    modifications = RadioField('modifications', validators=[DataRequired()])
+
+# Permet l'insertion de l'utilisateur
+class UtilisateurForm(FlaskForm):
+    idUti = HiddenField('iduti')
+    idRole = HiddenField('idrole')
+    nomUti = StringField('Nom', validators=[DataRequired()])
+    prenomUti = StringField('Prénom', validators=[DataRequired()])
+    emailUti = StringField('Email', validators=[DataRequired()])
+    mdp = PasswordField('Mot de Passe', validators=[DataRequired()])
+    role = SelectField('Rôle', choices=[(1, 'Administrateur'), (2, 'Professeur'), (3, 'Etablissement')])
+    modif = RadioField('Droit de Modification', choices=[(True, 'Oui'), (False, 'Non')], validators=[DataRequired()])
+
 @app.route("/")
 def home():
     return render_template("home.html")
@@ -46,8 +66,7 @@ def login():
     elif f.validate_on_submit():
         user = f.get_authenticated_user()
         if user:
-            print(login_user(user))
-            print()
+            login_user(user)
             if user.is_prof():
                 next = f.next.data or url_for("prof_home")
             elif user.is_admin():
@@ -64,34 +83,109 @@ def logout():
     return redirect(url_for('login'))
 
 @app.route('/admin/manage/add/')
-# @login_required
+@login_required
 def admin_add():
     f = UtilisateurForm()
     return render_template("ajout-util.html", form=f)
 
-@app.route('/r/')
-def admin_manage():
-    return None #TODO
+@app.route("/admin/manage/")
+@login_required
+def admin_manage(user_id=1):
+    user = Utilisateur.query.get(user_id)
+    login_user(user)
+    liste = Utilisateur.query.all()
+    roles = Role.query.all()
+    return render_template("gerer_utilisateurs.html", liste_users=liste, roles=roles, current_user_selected=user)
 
-@app.route('/b/')
+@app.route("/get_user_info/<int:user_id>", methods=['GET'])
+def get_user_info(user_id):
+    user = Utilisateur.query.get(user_id)
+    role_user = user.get_role()
+    if user:
+        user_info = {
+            'id': user.id,
+            'nom': user.nom,
+            'prenom': user.prenom,
+            'id_role': user.id_role,
+            'role_name': role_user.intitule,
+            'password': user.password,
+            'modifications': user.modifications
+        }
+        return jsonify(user_info)
+    else:
+        return jsonify({'error': 'Utilisateur non trouvé'}), 404
+
+@app.route('/update_user/', methods=['POST'])
+def update_user():
+    les_roles = {'Administrateur': 1, 'Professeur': 2, 'Etablissement': 3}
+    f = UserForm()
+    user_modified = Utilisateur.query.get(f.id.data)
+    user_modified.nom = f.nom.data
+    user_modified.prenom = f.prenom.data
+    user_modified.password = f.password.data
+    if f.id_role.data in les_roles:
+        user_modified.id_role = les_roles[f.id_role.data]
+    user_modified.modifications = eval(f.modifications.data)
+    db.session.commit()
+    return redirect(url_for('admin_manage'))
+
+@app.route('/consult/')
+@login_required
 def consult():
-    return None #TODO
+    domaines = Domaine.query.order_by(Domaine.nom).all()
+    categories = Categorie.query.order_by(Categorie.nom).all()
+    materiels = Materiel.query.order_by(Materiel.nom).all()
+    current = materiels[0]
+    return render_template("consultation.html", domaines=domaines, categories=categories, materiels=materiels, current_mat=current)
+
+@app.route('/consult/recherche')
+def update_materials():
+    categories = Categorie.query.order_by(Categorie.nom).all()
+    selected_domaine = request.args.get('domaine')
+    selected_categorie = request.args.get('categorie')
+    search = request.args.get('search')
+    liste_materiel = Materiel.query.order_by(Materiel.nom).all()
+
+    if (selected_categorie):        
+        liste_materiel = [materiel for materiel in liste_materiel if materiel.code_categorie == int(selected_categorie)]
+    
+    if (selected_domaine):
+        liste_materiel = [materiel for materiel in liste_materiel if materiel.code_domaine == int(selected_domaine)]
+       
+    if (search):
+        liste_materiel = [materiel for materiel in liste_materiel if search.lower() in materiel.nom.lower()]
+    
+    liste_materiel = [materiel.serialize() for materiel in liste_materiel]
+    
+    return jsonify({'materiels': liste_materiel})
+
+@app.route('/get_categories')
+def get_categories():
+    selected_domaine = request.args.get('domaine')
+    categories = Categorie.query.order_by(Categorie.nom).all()
+    if (selected_domaine):
+        categories = [categorie for categorie in categories if categorie.code_domaine == int(selected_domaine)]
+    categories = [categorie.serialize() for categorie in categories]
+    return jsonify({'categories': categories})
+
 
 @app.route('/c/')
 def delivery():
     return None #TODO
 
 class CommandeForm(FlaskForm):
-    with app.app_context():
-        choix_materiel = get_liste_materiel()
-        choix_materiel.insert(0, ("", "-- Choisir le matériel --"))
-        materiel_field = SelectField('Matériel', choices=choix_materiel, validators=[DataRequired("Merci de sélectionner une option.")], default="")
-        quantity_field = IntegerField("Quantité", validators=[DataRequired(), NumberRange(1, 1000)], default=1)
+    materiel_field = SelectField('Matériel', validators=[DataRequired("Merci de sélectionner une option.")])
+    quantity_field = IntegerField("Quantité", validators=[DataRequired(), NumberRange(1, 1000)], default=1)
 
 @app.route("/delivery/new/")
 @login_required
 def new_commande():
+    liste_materiel = Materiel.query.all()
+    choix_materiel = [(m.reference, m.nom) for m in liste_materiel]
+    choix_materiel.insert(0, ("", "-- Choisir le matériel --"))
     f = CommandeForm()
+    f.materiel_field.choices = choix_materiel
+    f.materiel_field.default = ""
     return render_template("new_commande.html", form=f)
 
 @app.route("/delivery/new/save", methods=("POST",))
@@ -102,18 +196,11 @@ def save_new_commande():
         date_commande = datetime.utcnow(),
         date_reception = None,
         statut = "Non validée",
-        id_util = current_user.id,
-        ref_materiel = f.materiel_field.data
-    )
-    commander = Commander(
-        numero_commande = 1 + db.session.query(db.func.max(Commander.numero_commande)).scalar(),
         quantite_commandee = f.quantity_field.data,
         id_util = current_user.id,
         ref_materiel = f.materiel_field.data
     )
     db.session.add(commande)
-    # db.session.commit()
-    db.session.add(commander)
     db.session.commit()
     return redirect(url_for('new_commande'))
 
@@ -130,18 +217,26 @@ def prof_home():
 @app.route("/ecole/home/", methods=("GET","POST",))
 @login_required
 def ecole_home():
-    print()
     return render_template("ecole.html")
 
-class UtilisateurForm(FlaskForm):
-    idUti = HiddenField('iduti')
-    idRole = HiddenField('idrole')
-    nomUti = StringField('Nom', validators=[DataRequired()])
-    prenomUti = StringField('Prénom', validators=[DataRequired()])
-    emailUti = StringField('Email', validators=[DataRequired()])
-    mdp = PasswordField('Mot de Passe', validators=[DataRequired()])
-    role = SelectField('Rôle', choices=[(1, 'Administrateur'), (2, 'Professeur'), (3, 'Etablissement')])
-    modif = RadioField('Droit de Modification', choices=[(True, 'Oui'), (False, 'Non')], validators=[DataRequired()])
+@app.route("/get_info_Materiel/<int:reference>", methods=["GET"])
+def get_info_Materiel(reference):
+    materiel = Materiel.query.get(reference)
+    if materiel:
+        image_data = materiel.get_image()
+        materiel_info = {
+            'reference': materiel.reference,
+            'nom': materiel.nom,
+            'domaine': materiel.domaine.nom,
+            'categorie': materiel.categorie.nom,
+            'quantite_global': materiel.quantite_globale,
+            'quantite_restante': materiel.quantite_restante,
+            'complements': materiel.complements,
+            'image': image_data
+        }
+        return jsonify(materiel_info)
+    else:
+        return jsonify({'error': 'Materiel non trouvé'}), 404
 
 @app.route("/save/util/", methods=("POST",))
 def save_util():

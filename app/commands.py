@@ -1,5 +1,6 @@
 from datetime import date
 import click
+import os
 from app.app import db, app
 
 @app.cli.command()
@@ -12,10 +13,10 @@ def loaddb(filename):
 
     # Chargement de notre jeu de données
     import yaml
-    data = yaml.safe_load(open(filename))
+    data = yaml.safe_load(open(filename, 'r', encoding='utf-8'))
 
     # Import des modèles
-    from .models import Role, Utilisateur, Domaine, Categorie, Materiel, Commande, Commander, Alerte
+    from .models import Role, Utilisateur, Domaine, Categorie, Materiel, Commande, Alerte
 
     # Création des différentes tables de notre base de données
     # {Categorie:[{code: 1, nom:"", code_domaine:1}, {...}]}
@@ -26,7 +27,7 @@ def loaddb(filename):
     liste_categories = data["Categorie"]
     liste_materiels = data["Materiel"]
     liste_commandes = data["Commande"]
-    liste_commander = data["Commander"]
+    # liste_commander = data["Commander"]
     liste_alertes = data["Alerte"]
 
     for dico_role in liste_roles:
@@ -48,15 +49,16 @@ def loaddb(filename):
 
     users = dict()
     for dico_users in liste_users:
-        user_name = dico_users["nomUti"]
-        if user_name not in users:
-            o = Utilisateur(nom=user_name,
+        user_email = dico_users["emailUti"]
+        if user_email not in users:
+            o = Utilisateur(nom=dico_users["nomUti"],
                             prenom=dico_users["prenomUti"],
                             email=dico_users["emailUti"],
                             password=dico_users["password"],
+                            modifications=dico_users["modifications"],
                             id_role=dico_users["idRole"])
             db.session.add(o)
-            users[user_name] = o
+            users[user_email] = o
     db.session.commit()
 
     materials = dict()
@@ -70,6 +72,16 @@ def loaddb(filename):
                 date_peremption = date(int(d_peremption[0]),
                                        int(d_peremption[1]),
                                        int(d_peremption[2]))
+            image = dico_materials["image"]
+            if image:
+                pathtest = os.path.join("static", "images", image)
+                if os.path.isfile(pathtest):
+                    with open(pathtest, "rb") as image_file:
+                        image_data = image_file.read()
+                else:
+                    image_data = None
+            else:
+                image_data = None
             o = Materiel(reference=material_ref,
                          nom=dico_materials["nomMateriel"],
                          rangement=dico_materials["precisionMateriel"],
@@ -83,6 +95,7 @@ def loaddb(filename):
                          date_peremption=date_peremption,
                          seuil_quantite=dico_materials["seuilQte"],
                          seuil_peremption=dico_materials["seuilPeremption"],
+                         image=image_data,
                          code_categorie=dico_materials["codeC"],
                          code_domaine=dico_materials["codeD"])
             db.session.add(o)
@@ -114,17 +127,17 @@ def loaddb(filename):
             commandes[num_commande] = o
     db.session.commit()
 
-    commander = dict()
-    for dico_commander in liste_commander:
-        num_comm = dico_commander["numeroCommande"]
-        if num_comm not in commander:
-            o = Commander(numero_commande=num_comm,
-                          quantite_commandee=dico_commander["qteCommandee"],
-                          id_util=dico_commander["idUti"],
-                          ref_materiel=dico_commander["refMateriel"])
-            db.session.add(o)
-            commander[num_comm] = o
-    db.session.commit()
+    # commander = dict()
+    # for dico_commander in liste_commander:
+    #     num_comm = dico_commander["numeroCommande"]
+    #     if num_comm not in commander:
+    #         o = Commander(numero_commande=num_comm,
+    #                       quantite_commandee=dico_commander["qteCommandee"],
+    #                       id_util=dico_commander["idUti"],
+    #                       ref_materiel=dico_commander["refMateriel"])
+    #         db.session.add(o)
+    #         commander[num_comm] = o
+    # db.session.commit()
 
     for dico_alertes in liste_alertes:
         o = Alerte(id=dico_alertes["idAlerte"],
