@@ -43,6 +43,7 @@ def login():
     elif f.validate_on_submit():
         user = f.get_authenticated_user()
         if user:
+            login_user(user)
             if user.is_prof():
                 next = f.next.data or url_for("prof_home")
             elif user.is_admin():
