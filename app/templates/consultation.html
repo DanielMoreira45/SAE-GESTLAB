@@ -74,7 +74,6 @@
 <script>
 
     function change() {
-        console.log("change");
         const searchQuery = document.getElementById('searchinput').value;
         const selectedDomaine = document.getElementById('Domaine').value;
         const selectedCategorie = document.getElementById('Categorie').value;
@@ -86,7 +85,6 @@
         fetch(`/get_categories?domaine=${selectedDomaine}`)
             .then(response => response.json())
             .then(data => {
-                console.log("data :", data);
                 dataCategories = data.categories;
                 const CatList = document.getElementById('Categorie');
                 CatList.innerHTML = "";
@@ -110,12 +108,10 @@
         const searchQuery = document.getElementById('searchinput').value;
         const selectedDomaine = document.getElementById('Domaine').value;
         const selectedCategorie = document.getElementById('Categorie').value;
-        console.log("aled");
         // Envoyer une requête Ajax pour mettre à jour la liste de matériaux
         fetch(`/consult/recherche?search=${searchQuery}&domaine=${selectedDomaine}&categorie=${selectedCategorie}`)
             .then(response => response.json())
             .then(data => {
-                console.log("data materiaux :", data);
                 dataMateriels = data.materiels;
                 const materielsList = document.getElementById('materielsList');
                 materielsList.innerHTML = "";
