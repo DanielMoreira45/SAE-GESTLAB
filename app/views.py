@@ -92,7 +92,7 @@ def admin_add():
 def admin_manage(user_id=1):
     user = Utilisateur.query.get(user_id)
     login_user(user)
-    liste = Utilisateur.query.all()
+    liste = Utilisateur.query.order_by(Utilisateur.nom).all()
     roles = Role.query.all()
     return render_template("gerer_utilisateurs.html", liste_users=liste, roles=roles, current_user_selected=user)
 
