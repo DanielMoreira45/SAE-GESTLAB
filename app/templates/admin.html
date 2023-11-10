@@ -26,5 +26,10 @@ if (buttonAjout) {
         window.location.href = "{{ url_for('admin_add') }}";
     });
 }
+if (buttonGestion) {
+    buttonGestion.addEventListener("click", function () {
+        window.location.href = "{{ url_for('admin_manage') }}";
+    });
+}
 </script>
 {% endblock %}
