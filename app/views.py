@@ -3,7 +3,7 @@
 from .app import app, db
 from .models import Materiel, Utilisateur, Domaine, Categorie, Role, Commande
 
-from flask import jsonify, render_template, url_for, redirect, request
+from flask import jsonify, render_template, url_for, redirect, request, flash
 from flask_login import login_required, login_user, logout_user, current_user
 from flask_wtf import FlaskForm
 from wtforms import StringField, HiddenField, PasswordField, SelectField, RadioField, IntegerField
@@ -202,6 +202,7 @@ def save_new_commande():
     )
     db.session.add(commande)
     db.session.commit()
+    flash("Commande effectuée avec succès !")
     return redirect(url_for('new_commande'))
 
 @app.route("/admin/home/")

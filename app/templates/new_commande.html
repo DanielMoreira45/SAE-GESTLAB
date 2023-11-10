@@ -19,4 +19,12 @@
       <input type="submit" id="commander_bouton" value="Commander" />
     </div>
   </form>
+  {% for mesg in get_flashed_messages() %}
+    <dialog open>
+      <p>{{ mesg }}</p>
+      <form method="dialog" id="form-dialog">
+        <button>OK</button>
+      </form>
+    </dialog>
+  {% endfor %}
 {% endblock %}
