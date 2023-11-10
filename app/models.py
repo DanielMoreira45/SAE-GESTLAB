@@ -187,4 +187,20 @@ class Alerte(db.Model):
 
 @login_manager.user_loader
 def load_user(user_id):
-    return Utilisateur.query.get(user_id)
+    return Utilisateur.query.get(int(user_id))
+
+def filter_commands(txt, domaine, categorie, statut, commandes):
+    liste_materiel = []
+    for materiel in Materiel.query.all():
+        if txt.upper() in materiel.nom.upper():
+            liste_materiel.append(materiel)
+    liste_commandes = []
+    
+    for commande in commandes:
+        if commande.materiel in liste_materiel:
+            if commande.materiel.domaine.nom == domaine or domaine == "Domaine":
+                if commande.materiel.categorie.nom == categorie or categorie == "Categorie":
+                    if commande.statut == statut or statut == "Statut":
+                        liste_commandes.append(commande)
+
+    return liste_commandes

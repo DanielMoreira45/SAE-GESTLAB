@@ -48,6 +48,10 @@ div.navigation a{
     text-decoration: none;
     color: white;
     font-weight: bold;
+}
+
+div.content{
+    margin: 8px
     font-size: 1.3em;
 }
 
@@ -89,9 +93,6 @@ div.horizontal-line {
     border-top: 2px solid white;
 }
 
-div.content{
-    margin: 8px;
-}
 
 footer p {
     font-family: "AgrandirWide";
