@@ -1,5 +1,6 @@
 from datetime import date
 import click
+import os
 from app.app import db, app
 
 @app.cli.command()
@@ -12,7 +13,7 @@ def loaddb(filename):
 
     # Chargement de notre jeu de données
     import yaml
-    data = yaml.safe_load(open(filename))
+    data = yaml.safe_load(open(filename, 'r', encoding='utf-8'))
 
     # Import des modèles
     from .models import Role, Utilisateur, Domaine, Categorie, Materiel, Commande, Commander, Alerte
@@ -54,6 +55,7 @@ def loaddb(filename):
                             prenom=dico_users["prenomUti"],
                             email=dico_users["emailUti"],
                             password=dico_users["password"],
+                            modifications=dico_users["modifications"],
                             id_role=dico_users["idRole"])
             db.session.add(o)
             users[user_name] = o
@@ -70,6 +72,16 @@ def loaddb(filename):
                 date_peremption = date(int(d_peremption[0]),
                                        int(d_peremption[1]),
                                        int(d_peremption[2]))
+            image = dico_materials["image"]
+            if image:
+                pathtest = os.path.join("static", "images", image)
+                if os.path.isfile(pathtest):
+                    with open(pathtest, "rb") as image_file:
+                        image_data = image_file.read()
+                else:
+                    image_data = None
+            else:
+                image_data = None
             o = Materiel(reference=material_ref,
                          nom=dico_materials["nomMateriel"],
                          rangement=dico_materials["precisionMateriel"],
@@ -83,6 +95,7 @@ def loaddb(filename):
                          date_peremption=date_peremption,
                          seuil_quantite=dico_materials["seuilQte"],
                          seuil_peremption=dico_materials["seuilPeremption"],
+                         image=image_data,
                          code_categorie=dico_materials["codeC"],
                          code_domaine=dico_materials["codeD"])
             db.session.add(o)

@@ -1,5 +1,6 @@
 """Lien avec la Base de données"""
 
+from base64 import b64encode
 from .app import db, login_manager
 from flask_login import UserMixin
 
@@ -18,6 +19,7 @@ class Utilisateur(db.Model, UserMixin):
     nom = db.Column(db.String(100))
     prenom = db.Column(db.String(100))
     email = db.Column(db.String(100), unique=True)
+    modifications = db.Column(db.Boolean)
     password = db.Column(db.String(100))
     id_role = db.Column(db.Integer, db.ForeignKey("role.id"))
     role = db.relationship("Role", backref=db.backref("utilisateurs", lazy="dynamic"))
@@ -85,6 +87,13 @@ class Categorie(db.Model):
 
     __table_args__ = (db.UniqueConstraint('code', 'code_domaine'),)
 
+    def serialize(self):
+        return {
+            'codeC': self.code,
+            'nom': self.nom,
+            'codeD': self.code_domaine,
+        }
+
     def __repr__(self):
         return "<Categorie (%d) %s %r>" % (self.code, self.nom, self.code_domaine)
 
@@ -104,6 +113,7 @@ class Materiel(db.Model):
     date_peremption = db.Column(db.Date)
     seuil_quantite = db.Column(db.Integer)
     seuil_peremption = db.Column(db.Integer)
+    image = db.Column(db.LargeBinary)
     code_categorie = db.Column(db.Integer, db.ForeignKey("categorie.code"))
     code_domaine = db.Column(db.Integer, db.ForeignKey("domaine.code"))
     categorie = db.relationship("Categorie",
@@ -112,8 +122,32 @@ class Materiel(db.Model):
     domaine = db.relationship("Domaine",
                               backref=db.backref("matériels", lazy="dynamic"))
 
+    def get_image(self):
+        if self.image is not None:
+            return b64encode(self.image).decode("utf-8")
+        else:
+            default_image_path = "static/images/black_square.png"
+            with open(default_image_path, 'rb') as f:
+                default_image_data = f.read()
+            return b64encode(default_image_data).decode("utf-8")
+
+    def serialize(self):
+        return {
+            'reference': self.reference,
+            'nom': self.nom,
+            'quantite_globale': self.quantite_globale,
+            'quantite_max': self.quantite_max,
+            'unite': self.unite,
+            'quantite_restante': self.quantite_restante,
+            'complements': self.complements,
+            'code_categorie': self.code_categorie,
+            'code_domaine': self.code_domaine,
+            'image': self.get_image(),
+        }
+
+
     def __repr__(self):
-        return "<Materiel (%d) %s %r %p %c %q>" % (self.reference, self.nom, self.rangement, self.date_peremption, self.commentaire, self.quantite_globale)
+        return "<Materiel (%d)>" % (self.reference)
 
 
 class Commande(db.Model):
@@ -131,7 +165,7 @@ class Commande(db.Model):
                                backref=db.backref("commandes", lazy="dynamic"))
 
     def __repr__(self):
-        return "<Commande (%d) %s %r %p %c %d>" % (self.numero, self.date_commande, self.statut, self.date_reception, self.id_util, self.ref_materiel)
+        return "<Commande (%d) %s %r %e %c %d>" % (self.numero, self.date_commande, self.statut, self.date_reception, self.id_util, self.ref_materiel)
 
 
 class Commander(db.Model):
@@ -170,4 +204,4 @@ class Alerte(db.Model):
 
 @login_manager.user_loader
 def load_user(user_id):
-    return Utilisateur.query.get(int(user_id))
+    return Utilisateur.query.get(user_id)
