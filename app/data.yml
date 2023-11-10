@@ -91,7 +91,8 @@ Commande:
   - {numeroCommande: 2, dateCommande: '2023-10-23', dateReception: '2023-10-30', statut: 'Livrée', idUti: 2, refMateriel: 2, qteCommandee: 10}
   - {numeroCommande: 3, dateCommande: '2023-10-25', dateReception: '2023-11-25', statut: 'En cours', idUti: 3, refMateriel: 14, qteCommandee: 10}
   - {numeroCommande: 4, dateCommande: '2023-10-25', dateReception: '2023-11-25', statut: 'En cours', idUti: 2, refMateriel: 18, qteCommandee: 10}
-  - {numeroCommande: 5, dateCommande: '2023-10-27', dateReception: '2023-11-23', statut: 'En cours', idUti: 3, refMateriel: 33, qteCommandee: 10}
+  - {numeroCommande: 5, dateCommande: '2023-10-27', dateReception: '2023-11-23', statut: 'A valider', idUti: 3, refMateriel: 33, qteCommandee: 10}
+  - {numeroCommande: 6, dateCommande: '2023-10-27', dateReception: '2023-11-23', statut: 'A valider', idUti: 3, refMateriel: 32, qteCommandee: 20}
 
 Alerte:
   - {idAlerte: 1, refMateriel: 25, commentaire: 'Alerte de quantité'}

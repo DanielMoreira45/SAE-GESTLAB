@@ -1,14 +1,14 @@
 """Toute les routes et les Formulaires"""
-
 from .app import app, db
-from .models import Materiel, Utilisateur, Domaine, Categorie, Role
+from .models import Materiel, Utilisateur, Domaine, Categorie, Role, Commande , filter_commands
 
-from flask import jsonify, render_template, url_for, redirect, request
-from flask_login import login_required, login_user, logout_user
+from flask import jsonify, render_template, url_for, redirect, request, flash
+from flask_login import login_required, login_user, logout_user, current_user
 from flask_wtf import FlaskForm
-from wtforms import StringField, HiddenField, PasswordField, SelectField, RadioField
-from wtforms.validators import DataRequired
+from wtforms import StringField, HiddenField, PasswordField, SelectField, RadioField, IntegerField
+from wtforms.validators import DataRequired, NumberRange
 from hashlib import sha256
+from datetime import datetime
 
 class LoginForm(FlaskForm):
     email = StringField('Email')
@@ -166,13 +166,100 @@ def get_categories():
     return jsonify({'categories': categories})
 
 
-@app.route('/c/')
+@app.route("/ecole/commandes/", methods=("GET", "POST"))
 def delivery():
-    return None #TODO
+    liste_commandes = Commande.query.all()
+    liste_domaines = Domaine.query.order_by(Domaine.nom).all()
+    liste_categories = Categorie.query.distinct(Categorie.nom).order_by(Categorie.nom).all()
+    liste_statuts = []
+    for commande in liste_commandes:
+        if commande.statut not in liste_statuts:
+            liste_statuts.append(commande.statut)
+    return render_template("gerer_commandes.html",liste_statuts=liste_statuts, liste_commandes=liste_commandes, liste_domaines=liste_domaines, liste_categories=liste_categories)
 
-@app.route('/d/')
+@app.route("/get_command_info/<int:numero>,<string:json>", methods=["GET"])
+def get_command_info(numero, json):
+    command = Commande.query.get(numero)
+    if command:
+        command_info = {
+            'numero': command.numero,
+            'nom': command.materiel.nom,
+            'domaine': command.materiel.domaine.nom,
+            'categorie': command.materiel.categorie.nom,
+            'statut': command.statut,
+            'quantite': command.quantite_commandee,
+            'unite': command.materiel.unite,
+            'user': command.utilisateur.nom
+        }
+        if json == "True":
+            return jsonify(command_info)
+        else:
+            return command_info
+    else:
+        return jsonify({'error': 'Commande non trouvé'}), 404
+    
+@app.route("/search/<string:recherche>,<string:domaine>,<string:categorie>,<string:statut>", methods=["GET"])
+def search(recherche, domaine, categorie, statut):
+    liste_commandes = Commande.query.all()
+    recherche = recherche[:len(recherche)-1]
+    liste_commandes = filter_commands(recherche, domaine, categorie, statut, liste_commandes)
+
+    liste_commandes2 = []
+    for commande in liste_commandes:
+        liste_commandes2.append(get_command_info(commande.numero, False))
+    
+    liste_categorie = []
+    for categorie in Categorie.query.all():
+        if categorie.domaine.nom == domaine or domaine == "Domaine":
+            liste_categorie.append(categorie.nom)
+    return jsonify({'liste_commandes':liste_commandes2, 'liste_categories':liste_categorie})
+
+@app.route("/validate/<string:validee>,<string:id>")
+def validate(validee, id):
+    id = id[21:]
+    commande = Commande.query.get(id)
+    if eval(validee):
+        if commande.statut == "En cours":
+            commande.statut = "Livrée"
+        else:
+            commande.statut = "En cours"
+    else:
+        commande.statut = "Annulée"
+    db.session.commit()
+    return jsonify({'id':id})
+
+
+class CommandeForm(FlaskForm):
+    materiel_field = SelectField('Matériel', validators=[DataRequired("Merci de sélectionner une option.")])
+    quantity_field = IntegerField("Quantité", validators=[DataRequired(), NumberRange(1, 1000)], default=1)
+
+@app.route("/delivery/new/")
+@login_required
 def new_commande():
-    return None #TODO
+    liste_materiel = Materiel.query.all()
+    choix_materiel = [(m.reference, m.nom) for m in liste_materiel]
+    choix_materiel.insert(0, ("", "-- Choisir le matériel --"))
+    f = CommandeForm()
+    f.materiel_field.choices = choix_materiel
+    f.materiel_field.default = ""
+    return render_template("new_commande.html", form=f)
+
+@app.route("/delivery/new/save", methods=("POST",))
+def save_new_commande():
+    f = CommandeForm()
+    commande = Commande(
+        numero = 1 + db.session.query(db.func.max(Commande.numero)).scalar(),
+        date_commande = datetime.utcnow(),
+        date_reception = None,
+        statut = "Non validée",
+        quantite_commandee = f.quantity_field.data,
+        id_util = current_user.id,
+        ref_materiel = f.materiel_field.data
+    )
+    db.session.add(commande)
+    db.session.commit()
+    flash("Commande effectuée avec succès !")
+    return redirect(url_for('new_commande'))
 
 @app.route("/admin/home/")
 @login_required
