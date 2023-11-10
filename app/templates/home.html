@@ -2,7 +2,6 @@
 {% block styles %}
 {{ super() }}
     <link rel="stylesheet" href="{{ url_for('static', filename='css/home_style.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/home_pos.css') }}">
 {% endblock %}
 {% block header %}
       <h1>GEST<span class="h1-yellow-part">LAB</span></h1>
@@ -12,5 +11,16 @@
           <li><img class="img-home" src="{{ url_for('static', filename='images/school_icon.png') }}" alt="Icone de l'école"><p>Lycée François Villon</p></li>
           <li><img class="img-home" src="{{ url_for('static', filename='images/location_icon.png') }}" alt="Icone de localisation"><p>Beaugency</p></li>
         </ul>
-        <button type="button">Connexion</button>
+        <button id="loginbutton" type="button">Connexion</button>
+{% endblock %}
+{% block scripts %}
+{{ super() }}
+    <script>
+        var ButtonLogin = document.getElementById("loginbutton");
+        if (ButtonLogin) {
+            ButtonLogin.addEventListener("click", function () {
+                window.location.href = "{{ url_for('login') }}";
+            });
+        }
+    </script>
 {% endblock %}

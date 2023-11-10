@@ -1,11 +1,11 @@
 @font-face {
     font-family: "DM-Sans";
-    src: url("./font/DMSans.ttf");
+    src: url("../font/DMSans.ttf");
   }
 
 footer {
     position: absolute;
-    top: 92%;
+    bottom: 0%;
     left: 30%;
     right: 30%;
     color: white;
