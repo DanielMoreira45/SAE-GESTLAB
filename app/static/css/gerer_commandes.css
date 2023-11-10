@@ -41,6 +41,8 @@ h1 {
 h2{
     text-align: center;
     flex-basis: 100%;
+    max-height: 30px;
+    margin-bottom: 2em;
 }
 
 img{
@@ -69,7 +71,7 @@ p{
     overflow: auto;
     background-color: white;
     scroll-snap-type: y proximity;
-    scrollbar-color: #EDF0F2;
+    scrollbar-color: rgb(0, 153, 255);
     border-color: black;
     border-style: solid;
     margin-left: 10%;
@@ -106,24 +108,25 @@ p{
 }
 
 .commands::-webkit-scrollbar-thumb {
-    background: rgb(217, 217, 217);
+    background: rgb(217, 217, 217);;
     border-radius: 8px;
-}
+  }
 
 .materiel{
-
     flex-wrap: wrap;
     padding: 1em; 
+    padding-left: 3em;
     color: black;
     display: flex;
-    flex-wrap: wrap;
     margin-bottom: 1em;
     height:80%;
     flex-grow: 0;
+    align-content: baseline;
 }
 
 .materiel label{
     flex-basis: 100%;
+    margin-bottom: 1em;
 }
 
 .materiel, .commands{
@@ -177,6 +180,8 @@ input:hover, button:hover, select:hover{
 .les_labels{
     display: flex;
     flex-wrap: wrap;
+    flex-basis: 50%;
+    margin-left: 3em;
 }
 
 #recherche:hover{
