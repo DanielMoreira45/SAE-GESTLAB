@@ -48,7 +48,10 @@ div.navigation a{
     text-decoration: none;
     color: white;
     font-weight: bold;
-    
+}
+
+div.content{
+    margin: 8px;
 }
 
 div.navigation {

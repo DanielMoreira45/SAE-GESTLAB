@@ -5,7 +5,7 @@ from .app import db, login_manager
 from flask_login import UserMixin
 
 class Role(db.Model):
-    __tabame__ = "role"
+    __tablename__ = "role"
     id = db.Column(db.Integer, primary_key=True)
     intitule = db.Column(db.String(100))
 
