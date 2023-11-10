@@ -1,0 +1,189 @@
+{% extends "consul_base.html" %}
+{% block styles %}
+{{ super() }}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/gerer_commandes.css') }}">
+{% endblock %}
+
+{% block content %}
+    <h1>Gérer les commandes</h1>
+    <section class="search_buttons">
+        <form class="search" role="search" method="POST">
+            <input type="search" name="recherche" id="recherche" placeholder="Rechercher" oninput="update_categorie()">
+            <select name="domaine" id="domaine-select">
+                <option id="domaine" value="Domaine" onclick="update_categorie()">-- Domaine --</option>
+                {% for domaine in liste_domaines %}
+                    <option id="domaine" value="{{ domaine.nom }}" onclick="update_categorie()">{{ domaine.nom }}</option>
+                {% endfor %}
+            </select>
+            <select name="categorie" id="categorie-select">
+                <option id="categorie" value="Categorie" onclick="update_categorie()">-- Categorie --</option>
+            </select>
+            <select name="statut" id="statut-select">
+                <option id="statut" value="Statut" onclick="update_categorie()">-- Statut --</option>
+                {% for statut in liste_statuts %}
+                    <option id="statut" value="{{ statut }}" onclick="update_categorie()">{{ statut }}</option>
+                {% endfor %}
+            </select>
+            <input type="submit" name="btn-reset" value="reset" class="yellow-button">
+        </form>
+    </section>
+    <section class="commands">
+        {% if liste_commandes is none %}
+            <p>Il n'y a pas de commandes pour cette recherche</p>
+        {% else %}
+        <ul id="liste">
+            {% for command in liste_commandes %}
+            <li>
+                <button id="{{ command.numero }}" class="command_button" onclick="edit(this.id)">
+                    <img src="{{ url_for('static', filename='images/black_square.png') }}" alt="image commande" class="img">
+                    <p>{{ command.materiel.nom }}</p>
+                </button>
+            </li>
+            {% endfor %}
+        </ul>
+        {% endif %}
+    </section>
+    <section class="right">
+        <div class="materiel">
+            <h2><label id="nom"></label></h2>
+            <img src="{{ url_for('static', filename='images/black_square.png') }}" alt="image commande">
+            <div class="les_labels">
+                <label for="numero" id="label-numero"></label>
+                <label for="statut" id="label-statut"></label>
+                <label for="domaine" id="label-domaine"></label>
+                <label for="categorie" id="label-categorie"></label>
+                <label for="quantite" id="quantite"></label>
+                <label for="user" id="user"></label>
+            </div>
+        </div>
+        <div class="action_buttons">
+            <input type="button" class="yellow-button" value="Imprimer" onclick="print()">
+            <input type="button" class="annuler" id="annuler" value="Annuler la commande" onclick="validate('False')">
+            <input type="button" class="valider" id="valider" value="Valider la commande" onclick="validate('True')">
+        </div>
+    </section>
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            var firstCommandButton = document.querySelector(".command_button");
+            if (firstCommandButton) {
+                var commandRef = firstCommandButton.getAttribute("id");
+                edit(commandRef);
+            }
+            update_categorie();
+            
+        });
+
+        function edit(id) {
+            var labelNom = document.getElementById("nom");
+            var labelNumero = document.getElementById("label-numero")
+            var labelDomaine = document.getElementById("label-domaine");
+            var labelCategorie = document.getElementById("label-categorie");
+            var labelStatut = document.getElementById("label-statut");
+            var labelQuantite = document.getElementById("quantite");
+            var labelUser = document.getElementById("user");
+            
+            fetch('/get_command_info/' + id + ",True")
+                .then(response => response.json())
+                .then(data => {
+                    labelNom.textContent = data.nom;
+                    labelNumero.textContent = "Numéro de commande : "+id
+                    labelDomaine.textContent = "Domaine : "+data.domaine;
+                    labelCategorie.textContent = "Catégorie : "+data.categorie;  
+                    labelStatut.textContent = "Statut : "+data.statut;   
+                    if (data.unite == null){
+                        labelQuantite.textContent = "Quantité commandée : "+data.quantite
+                    } else {labelQuantite.textContent = "Quantité commandée : "+data.quantite+" "+data.unite;}
+                    labelUser.textContent = "Commande effectuée par "+data.user;
+                    
+                    if (data.statut == "A valider"){
+                        document.getElementById("valider").value = "Valider la commande";
+                        document.getElementById("annuler").disabled = false;
+                        document.getElementById("valider").disabled = false;
+                    }
+                    else if (data.statut == "En cours"){
+                        document.getElementById("valider").value = "Commande livrée";
+                        document.getElementById("valider").disabled = false;
+                        document.getElementById("annuler").disabled = true;
+                    }
+                    else{
+                        document.getElementById("annuler").disabled = true;
+                        document.getElementById("valider").disabled = true;
+                    }
+                })
+                .catch(error => console.error('Erreur : ' + error));  
+        }
+
+        function search(){
+            recherche = document.getElementById("recherche").value
+            domaine = document.getElementById("domaine-select").value
+            categorie_selected = document.getElementById("categorie-select").value
+            statut = document.getElementById("statut-select").value
+            fetch('/search/'+recherche+' ,'+domaine+','+categorie_selected+','+statut)
+                .then(response => response.json())
+                .then(data => {  
+                    var liste_commandes_search = data.liste_commandes;
+                    var ul = document.getElementById("liste")
+                    ul.innerHTML = "";
+                    liste_commandes_search.forEach(function(commande) {
+                        var li = document.createElement("li");
+                        var button = document.createElement("button")
+                        button.id = commande.numero
+                        button.className = "command_button"
+                        button.onclick = function () {
+                            edit(this.id);
+                        }
+                        var p = document.createElement("p");
+                        p.textContent = commande.nom;
+                        var image = document.createElement("img");
+                        image.src = "{{ url_for('static', filename='images/black_square.png') }}";
+                        image.alt = "image commande";
+                        image.className = "img";
+                        button.appendChild(image);
+                        button.appendChild(p)
+                        li.appendChild(button)
+                        ul.appendChild(li);  
+                    });
+                })
+        }
+
+        function update_categorie(){
+            recherche = document.getElementById("recherche").value
+            domaine = document.getElementById("domaine-select").value
+            categorie_selected = document.getElementById("categorie-select").value
+            statut = document.getElementById("statut-select").value
+            fetch('/search/'+recherche+' ,'+domaine+','+categorie_selected+','+statut)
+                .then(response => response.json())
+                .then(data => {  
+                    document.getElementById("categorie-select").innerHTML = '<option id="categorie" value="Categorie" onclick="update_categorie()">-- Categorie --</option>';
+                    data.liste_categories.forEach(function(categorie){
+                        var option = document.createElement("option");
+                        option.id = "categorie";
+                        option.value = categorie;
+                        option.textContent = categorie;
+                        option.onclick = function () {
+                            search();
+                        }
+                        document.getElementById("categorie-select").appendChild(option);
+                    });
+                    if (data.liste_categories.includes(categorie_selected)){
+                        document.getElementById("categorie-select").value = categorie_selected;
+                    }
+                    else{
+                        document.getElementById("categorie-select").value = "Categorie";
+                    }
+                    search()
+                })
+                .catch(error => console.error('Erreur : ' + error));     
+        }
+
+        function validate(validee){
+            var id = document.getElementById("label-numero").textContent
+            fetch('/validate/'+validee+','+id)
+            .then(response => response.json())
+            .then(data => {
+                edit(data.id)
+            })
+            .catch(error => console.errot('Erreur : ' + error))
+        }
+    </script>
+{% endblock %}

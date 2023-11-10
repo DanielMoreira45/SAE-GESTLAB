@@ -1,0 +1,202 @@
+@font-face {
+    font-family: "DM-Sans";
+    src: url("../font/DMSans.ttf");
+}
+
+@font-face {
+    font-family: "AgrandirWide";
+    src: url("../font/Agrandir-Regular.otf");
+}
+
+body{
+    background-image: linear-gradient(
+        to bottom,
+        rgba(32, 32, 32, 0.5),
+        rgba(32, 32, 32, 0.5)), url("../images/background_util.png");
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-attachment: fixed;
+}
+
+h1{
+    font-family: "AgrandirWide";
+    color: white;
+    text-align: center;
+    font-size: 3em;
+}
+
+section{
+    font-family: "AgrandirWide";
+}
+
+section input{
+    flex-basis: 45%;
+    flex-grow: 1;
+    font-family: "AgrandirWide";
+    border-radius: 16px;
+    font-size: 1em;
+    padding: 0.5em;
+}
+
+select{
+    font-family: "AgrandirWide";
+    border-radius: 16px;
+    font-size: 1em;
+    padding: 0.5em;
+}
+
+.user img{
+    width: 6em;
+    height: 6em;
+}
+
+.user_infos section {
+    background-color: white;
+    padding: 1em;
+    margin-left: 1.5em;
+    height: 51.5vh;
+    width: 40vw;
+    border-radius: 40px;
+}
+
+.user {
+    height: 55vh;
+    width: 25vw;
+    overflow: auto;
+    background-color: white;
+    border: 2px white solid;
+    scroll-snap-type: y proximity;
+    scrollbar-color: #EDF0F2;
+    border-top-left-radius: 40px;
+    border-bottom-left-radius: 40px;
+    border-top-right-radius: 25px;
+    border-bottom-right-radius: 25px;
+}
+
+.user_bouton {
+    font-size: large;
+}
+
+.user section {
+    border-radius: 40px;
+}
+
+.user input:focus {
+    background-color: #EDF0F2;
+}
+
+.user::-webkit-scrollbar {
+    width: 0.7em;
+}
+
+.user::-webkit-scrollbar-thumb:hover{
+    background-color: #ABABAB;
+}
+
+.user::-webkit-scrollbar-thumb:active{
+    background-color: grey;
+}
+
+.user::-webkit-scrollbar-thumb {
+    background: rgb(217, 217, 217);;
+    border-radius: 8px;
+  }
+
+div.user_item input{
+    border: none;
+    background-color: white;
+    margin: 1em;
+    padding: 1.5em;
+}
+
+div.main{
+    display: flex;
+    flex-wrap: nowrap;
+    justify-content: center;
+}
+
+div.user_item{
+    display: flex;
+    text-align: center;
+    align-items: center;
+}
+
+div.user_infos input{
+    padding: 0.5em;
+    margin: 0.5em;
+}
+
+label{
+    font-weight: bold;
+}
+
+.wrapper {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    grid-gap: 1em;
+}
+
+.nom{
+    grid-column: 1;
+    grid-row: 1;
+    padding-left: 1em;
+}
+
+.nom_input{
+    grid-column: 1;
+    grid-row: 2;
+}
+
+.prenom{
+    grid-column: 2;
+    grid-row: 1;
+    padding-right: 1em;
+}
+
+.prenom_input{
+    grid-column: 2;
+    grid-row: 2;
+}
+
+.passwd{
+    grid-column: 1;
+    grid-row: 3;
+    padding-left: 1em;
+}
+
+.passwd_input{
+    grid-column: 1;
+    grid-row: 4;
+}
+
+.role{
+    padding-right: 1em;
+}
+
+.droits_modif{
+    grid-column: 1 / span 2;
+    grid-row: 5;
+    padding-top: 1em;
+    text-align: center;
+}
+
+.button_modify{
+    grid-column : 1 / span 2;
+    grid-row : 6;
+    justify-self: center;
+}
+
+#save_button{
+    background-color: rgb(255, 216, 131);
+    font-family: "AgrandirWide";
+    font-size: 1em;
+    border-radius: 25px;
+    padding: 1em;
+    border: none;
+    cursor: pointer;
+    font-weight: bold;
+    display: block;
+    margin: auto;
+    grid-column: 1 / span 2;
+    grid-row: 7;
+}

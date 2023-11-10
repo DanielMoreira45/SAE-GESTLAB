@@ -1,0 +1,16 @@
+{% extends "consul_base.html" %}
+{% block styles %}
+{{ super() }}
+<link rel="stylesheet" href="{{ url_for('static', filename='../static/css/home_ecole.css') }}">
+{% endblock %}
+{% block content %}
+    {% if current_user.is_authenticated %}
+    <h1 id="bjr-admin">BONJOUR <span class="nom-util">{{ current_user.nom }}</span> !</h1>
+    {% else %}
+    <h1 id="bjr-admin">BONJOUR !</h1>
+    {% endif %}
+    <div class="boutons">
+        <a href="{{ url_for('consult') }}"><button id="btn-navi"><img src="{{ url_for('static', filename='../static/images/materiel.png') }}" alt="">Consulter le matériel</button></a>
+        <a href="{{ url_for('delivery') }}"><button id="btn-navi"><img src="{{ url_for('static', filename='../static/images/commande.png') }}" alt="">Gérer les commandes</button></a> 
+    </div>
+{% endblock %}
