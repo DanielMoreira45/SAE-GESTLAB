@@ -51,7 +51,8 @@ div.navigation a{
 }
 
 div.content{
-    margin: 8px;
+    margin: 8px
+    font-size: 1.3em;
 }
 
 div.navigation {
@@ -59,6 +60,7 @@ div.navigation {
     font-size: 1.2em;
     margin-bottom: 0.2em;
 }
+
 p.Logo{
     font-size: 2em;
     margin: 0;
@@ -94,7 +96,7 @@ div.horizontal-line {
 
 footer p {
     font-family: "AgrandirWide";
-    font-size: 1em;
+    font-size: 1.3em;
     color: white;
 }
 

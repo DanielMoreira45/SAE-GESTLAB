@@ -1,12 +1,14 @@
 """Toute les routes et les Formulaires"""
 from .app import app, db
-from flask import render_template, url_for, redirect, request, jsonify
-from .models import Utilisateur, Commande, Domaine, Categorie, Materiel, filter_commands, Role
-from flask_login import login_required, login_user, logout_user
+from .models import Materiel, Utilisateur, Domaine, Categorie, Role, Commande , filter_commands
+
+from flask import jsonify, render_template, url_for, redirect, request, flash
+from flask_login import login_required, login_user, logout_user, current_user
 from flask_wtf import FlaskForm
-from wtforms import StringField, HiddenField, PasswordField, SelectField, RadioField
-from wtforms.validators import DataRequired
+from wtforms import StringField, HiddenField, PasswordField, SelectField, RadioField, IntegerField
+from wtforms.validators import DataRequired, NumberRange
 from hashlib import sha256
+from datetime import datetime
 
 class LoginForm(FlaskForm):
     email = StringField('Email')
@@ -229,9 +231,37 @@ def validate(validee, id):
     return jsonify({'id':id})
 
 
-@app.route('/d/')
+class CommandeForm(FlaskForm):
+    materiel_field = SelectField('Matériel', validators=[DataRequired("Merci de sélectionner une option.")])
+    quantity_field = IntegerField("Quantité", validators=[DataRequired(), NumberRange(1, 1000)], default=1)
+
+@app.route("/delivery/new/")
+@login_required
 def new_commande():
-    return None #TODO
+    liste_materiel = Materiel.query.all()
+    choix_materiel = [(m.reference, m.nom) for m in liste_materiel]
+    choix_materiel.insert(0, ("", "-- Choisir le matériel --"))
+    f = CommandeForm()
+    f.materiel_field.choices = choix_materiel
+    f.materiel_field.default = ""
+    return render_template("new_commande.html", form=f)
+
+@app.route("/delivery/new/save", methods=("POST",))
+def save_new_commande():
+    f = CommandeForm()
+    commande = Commande(
+        numero = 1 + db.session.query(db.func.max(Commande.numero)).scalar(),
+        date_commande = datetime.utcnow(),
+        date_reception = None,
+        statut = "Non validée",
+        quantite_commandee = f.quantity_field.data,
+        id_util = current_user.id,
+        ref_materiel = f.materiel_field.data
+    )
+    db.session.add(commande)
+    db.session.commit()
+    flash("Commande effectuée avec succès !")
+    return redirect(url_for('new_commande'))
 
 @app.route("/admin/home/")
 @login_required
