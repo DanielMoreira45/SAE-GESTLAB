@@ -79,9 +79,14 @@
         const selectedDomaine = document.getElementById('Domaine').value;
         const selectedCategorie = document.getElementById('Categorie').value;
         
+        const optionC = document.createElement('option');
+        optionC.value = "";
+        optionC.textContent = "Catégorie";
+
         fetch(`/get_categories?domaine=${selectedDomaine}`)
             .then(response => response.json())
             .then(data => {
+                console.log("data :", data);
                 dataCategories = data.categories;
                 const CatList = document.getElementById('Categorie');
                 CatList.innerHTML = "";
