@@ -1,7 +1,8 @@
 """Toute les routes et les Formulaires"""
 from .app import app, db
-from flask import jsonify, render_template, url_for, redirect, request
 from .models import Materiel, Utilisateur, Domaine, Categorie, Role
+
+from flask import jsonify, render_template, url_for, redirect, request
 from flask_login import login_required, login_user, logout_user
 from flask_wtf import FlaskForm
 from wtforms import StringField, HiddenField, PasswordField, SelectField, RadioField
@@ -24,6 +25,16 @@ class LoginForm(FlaskForm):
     
     def show_password_incorrect(self):
         self.password_incorrect = "Email ou mot de passe incorrect"
+
+class UtilisateurForm(FlaskForm):
+    idUti = HiddenField('iduti')
+    idRole = HiddenField('idrole')
+    nomUti = StringField('Nom', validators=[DataRequired()])
+    prenomUti = StringField('Prénom', validators=[DataRequired()])
+    emailUti = StringField('Email', validators=[DataRequired()])
+    mdp = PasswordField('Mot de Passe', validators=[DataRequired()])
+    role = SelectField('Rôle', choices=[(1, 'Administrateur'), (2, 'Professeur'), (3, 'Etablissement')])
+    modif = RadioField('Droit de Modification', choices=[(True, 'Oui'), (False, 'Non')], validators=[DataRequired()])
 
 @app.route("/")
 def home():
@@ -54,16 +65,16 @@ def login():
 
     return render_template("connexion.html", form=f)
 
-
-
 @app.route('/logout/')
 def logout():
     logout_user()
     return redirect(url_for('login'))
 
-@app.route('/a/')
+@app.route('/admin/manage/add/')
+@login_required
 def admin_add():
-    return None #TODO
+    f = UtilisateurForm()
+    return render_template("ajout-util.html", form=f)
 
 @app.route('/r/')
 def admin_manage():
@@ -123,6 +134,7 @@ def admin_home():
     return render_template("admin.html")
   
 @app.route("/prof/home/")
+@login_required
 def prof_home():
     return render_template("prof.html")
 
@@ -149,6 +161,18 @@ def get_info_Materiel(reference):
         return jsonify(materiel_info)
     else:
         return jsonify({'error': 'Materiel non trouvé'}), 404
-    
 
-
+@app.route("/save/util/", methods=("POST",))
+def save_util():
+    f = UtilisateurForm()
+    u = Utilisateur(
+        id = 1 + db.session.query(db.func.max(Utilisateur.id)).scalar(),
+        nom = f.nomUti.data,
+        prenom = f.prenomUti.data,
+        email = f.emailUti.data,
+        password = f.mdp.data,
+        id_role = f.role.data
+    )
+    db.session.add(u)
+    db.session.commit()
+    return redirect(url_for('admin_add'))
