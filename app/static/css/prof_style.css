@@ -40,6 +40,7 @@ main {
     align-items: center;
     padding: 1.3em;
     border: none;
+    cursor: pointer;
 }
 
 #btn-navi img{
