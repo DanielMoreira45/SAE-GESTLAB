@@ -1,0 +1,94 @@
+{% extends 'consult_base.html' %}
+{% block styles %}
+{{ super() }}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/gerer_utilisateurs.css')}}">
+{% endblock %}
+{% block content %}
+<h1>Gérer les utilisateurs</h1>
+<div class="main">
+    <div class="user">
+        <section>
+            {% for user in liste_users %}
+            <div class="user_item">
+                <img src="{{ url_for('static', filename='images/user.png') }}" alt="Un utilisateur">
+                <input type="button" value="{{ user.nom }} {{ user.prenom }}" class="user_bouton" id="{{ user.id }}"
+                    onclick="edit(this.id)" autofocus>
+            </div>
+            {% endfor %}
+        </section>
+    </div>
+    <form action="{{ url_for('update_user') }}" role="form" method="POST" class="user_infos">
+        <section class="wrapper">
+            <input type="hidden" value="{{ current_user_selected.id }}" name="id" id="id">
+            <label class="nom" for="nom">Nom :</label>
+            <input class="nom_input" name="nom" id="nom" type="text" value="{{ current_user_selected.nom }}">
+            <label class="prenom" for="prenom">Prénom :</label>
+            <input class ="prenom_input" name="prenom" id="prenom" type="text" value="{{ current_user_selected.prenom }}">
+            <label class="passwd" for="password">Mot de passe :</label>
+            <input class ="passwd_input" name="password" id="password" type="password" value="{{ current_user_selected.password }}">
+            <label class="role" for="role-select">Rôle :</label>
+            <select name="id_role" id="id_role">
+                {% for role in roles %}
+                {% if current_user_selected.id_role == role.id %}
+                <option value="{{ role.id }}" selected>{{ role.intitule }}</option>
+                {% else %}
+                <option value="{{ role.id }}">{{ role.intitule }}</option>
+                {% endif %}
+                {% endfor %}
+            </select>
+            <label class="droits_modif" for="modifications">Droits de modification</label>
+            <div class="button_modify">
+                {% if current_user_selected.modifications == True %}
+                <input type="radio" name="modifications" id="yes_choice" value="True" checked>
+                <label for="yes_choice">Oui</label>
+                <input type="radio" name="modifications" id="no_choice" value="False">
+                <label for="no_choice">Non</label>
+                {% else %}
+                <input type="radio" name="modifications" id="yes_choice" value="True">
+                <label for="yes_choice">Oui</label>
+                <input type="radio" name="modifications" id="no_choice" value="False" checked>
+                <label for="no_choice">Non</label>
+                {% endif %}
+            </div>
+            <button type="submit" id="save_button">Enregistrer</button>
+        </section>
+    </form>
+</div>
+<script>
+    function edit(id) {
+        var inputId = document.getElementById("id");
+        var inputNom = document.getElementById("nom");
+        var inputPrenom = document.getElementById("prenom");
+        var inputPassword = document.getElementById("password");
+        var roleSelect = document.getElementById("id_role");
+        var droitModif = document.getElementsByName("modifications");
+
+        fetch('/get_user_info/' + id)
+            .then(response => response.json())
+            .then(data => {
+                inputId.value = data.id;
+                inputNom.value = data.nom;
+                inputPrenom.value = data.prenom;
+                inputPassword.value = data.password;
+                roleSelect.innerHTML = '';
+                for (const role of ["Administrateur", "Professeur", "Etablissement"]) {
+                    var option = document.createElement("option");
+                    option.value = role;
+                    option.text = role;
+                    if (role === data.role_name) {
+                        option.selected = true;
+                    }
+                    roleSelect.appendChild(option);
+                }
+                if (data.modifications === true) {
+                    var droit = document.getElementById("yes_choice");
+                    droit.checked = true;
+                } else {
+                    var droit = document.getElementById("no_choice");
+                    droit.checked = true;
+                }
+            })
+            .catch(error => console.error('Erreur : ' + error));
+    }
+</script>
+{% endblock %}

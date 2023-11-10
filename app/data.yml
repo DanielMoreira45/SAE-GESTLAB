@@ -85,6 +85,7 @@ Materiel:
   - {refMateriel: 32, nomMateriel: 'Fusibles électriques', precisionMateriel: 'Armoire 6 Tiroir C', commentaire: '', qteMateriel: 5, unite: null, complements: "protéger les circuits électriques sensibles", ficheFDS: null, seuilQte: 2, seuilPeremption: null, datePeremption: null, codeC: 30, codeD: 6, qteMax: 10, qteRestante: 5, image: Screenshot_63.png}
   - {refMateriel: 33, nomMateriel: 'Burette', precisionMateriel: 'Armoire 2 Tiroir B', commentaire: '', qteMateriel: 50, unite: null, complements: "mesurer précisément le volume d'une solution versée dans une autre", ficheFDS: null, seuilQte: 12, seuilPeremption: null, datePeremption: null, codeC: 7, codeD: 2, qteMax: 50, qteRestante: 40, image: Screenshot_63.png}
 
+
 Commande:
   - {numeroCommande: 1, dateCommande: '2023-10-23', dateReception: '2023-10-30', statut: 'Livrée', idUti: 2, refMateriel: 1}
   - {numeroCommande: 2, dateCommande: '2023-10-23', dateReception: '2023-10-30', statut: 'Livrée', idUti: 2, refMateriel: 2}

@@ -49,16 +49,16 @@ def loaddb(filename):
 
     users = dict()
     for dico_users in liste_users:
-        user_name = dico_users["nomUti"]
-        if user_name not in users:
-            o = Utilisateur(nom=user_name,
+        user_email = dico_users["emailUti"]
+        if user_email not in users:
+            o = Utilisateur(nom=dico_users["nomUti"],
                             prenom=dico_users["prenomUti"],
                             email=dico_users["emailUti"],
                             password=dico_users["password"],
                             modifications=dico_users["modifications"],
                             id_role=dico_users["idRole"])
             db.session.add(o)
-            users[user_name] = o
+            users[user_email] = o
     db.session.commit()
 
     materials = dict()
