@@ -6,7 +6,7 @@ from flask import jsonify, render_template, url_for, redirect, request, flash
 from flask_login import login_required, login_user, logout_user, current_user
 from flask_wtf import FlaskForm
 from wtforms import StringField, HiddenField, PasswordField, SelectField, RadioField, IntegerField, TextAreaField
-from wtforms.validators import DataRequired, NumberRange
+from wtforms.validators import DataRequired, NumberRange, AnyOf
 from hashlib import sha256
 from datetime import datetime
 from flask_wtf.file import FileField
@@ -304,12 +304,12 @@ class MaterielForm(FlaskForm):
 
     rangement = StringField('Rangement', validators=[DataRequired()])
     commentaire = TextAreaField('Description' , validators=[DataRequired()])
-    quantite = IntegerField('Quantité', validators=[DataRequired()])
+    quantite = IntegerField('Quantité', validators=[DataRequired(), NumberRange(min=0)])
     unite = SelectField('Unité', choices=[None,'cm','g','ml'])
     complements = StringField('Compléments', validators=[DataRequired()])
     ficheFDS = FileField('Fiche De Sécurité')
-    seuil_quantite = IntegerField('Seuil de Quantité')
-    seuil_peremption = IntegerField('Seuil de Péremption (nb jours)')
+    seuil_quantite = IntegerField('Seuil de Quantité', validators=[NumberRange(min=0)])
+    seuil_peremption = IntegerField('Seuil de Péremption (nb jours)', validators=[NumberRange(min=0)])
     categorie = SelectField('Catégorie', choices=lesC, validators=[DataRequired()])
     domaine = SelectField('Domaine', choices=lesD, validators=[DataRequired()])
 
