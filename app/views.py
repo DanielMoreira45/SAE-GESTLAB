@@ -156,7 +156,7 @@ def update_materials():
     liste_materiel = [materiel.serialize() for materiel in liste_materiel]
     return jsonify({'materiels': liste_materiel})
 
-@app.route('/get_categories')
+@app.route('/get_categories/')
 def get_categories():
     selected_domaine = request.args.get('domaine')
     categories = Categorie.query.order_by(Categorie.nom).all()
@@ -166,7 +166,7 @@ def get_categories():
     return jsonify({'categories': categories})
 
 
-@app.route("/ecole/commandes/", methods=("GET", "POST"))
+@app.route("/commandes/", methods=("GET", "POST"))
 def delivery():
     liste_commandes = Commande.query.all()
     liste_domaines = Domaine.query.order_by(Domaine.nom).all()
@@ -177,8 +177,7 @@ def delivery():
             liste_statuts.append(commande.statut)
     return render_template("gerer_commandes.html",liste_statuts=liste_statuts, liste_commandes=liste_commandes, liste_domaines=liste_domaines, liste_categories=liste_categories)
 
-#@app.route("/get_command_info/<int:numero>,<string:json>", methods=["GET"])
-@app.route("/get_command_info/", methods=["GET"])
+@app.route("/commandes/get_command_info/", methods=["GET"])
 def get_command_info():
     numero = request.args.get("id")
     command = Commande.query.get(numero)
@@ -192,16 +191,17 @@ def get_command_info():
     else:
         return jsonify({'error': 'Commande non trouvé'}), 404
     
-@app.route("/search/", methods=["GET"])
+@app.route("/commandes/search/", methods=["GET"])
 def search():
     liste_commandes = Commande.query.all()
     liste_categories = Categorie.query.all()
+    print(liste_categories)
     recherche = request.args.get("recherche")
     recherche = recherche[:len(recherche)]
     domaine = request.args.get("domaine")
     categorie = request.args.get("categorie")
+    print(categorie)
     statut = request.args.get("statut")
-    #liste_commandes = filter_commands(recherche, domaine, categorie, statut, liste_commandes)
 
     if (domaine):
         liste_commandes = [commande for commande in liste_commandes if commande.materiel.code_domaine == int(domaine)]
@@ -215,21 +215,13 @@ def search():
 
     if (recherche):
         liste_commandes = [commande for commande in liste_commandes if recherche.lower() in commande.materiel.nom.lower()]
-
-    '''liste_commandes2 = []
-    for commande in liste_commandes:
-        liste_commandes2.append(get_command_info(commande.numero, False))'''
     
     liste_commandes = [commande.serialize() for commande in liste_commandes]
     liste_categories = [categorie.serialize() for categorie in liste_categories]
-    
-    '''liste_categorie = []
-    for categorie in Categorie.query.all():
-        if categorie.domaine.nom == domaine or domaine == "Domaine":
-            liste_categorie.append(categorie.nom)'''
+
     return jsonify({'liste_commandes':liste_commandes, 'liste_categories':liste_categories})
 
-@app.route("/validate/")
+@app.route("/commandes/validate/")
 def validate():
     id = request.args.get("id")
     id = id[21:]
@@ -245,21 +237,6 @@ def validate():
     db.session.commit()
     return jsonify({'id':id})
 
-'''def filter_commands(txt, domaine, categorie, statut, commandes):
-    liste_materiel = []
-    for materiel in Materiel.query.all():
-        if txt.upper() in materiel.nom.upper():
-            liste_materiel.append(materiel)
-    liste_commandes = []
-    
-    for commande in commandes:
-        if commande.materiel in liste_materiel:
-            if commande.materiel.domaine.nom == domaine or domaine == "Domaine":
-                if commande.materiel.categorie.nom == categorie or categorie == "Categorie":
-                    if commande.statut == statut or statut == "Statut":
-                        liste_commandes.append(commande)
-
-    return liste_commandes'''
 
 
 class CommandeForm(FlaskForm):

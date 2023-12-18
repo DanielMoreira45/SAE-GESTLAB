@@ -80,7 +80,7 @@
             var labelQuantite = document.getElementById("quantite");
             var labelUser = document.getElementById("user");
             
-            fetch(`/get_command_info/?id=${id}&json=True`)
+            fetch(`/commandes/get_command_info/?id=${id}&json=True`)
                 .then(response => response.json())
                 .then(data => {
                     labelNom.textContent = data.nom;
@@ -116,7 +116,7 @@
             domaine = document.getElementById("domaine-select").value
             categorie_selected = document.getElementById("categorie-select").value
             statut = document.getElementById("statut-select").value
-            fetch(`/search/?recherche=${recherche}&domaine=${domaine}&categorie=${categorie_selected}&statut=${statut}`)
+            fetch(`/commandes/search/?recherche=${recherche}&domaine=${domaine}&categorie=${categorie_selected}&statut=${statut}`)
                 .then(response => response.json())
                 .then(data => {  
                     var liste_commandes_search = data.liste_commandes;
@@ -146,26 +146,19 @@
             domaine = document.getElementById("domaine-select").value
             categorie_selected = document.getElementById("categorie-select").value
             statut = document.getElementById("statut-select").value
-            fetch(`/search/?recherche=${recherche}&domaine=${domaine}&categorie=${categorie_selected}&statut=${statut}`)
+            fetch(`/commandes/search/?recherche=${recherche}&domaine=${domaine}&categorie=${categorie_selected}&statut=${statut}`)
                 .then(response => response.json())
                 .then(data => {  
                     document.getElementById("categorie-select").innerHTML = '<option id="categorie" value="">-- Categorie --</option>';
                     data.liste_categories.forEach(function(categorie){
                         var option = document.createElement("option");
-                        option.id = "categorie";
                         option.value = categorie.codeC;
                         option.textContent = categorie.nom;
-                        option.onclick = function () {
-                            search();
+                        if (option.value == categorie_selected){
+                            option.selected = true;
                         }
                         document.getElementById("categorie-select").appendChild(option);
                     });
-                    if (data.liste_categories.includes(categorie_selected)){
-                        document.getElementById("categorie-select").value = categorie_selected;
-                    }
-                    else{
-                        document.getElementById("categorie-select").value = "";
-                    }
                     search()
                 })
                 .catch(error => console.error('Erreur : ' + error));     
@@ -173,8 +166,7 @@
 
         function validate(validee){
             var id = document.getElementById("label-numero").textContent
-            //fetch('/validate/'+validee+','+id)
-            fetch(`/validate/?validee=${validee}&id=${id}`)
+            fetch(`/commandes/validate/?validee=${validee}&id=${id}`)
             .then(response => response.json())
             .then(data => {
                 edit(data.id)
