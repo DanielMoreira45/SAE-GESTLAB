@@ -1,6 +1,6 @@
 """Toute les routes et les Formulaires"""
 from .app import app, db
-from .models import Materiel, Utilisateur, Domaine, Categorie, Role, Commande , filter_commands
+from .models import Materiel, Utilisateur, Domaine, Categorie, Role, Commande
 
 from flask import jsonify, render_template, url_for, redirect, request, flash
 from flask_login import login_required, login_user, logout_user, current_user
@@ -177,20 +177,14 @@ def delivery():
             liste_statuts.append(commande.statut)
     return render_template("gerer_commandes.html",liste_statuts=liste_statuts, liste_commandes=liste_commandes, liste_domaines=liste_domaines, liste_categories=liste_categories)
 
-@app.route("/get_command_info/<int:numero>,<string:json>", methods=["GET"])
-def get_command_info(numero, json):
+#@app.route("/get_command_info/<int:numero>,<string:json>", methods=["GET"])
+@app.route("/get_command_info/", methods=["GET"])
+def get_command_info():
+    numero = request.args.get("id")
     command = Commande.query.get(numero)
     if command:
-        command_info = {
-            'numero': command.numero,
-            'nom': command.materiel.nom,
-            'domaine': command.materiel.domaine.nom,
-            'categorie': command.materiel.categorie.nom,
-            'statut': command.statut,
-            'quantite': command.quantite_commandee,
-            'unite': command.materiel.unite,
-            'user': command.utilisateur.nom
-        }
+        command_info = command.serialize()
+        json = request.args.get("json")
         if json == "True":
             return jsonify(command_info)
         else:
@@ -198,26 +192,49 @@ def get_command_info(numero, json):
     else:
         return jsonify({'error': 'Commande non trouvé'}), 404
     
-@app.route("/search/<string:recherche>,<string:domaine>,<string:categorie>,<string:statut>", methods=["GET"])
-def search(recherche, domaine, categorie, statut):
+@app.route("/search/", methods=["GET"])
+def search():
     liste_commandes = Commande.query.all()
-    recherche = recherche[:len(recherche)-1]
-    liste_commandes = filter_commands(recherche, domaine, categorie, statut, liste_commandes)
+    liste_categories = Categorie.query.all()
+    recherche = request.args.get("recherche")
+    recherche = recherche[:len(recherche)]
+    domaine = request.args.get("domaine")
+    categorie = request.args.get("categorie")
+    statut = request.args.get("statut")
+    #liste_commandes = filter_commands(recherche, domaine, categorie, statut, liste_commandes)
 
-    liste_commandes2 = []
+    if (domaine):
+        liste_commandes = [commande for commande in liste_commandes if commande.materiel.code_domaine == int(domaine)]
+        liste_categories = [categorie for categorie in liste_categories if categorie.code_domaine == int(domaine)]
+
+    if (categorie):        
+        liste_commandes = [commande for commande in liste_commandes if commande.materiel.code_categorie == int(categorie)]
+
+    if (statut):
+        liste_commandes = [commande for commande in liste_commandes if commande.statut == statut]
+
+    if (recherche):
+        liste_commandes = [commande for commande in liste_commandes if recherche.lower() in commande.materiel.nom.lower()]
+
+    '''liste_commandes2 = []
     for commande in liste_commandes:
-        liste_commandes2.append(get_command_info(commande.numero, False))
+        liste_commandes2.append(get_command_info(commande.numero, False))'''
     
-    liste_categorie = []
+    liste_commandes = [commande.serialize() for commande in liste_commandes]
+    liste_categories = [categorie.serialize() for categorie in liste_categories]
+    
+    '''liste_categorie = []
     for categorie in Categorie.query.all():
         if categorie.domaine.nom == domaine or domaine == "Domaine":
-            liste_categorie.append(categorie.nom)
-    return jsonify({'liste_commandes':liste_commandes2, 'liste_categories':liste_categorie})
+            liste_categorie.append(categorie.nom)'''
+    return jsonify({'liste_commandes':liste_commandes, 'liste_categories':liste_categories})
 
-@app.route("/validate/<string:validee>,<string:id>")
-def validate(validee, id):
+@app.route("/validate/")
+def validate():
+    id = request.args.get("id")
     id = id[21:]
     commande = Commande.query.get(id)
+    validee = request.args.get("validee")
     if eval(validee):
         if commande.statut == "En cours":
             commande.statut = "Livrée"
@@ -227,6 +244,22 @@ def validate(validee, id):
         commande.statut = "Annulée"
     db.session.commit()
     return jsonify({'id':id})
+
+'''def filter_commands(txt, domaine, categorie, statut, commandes):
+    liste_materiel = []
+    for materiel in Materiel.query.all():
+        if txt.upper() in materiel.nom.upper():
+            liste_materiel.append(materiel)
+    liste_commandes = []
+    
+    for commande in commandes:
+        if commande.materiel in liste_materiel:
+            if commande.materiel.domaine.nom == domaine or domaine == "Domaine":
+                if commande.materiel.categorie.nom == categorie or categorie == "Categorie":
+                    if commande.statut == statut or statut == "Statut":
+                        liste_commandes.append(commande)
+
+    return liste_commandes'''
 
 
 class CommandeForm(FlaskForm):

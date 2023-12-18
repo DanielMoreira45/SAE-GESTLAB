@@ -167,6 +167,19 @@ class Commande(db.Model):
                                                      lazy="dynamic"))
     materiel = db.relationship("Materiel",
                                backref=db.backref("commandes", lazy="dynamic"))
+    
+    def serialize(self):
+        return {
+            'numero': self.numero,
+            'nom': self.materiel.nom,
+            'domaine': self.materiel.domaine.nom,
+            'categorie': self.materiel.categorie.nom,
+            'statut': self.statut,
+            'quantite': self.quantite_commandee,
+            'unite': self.materiel.unite,
+            'user': self.utilisateur.nom
+        }
+
 
     def __repr__(self):
         return "<Commande (%d) %s %r %e %c %d>" % (self.numero, self.date_commande, self.statut, self.date_reception, self.id_util, self.ref_materiel)
@@ -189,18 +202,4 @@ class Alerte(db.Model):
 def load_user(user_id):
     return Utilisateur.query.get(int(user_id))
 
-def filter_commands(txt, domaine, categorie, statut, commandes):
-    liste_materiel = []
-    for materiel in Materiel.query.all():
-        if txt.upper() in materiel.nom.upper():
-            liste_materiel.append(materiel)
-    liste_commandes = []
-    
-    for commande in commandes:
-        if commande.materiel in liste_materiel:
-            if commande.materiel.domaine.nom == domaine or domaine == "Domaine":
-                if commande.materiel.categorie.nom == categorie or categorie == "Categorie":
-                    if commande.statut == statut or statut == "Statut":
-                        liste_commandes.append(commande)
 
-    return liste_commandes
