@@ -92,9 +92,9 @@ class Categorie(db.Model):
 
     def serialize(self):
         return {
-            'codeC': self.code,
-            'nom': self.nom,
-            'codeD': self.code_domaine,
+            'codeC': self.codeC,
+            'nom': self.nomC,
+            'codeD': self.codeD,
         }
 
     def __repr__(self):
@@ -111,9 +111,9 @@ class MaterielGenerique(db.Model):
     unite = db.Column(db.String(100))
     qteMax = db.Column(db.Float)
     complements = db.Column(db.String(500))
-    fiche_fds = db.Column(db.LargeBinary)
-    seuil_quantite = db.Column(db.Integer)
-    seuil_peremption = db.Column(db.Integer)
+    ficheFDS = db.Column(db.LargeBinary)
+    seuilQte = db.Column(db.Integer)
+    seuilPeremption = db.Column(db.Integer)
     imageMateriel = db.Column(db.LargeBinary)
     codeC = db.Column(db.Integer, db.ForeignKey("CATEGORIE.codeC"))
     codeD = db.Column(db.Integer, db.ForeignKey("DOMAINE.codeD"))
@@ -124,8 +124,8 @@ class MaterielGenerique(db.Model):
                               backref=db.backref("matériels", lazy="dynamic"))
 
     def get_image(self):
-        if self.image is not None:
-            return b64encode(self.image).decode("utf-8")
+        if self.imageMateriel is not None:
+            return b64encode(self.imageMateriel).decode("utf-8")
         else:
             default_image_path = "static/images/black_square.png"
             with open(default_image_path, 'rb') as f:
@@ -186,6 +186,7 @@ class Commande(db.Model):
     dateReception = db.Column(db.Date)
     qteCommandee = db.Column(db.Integer)
     idStatut = db.Column(db.Integer, db.ForeignKey("STATUT.idStatut"))
+    statut = db.relationship("Statut", backref=db.backref("statuts", lazy="dynamic"))
     idUti = db.Column(db.Integer, db.ForeignKey("UTILISATEUR.idUti"))
     refMateriel = db.Column(db.Integer, db.ForeignKey("MATERIELGENERIQUE.refMateriel"))
     utilisateur = db.relationship("Utilisateur",

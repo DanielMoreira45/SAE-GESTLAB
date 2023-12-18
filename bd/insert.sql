@@ -7,7 +7,8 @@ VALUES
 insert into Statut(idStatut, nomStatut) values
 (1, 'Livrée'),
 (2, 'En cours'),
-(3, 'A valider');
+(3, 'A valider'),
+(4, 'Non validée');
 
 INSERT INTO Utilisateur(idUti, idRole, nomUti, prenomUti, emailUti, mdp, modifications)
 VALUES

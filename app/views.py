@@ -1,6 +1,6 @@
 """Toute les routes et les Formulaires"""
 from .app import app, db
-from .models import MaterielGenerique, MaterielInstance, Utilisateur, Domaine, Categorie, Role, Commande , filter_commands
+from .models import Statut, MaterielGenerique, MaterielInstance, Utilisateur, Domaine, Categorie, Role, Commande , filter_commands
 from .forms import LoginForm, UtilisateurForm, UserForm, CommandeForm
 from flask import jsonify, render_template, url_for, redirect, request, flash
 from flask_login import login_required, login_user, logout_user, current_user
@@ -33,7 +33,6 @@ def login():
             elif user.is_etablissement():
                 next = f.next.data or url_for("ecole_home")
             return redirect(next)
-
     return render_template("connexion.html", form=f)
 
 @app.route('/logout/')
@@ -52,7 +51,7 @@ def admin_add():
 def admin_manage(user_id=1):
     user = Utilisateur.query.get(user_id)
     login_user(user)
-    liste = Utilisateur.query.order_by(Utilisateur.nom).all()
+    liste = Utilisateur.query.order_by(Utilisateur.nomUti).all()
     roles = Role.query.all()
     return render_template("gerer_utilisateurs.html", liste_users=liste, roles=roles, current_user_selected=user)
 
@@ -62,12 +61,12 @@ def get_user_info(user_id):
     role_user = user.get_role()
     if user:
         user_info = {
-            'id': user.id,
-            'nom': user.nom,
-            'prenom': user.prenom,
-            'id_role': user.id_role,
+            'id': user.idUti,
+            'nom': user.nomUti,
+            'prenom': user.prenomUti,
+            'id_role': user.idRole,
             'role_name': role_user.intitule,
-            'password': user.password,
+            'password': user.mdp,
             'modifications': user.modifications
         }
         return jsonify(user_info)
@@ -91,19 +90,19 @@ def update_user():
 @app.route('/consult/')
 @login_required
 def consult():
-    domaines = Domaine.query.order_by(Domaine.nom).all()
-    categories = Categorie.query.order_by(Categorie.nom).all()
-    materiels = MaterielGenerique.query.order_by(MaterielGenerique.nom).all()
+    domaines = Domaine.query.order_by(Domaine.nomD).all()
+    categories = Categorie.query.order_by(Categorie.nomC).all()
+    materiels = MaterielGenerique.query.order_by(MaterielGenerique.nomMateriel).all()
     current = materiels[0]
     return render_template("consultation.html", domaines=domaines, categories=categories, materiels=materiels, current_mat=current)
 
 @app.route('/consult/recherche')
 def update_materials():
-    categories = Categorie.query.order_by(Categorie.nom).all()
+    categories = Categorie.query.order_by(Categorie.nomC).all()
     selected_domaine = request.args.get('domaine')
     selected_categorie = request.args.get('categorie')
     search = request.args.get('search')
-    liste_materiel = MaterielGenerique.query.order_by(MaterielGenerique.nom).all()
+    liste_materiel = MaterielGenerique.query.order_by(MaterielGenerique.nomMateriel).all()
     if (selected_categorie):        
         liste_materiel = [materiel for materiel in liste_materiel if materiel.code_categorie == int(selected_categorie)]
 
@@ -119,9 +118,9 @@ def update_materials():
 @app.route('/get_categories')
 def get_categories():
     selected_domaine = request.args.get('domaine')
-    categories = Categorie.query.order_by(Categorie.nom).all()
+    categories = Categorie.query.order_by(Categorie.nomC).all()
     if (selected_domaine):
-        categories = [categorie for categorie in categories if categorie.code_domaine == int(selected_domaine)]
+        categories = [categorie for categorie in categories if categorie.codeD == int(selected_domaine)]
     categories = [categorie.serialize() for categorie in categories]
     return jsonify({'categories': categories})
 
@@ -129,27 +128,28 @@ def get_categories():
 @app.route("/ecole/commandes/", methods=("GET", "POST"))
 def delivery():
     liste_commandes = Commande.query.all()
-    liste_domaines = Domaine.query.order_by(Domaine.nom).all()
-    liste_categories = Categorie.query.distinct(Categorie.nom).order_by(Categorie.nom).all()
+    liste_domaines = Domaine.query.order_by(Domaine.nomD).all()
+    liste_categories = Categorie.query.distinct(Categorie.nomC).order_by(Categorie.nomC).all()
     liste_statuts = []
     for commande in liste_commandes:
-        if commande.statut not in liste_statuts:
+        if commande.statut.nomStatut not in liste_statuts:
             liste_statuts.append(commande.statut)
     return render_template("gerer_commandes.html",liste_statuts=liste_statuts, liste_commandes=liste_commandes, liste_domaines=liste_domaines, liste_categories=liste_categories)
 
 @app.route("/get_command_info/<int:numero>,<string:json>", methods=["GET"])
 def get_command_info(numero, json):
     command = Commande.query.get(numero)
+    statut = Statut.query.get(command.idStatut)
     if command:
         command_info = {
-            'numero': command.numero,
-            'nom': command.materiel.nom,
-            'domaine': command.materiel.domaine.nom,
-            'categorie': command.materiel.categorie.nom,
-            'statut': command.statut,
-            'quantite': command.quantite_commandee,
+            'numero': command.numeroCommande,
+            'nom': command.materiel.nomMateriel,
+            'domaine': command.materiel.domaine.nomD,
+            'categorie': command.materiel.categorie.nomC,
+            'statut': statut.nomStatut,
+            'quantite': command.qteCommandee,
             'unite': command.materiel.unite,
-            'user': command.utilisateur.nom
+            'user': command.utilisateur.nomUti
         }
         if json == "True":
             return jsonify(command_info)
@@ -166,18 +166,19 @@ def search(recherche, domaine, categorie, statut):
 
     liste_commandes2 = []
     for commande in liste_commandes:
-        liste_commandes2.append(get_command_info(commande.numero, False))
+        liste_commandes2.append(get_command_info(commande.numeroCommande, False))
     
     liste_categorie = []
     for categorie in Categorie.query.all():
-        if categorie.domaine.nom == domaine or domaine == "Domaine":
-            liste_categorie.append(categorie.nom)
+        if categorie.domaine.nomD == domaine or domaine == "Domaine":
+            liste_categorie.append(categorie.nomC)
     return jsonify({'liste_commandes':liste_commandes2, 'liste_categories':liste_categorie})
 
 @app.route("/validate/<string:validee>,<string:id>")
 def validate(validee, id):
     id = id[21:]
     commande = Commande.query.get(id)
+    statut = Statut.query.get(commande.idStatut)
     if eval(validee):
         if commande.statut == "En cours":
             commande.statut = "Livrée"
@@ -192,7 +193,7 @@ def validate(validee, id):
 @login_required
 def new_commande():
     liste_materiel = MaterielGenerique.query.all()
-    choix_materiel = [(m.reference, m.nom) for m in liste_materiel]
+    choix_materiel = [(m.refMateriel, m.nomMateriel) for m in liste_materiel]
     choix_materiel.insert(0, ("", "-- Choisir le matériel --"))
     f = CommandeForm()
     f.materiel_field.choices = choix_materiel
@@ -203,13 +204,13 @@ def new_commande():
 def save_new_commande():
     f = CommandeForm()
     commande = Commande(
-        numero = 1 + db.session.query(db.func.max(Commande.numero)).scalar(),
-        date_commande = datetime.utcnow(),
-        date_reception = None,
-        statut = "Non validée",
-        quantite_commandee = f.quantity_field.data,
-        id_util = current_user.id,
-        ref_materiel = f.materiel_field.data
+        numeroCommande = 1 + db.session.query(db.func.max(Commande.numeroCommande)).scalar(),
+        dateCommande = datetime.utcnow(),
+        dateReception = None,
+        idStatut = 3,
+        qteCommandee = f.quantity_field.data,
+        idUti = current_user.idUti,
+        refMateriel = f.materiel_field.data
     )
     db.session.add(commande)
     db.session.commit()
@@ -237,12 +238,12 @@ def get_info_Materiel(reference):
     if materiel:
         image_data = materiel.get_image()
         materiel_info = {
-            'reference': materiel.reference,
-            'nom': materiel.nom,
-            'domaine': materiel.domaine.nom,
-            'categorie': materiel.categorie.nom,
-            'quantite_global': materiel.quantite_globale,
-            'quantite_restante': materiel.quantite_restante,
+            'refMateriel': materiel.refMateriel,
+            'nomMateriel': materiel.nomMateriel,
+            'domaine': materiel.domaine.nomD,
+            'categorie': materiel.categorie.nomC,
+            'qteMateriel': materiel.qteMateriel,
+            'qteMax' : materiel.qteMax,
             'complements': materiel.complements,
             'image': image_data
         }
@@ -254,12 +255,13 @@ def get_info_Materiel(reference):
 def save_util():
     f = UtilisateurForm()
     u = Utilisateur(
-        id = 1 + db.session.query(db.func.max(Utilisateur.id)).scalar(),
-        nom = f.nomUti.data,
-        prenom = f.prenomUti.data,
-        email = f.emailUti.data,
-        password = f.mdp.data,
-        id_role = f.role.data
+        idUti = 1 + db.session.query(db.func.max(Utilisateur.idUti)).scalar(),
+        nomUti = f.nomUti.data,
+        prenomUti = f.prenomUti.data,
+        emailUti = f.emailUti.data,
+        mdp = f.mdp.data,
+        idRole = f.role.data,
+        modifications = eval(f.modif.data)
     )
     db.session.add(u)
     db.session.commit()
