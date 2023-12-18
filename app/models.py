@@ -212,7 +212,7 @@ class Statut(db.Model):
     nom = db.Column(db.String)
     num_commande = db.Column(db.Integer, db.ForeignKey("commande.numero"))
     commande = db.relationship("Commande",
-                               backref=db.backref("alertes", lazy="dynamic"))
+                               backref=db.backref("statut", lazy="dynamic"))
 
     def __repr__(self):
         return "<Statut (%d) %s>" % (self.id, self.nom)
