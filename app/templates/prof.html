@@ -6,7 +6,7 @@
 {% endblock %}
 {% block content %}
   {% if current_user.is_authenticated %}
-    <h1 id="bjr-prof">Bonjour <span class="nom-util">{{ current_user.nom }}</span> !</h1>
+    <h1 id="bjr-prof">Bonjour <span class="nom-util">{{ current_user.nomUti }}</span> !</h1>
   {% else %}
     <h1 id="bjr-prof">Bonjour !</h1>
   {% endif %}
