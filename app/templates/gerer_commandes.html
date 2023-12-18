@@ -9,19 +9,19 @@
     <section class="search_buttons">
         <form class="search" role="search" method="POST">
             <input type="search" name="recherche" id="recherche" placeholder="Rechercher" oninput="update_categorie()">
-            <select name="domaine" id="domaine-select">
-                <option id="domaine" value="" onclick="update_categorie()">-- Domaine --</option>
+            <select name="domaine" id="domaine-select" onchange="update_categorie()">
+                <option id="domaine" value="">-- Domaine --</option>
                 {% for domaine in liste_domaines %}
-                    <option id="domaine" value="{{ domaine.code }}" onclick="update_categorie()">{{ domaine.nom }}</option>
+                    <option id="domaine" value="{{ domaine.code }}">{{ domaine.nom }}</option>
                 {% endfor %}
             </select>
-            <select name="categorie" id="categorie-select">
-                <option id="categorie" value="" onclick="update_categorie()">-- Categorie --</option>
+            <select name="categorie" id="categorie-select" onchange="update_categorie()">
+                <option id="categorie" value="">-- Categorie --</option>
             </select>
-            <select name="statut" id="statut-select">
-                <option id="statut" value="" onclick="update_categorie()">-- Statut --</option>
+            <select name="statut" id="statut-select" onchange="update_categorie()">
+                <option id="statut" value="">-- Statut --</option>
                 {% for statut in liste_statuts %}
-                    <option id="statut" value="{{ statut }}" onclick="update_categorie()">{{ statut }}</option>
+                    <option id="statut" value="{{ statut }}">{{ statut }}</option>
                 {% endfor %}
             </select>
             <input type="submit" name="btn-reset" value="reset" class="yellow-button">
@@ -127,9 +127,6 @@
                         var button = document.createElement("button")
                         button.id = commande.numero
                         button.className = "command_button"
-                        button.onclick = function () {
-                            edit(this.id);
-                        }
                         var p = document.createElement("p");
                         p.textContent = commande.nom;
                         var image = document.createElement("img");
@@ -152,7 +149,7 @@
             fetch(`/search/?recherche=${recherche}&domaine=${domaine}&categorie=${categorie_selected}&statut=${statut}`)
                 .then(response => response.json())
                 .then(data => {  
-                    document.getElementById("categorie-select").innerHTML = '<option id="categorie" value="" onclick="update_categorie()">-- Categorie --</option>';
+                    document.getElementById("categorie-select").innerHTML = '<option id="categorie" value="">-- Categorie --</option>';
                     data.liste_categories.forEach(function(categorie){
                         var option = document.createElement("option");
                         option.id = "categorie";
