@@ -26,7 +26,8 @@ create table `Utilisateur`(
     nomUti varchar(50),
     prenomUti varchar(50),
     emailUti varchar(50),
-    telUti varchar(50),
+    mdp varchar(50),
+    modifications boolean,
     primary key (idUti)
 )ENGINE=InnoDB DEFAULT CHARSET=UTF8;
 
@@ -57,6 +58,7 @@ create table `MaterielGenerique`(
     ficheFDS longblob,
     seuilQte int(5),    -- à environ 25% de la quantité du produit
     seuilPeremption int(3),    -- nombre de jours avant la date de péremption
+    imageMateriel longblob,
     primary key (refMateriel)
 )ENGINE=InnoDB DEFAULT CHARSET=UTF8;
 
@@ -80,6 +82,7 @@ create table `Commande`(
     refMateriel int(5),
     dateCommande date,
     dateReception date,
+    qteCommandee int(5),
     idStatut int(5),
     primary key (numeroCommande, idUti, refMateriel)
 )ENGINE=InnoDB DEFAULT CHARSET=UTF8;
