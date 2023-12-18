@@ -1,6 +1,7 @@
 """Toute les routes et les Formulaires"""
 from .app import app, db
 from .models import Materiel, Utilisateur, Domaine, Categorie, Role, Commande , filter_commands
+from .forms import MaterielModificationForm
 
 from flask import jsonify, render_template, url_for, redirect, request, flash
 from flask_login import login_required, login_user, logout_user, current_user
@@ -135,7 +136,8 @@ def consult():
     categories = Categorie.query.order_by(Categorie.nom).all()
     materiels = Materiel.query.order_by(Materiel.nom).all()
     current = materiels[0]
-    return render_template("consultation.html", domaines=domaines, categories=categories, materiels=materiels, current_mat=current)
+    f = MaterielModificationForm(materiel=current)
+    return render_template("consultation.html",form = f ,domaines=domaines, categories=categories, materiels=materiels, current_mat=current)
 
 @app.route('/consult/recherche')
 def update_materials():

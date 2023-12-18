@@ -46,20 +46,22 @@
     </div>
     <div>
         <div class="description">
-            <h2 id="nom">{{ current_mat.nom }}</h2>
-            <div class="chiffre">
-                <label id="domaine">Domaine : {{ current_mat.domaine.nom }}</label>
-                <label id="categorie">Categorie : {{ current_mat.categorie.nom }}</label>
-                <label id="reference">Reference : {{ current_mat.reference }}</label>
-                {% if current_mat.domaine.nom == "Produits Chimiques" %}
-                <label id="quantiteR">Quantité restante : {{ current_mat.quantite_restante }}</label>
-                {% endif %}
-                <label id="quantiteT">Quantité totale : {{ current_mat.quantite_globale }}</label>
-            </div>
-            <div class="textu">
-                <img id="image" src="data:image/png;base64,{{ current_mat.get_image() }}" alt="{{ current_mat.nom }}">
-                <p id="complements">{{ current_mat.complements }}</p>
-            </div>
+            <form action="" method="post">
+                <h2 id="nom">{{ form.nom.data}}</h2>
+                <div class="chiffre">
+                    <label>Domaine : </label><input type="text"  id="domaine" value="{{ form.domaine.data }}" disabled>
+                    <label >Reférence : </label><input type="text" id="categorie" value="{{ form.categorie.data }}" disabled>
+                    <label>Reference : </label><input type="text" id="reference" value="{{ form.reference.data }}" disabled>
+                    {% if form.domaine.data == "Produits Chimiques" %}
+                    <label >Quantité Restante : </label><input type="text" id="quantiteR" value="{{form.quantiteRes.data }}" disabled>
+                    {% endif %}
+                    <label>Quantité Totale :</label><input type="text" id="quantiteT" value="{{ form.quantiteTot.data }}" disabled>
+                </div>
+                <div class="textu">
+                    <img id="image" src="data:image/png;base64,{{ current_mat.get_image() }}" alt="{{ current_mat.nom }}">
+                    <input type="text" id="complements" value="{{ form.description.data }}" disabled>
+                </div>
+            </form>
         </div>
         <div class="button">
             {% if current_user.modifications == True %}
@@ -152,15 +154,15 @@
         fetch('/get_info_Materiel/' + id)
             .then(response => response.json())
             .then(data => {
-                labelNom.textContent = data.nom;
-                labelDomaine.textContent = "Domaine : " + data.domaine;
-                labelCategorie.textContent = "Catégorie : " + data.categorie;
-                labelQuanT.textContent = "Quantité totale : " + data.quantite_global;
-                labelReference.textContent = "Reference : " + data.reference;
+                labelNom.value = data.nom;
+                labelDomaine.value = data.domaine;
+                labelCategorie.value = data.categorie;
+                labelQuanT.value = data.quantite_global;
+                labelReference.value = data.reference;
                 if (labelQuanR) {
-                    labelQuanR.textContent = "Quantité restante : " + data.quantite_restante;
+                    labelQuanR.value = data.quantite_restante;
                 }
-                labelComplements.textContent = data.complements;
+                labelComplements.value = data.complements;
                 labelImage.src = "data:image/png;base64," + data.image;
                 labelImage.alt = data.nom;
 

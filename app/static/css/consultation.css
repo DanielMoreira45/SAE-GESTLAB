@@ -43,28 +43,30 @@ div.description{
     border: none;
     border-radius: 9px;
 }
-div.description h2{
+div.description>form>h2{
     margin: 0.5vw 0px 0.5vw 1rem;
 }
-div.description>div.chiffre{
+div.description>form>div.chiffre{
     display: flex;
     flex-wrap: wrap;
     margin: 1rem;
 }
 
-div.description>div.chiffre>label{
+div.description>form>div.chiffre>input{
     flex-grow: 1;
     margin: 0.5em 1em;
     flex-basis: 28%;
+    border: hidden;
+    width: 5vw;
 }
 
-div.description>div.textu{
+div.description>form>div.textu{
     display: flex;
     flex-wrap: nowrap;
     margin: 1rem;
 }
 
-div.description>div.textu>p{
+div.description>form>div.textu>p{
     margin-left: 1rem;
 }
 
