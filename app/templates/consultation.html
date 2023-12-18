@@ -49,13 +49,13 @@
             <form action="" method="post">
                 <h2 id="nom">{{ form.nom.data}}</h2>
                 <div class="chiffre">
-                    <label>Domaine : </label><input type="text"  id="domaine" value="{{ form.domaine.data }}" disabled>
-                    <label >Reférence : </label><input type="text" id="categorie" value="{{ form.categorie.data }}" disabled>
-                    <label>Reference : </label><input type="text" id="reference" value="{{ form.reference.data }}" disabled>
+                    <label>Domaine : <input type="text"  id="domaine" value="{{ form.domaine.data }}" disabled></label>
+                    <label >Reférence : <input type="text" id="categorie" value="{{ form.categorie.data }}" disabled></label>
+                    <label>Reference : <input type="text" id="reference" value="{{ form.reference.data }}" disabled></label>
                     {% if form.domaine.data == "Produits Chimiques" %}
-                    <label >Quantité Restante : </label><input type="text" id="quantiteR" value="{{form.quantiteRes.data }}" disabled>
+                    <label >Quantité Restante : <input type="text" id="quantiteR" value="{{form.quantiteRes.data }}" disabled></label>
                     {% endif %}
-                    <label>Quantité Totale :</label><input type="text" id="quantiteT" value="{{ form.quantiteTot.data }}" disabled>
+                    <label>Quantité Totale :<input type="text" id="quantiteT" value="{{ form.quantiteTot.data }}" disabled></label>
                 </div>
                 <div class="textu">
                     <img id="image" src="data:image/png;base64,{{ current_mat.get_image() }}" alt="{{ current_mat.nom }}">

@@ -52,12 +52,15 @@ div.description>form>div.chiffre{
     margin: 1rem;
 }
 
-div.description>form>div.chiffre>input{
-    flex-grow: 1;
-    margin: 0.5em 1em;
-    flex-basis: 28%;
+div.description>form>div.chiffre>label{
+    display: inline;
+    height: 5vh;
+}
+
+div.description>form>div.chiffre>label>input{
+    margin: 0.0em 1em;
     border: hidden;
-    width: 5vw;
+    min-width: 10vw;
 }
 
 div.description>form>div.textu{
