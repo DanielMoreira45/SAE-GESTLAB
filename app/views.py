@@ -5,10 +5,11 @@ from .models import Materiel, Utilisateur, Domaine, Categorie, Role, Commande , 
 from flask import jsonify, render_template, url_for, redirect, request, flash
 from flask_login import login_required, login_user, logout_user, current_user
 from flask_wtf import FlaskForm
-from wtforms import StringField, HiddenField, PasswordField, SelectField, RadioField, IntegerField
+from wtforms import StringField, HiddenField, PasswordField, SelectField, RadioField, IntegerField, TextAreaField
 from wtforms.validators import DataRequired, NumberRange
 from hashlib import sha256
 from datetime import datetime
+from flask_wtf.file import FileField
 
 class LoginForm(FlaskForm):
     email = StringField('Email')
@@ -260,6 +261,85 @@ def save_new_commande():
     db.session.commit()
     flash("Commande effectuée avec succès !")
     return redirect(url_for('new_commande'))
+
+class MaterielForm(FlaskForm):
+    nom = StringField('Nom', validators=[DataRequired()])
+    photo = FileField('Photo')
+    lesD = [(1, 'Appareillage'),
+            (2, 'Verrerie et associés'),
+            (3, 'Produits Chimiques'),
+            (4, 'Matériel de Laboratoire'),
+            (5, 'Média'),
+            (6, 'Matériel Électrique')]
+    lesC = [(1, 'Observation'),
+            (2, 'Mesures'),
+            (3, 'ExAO'),
+            (4, 'Multimédia'),
+            (5, 'Expérimentation'),
+            (6, 'Divers'),
+            (7, 'Verrerie'),
+            (8, 'Produits Organiques'),
+            (9, 'Produits Minéraux'),
+            (10, 'Enzymes'),
+            (11, 'Colorants'),
+            (12, 'Entretien'),
+            (13, 'Autres'),
+            (14, 'Appareils de labo'),
+            (15, 'Sécurité'),
+            (16, 'Fournitures'),
+            (17, 'Mobilier'),
+            (18, 'Divers'),
+            (19, 'Logiciels'),
+            (20, 'DVD/VHS'),
+            (21, 'Manuels Scolaires'),
+            (22, 'Livres Scientifiques'),
+            (23, 'Cartes/Posters'),
+            (24, 'Divers'),
+            (25, 'Générateurs'),
+            (26, 'Mesures'),
+            (27, 'Récepteurs'),
+            (28, 'Connectique'),
+            (29, 'Métaux'),
+            (30, 'Divers')]
+
+    rangement = StringField('Rangement', validators=[DataRequired()])
+    commentaire = TextAreaField('Description' , validators=[DataRequired()])
+    quantite = IntegerField('Quantité', validators=[DataRequired()])
+    unite = SelectField('Unité', choices=[None,'cm','g','ml'])
+    complements = StringField('Compléments', validators=[DataRequired()])
+    ficheFDS = FileField('Fiche De Sécurité')
+    seuil_quantite = IntegerField('Seuil de Quantité')
+    seuil_peremption = IntegerField('Seuil de Péremption (nb jours)')
+    categorie = SelectField('Catégorie', choices=lesC, validators=[DataRequired()])
+    domaine = SelectField('Domaine', choices=lesD, validators=[DataRequired()])
+
+@app.route('/materiel/add/')
+@login_required
+def materiel_add():
+    f = MaterielForm()
+    return render_template("ajout-materiel.html", form=f)
+
+@app.route("/save/materiel/", methods=("POST",))
+def save_materiel():
+    f = MaterielForm()
+    m = Materiel(
+        reference = 1 + db.session.query(db.func.max(Materiel.reference)).scalar(),
+        nom = f.nom.data,
+	    # photo = f.photo.data,
+        rangement = f.rangement.data,
+        commentaire = f.commentaire.data,
+        quantite_globale = f.quantite.data,
+        unite = f.unite.data,
+        complements = f.complements.data,
+        # fiche_fds = f.ficheFDS.data,
+        seuil_quantite = f.seuil_quantite.data,
+        seuil_peremption = f.seuil_peremption.data,
+        code_domaine = f.domaine.data,
+        code_categorie = f.categorie.data
+    )
+    db.session.add(m)
+    db.session.commit()
+    return redirect(url_for('materiel_add'))
 
 @app.route("/admin/home/")
 @login_required
