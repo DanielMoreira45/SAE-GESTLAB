@@ -1,3 +1,5 @@
+"Formulaires de l'application"
+
 from flask_wtf import FlaskForm
 from wtforms import StringField, HiddenField, PasswordField, SelectField, RadioField, IntegerField
 from wtforms.validators import DataRequired, NumberRange

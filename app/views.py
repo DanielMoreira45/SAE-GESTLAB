@@ -1,6 +1,6 @@
 """Toute les routes et les Formulaires"""
 from .app import app, db
-from .models import Materiel, Utilisateur, Domaine, Categorie, Role, Commande , filter_commands
+from .models import MaterielGenerique, MaterielInstance, Utilisateur, Domaine, Categorie, Role, Commande , filter_commands
 from .forms import LoginForm, UtilisateurForm, UserForm, CommandeForm
 from flask import jsonify, render_template, url_for, redirect, request, flash
 from flask_login import login_required, login_user, logout_user, current_user
@@ -93,7 +93,7 @@ def update_user():
 def consult():
     domaines = Domaine.query.order_by(Domaine.nom).all()
     categories = Categorie.query.order_by(Categorie.nom).all()
-    materiels = Materiel.query.order_by(Materiel.nom).all()
+    materiels = MaterielGenerique.query.order_by(MaterielGenerique.nom).all()
     current = materiels[0]
     return render_template("consultation.html", domaines=domaines, categories=categories, materiels=materiels, current_mat=current)
 
@@ -103,7 +103,7 @@ def update_materials():
     selected_domaine = request.args.get('domaine')
     selected_categorie = request.args.get('categorie')
     search = request.args.get('search')
-    liste_materiel = Materiel.query.order_by(Materiel.nom).all()
+    liste_materiel = MaterielGenerique.query.order_by(MaterielGenerique.nom).all()
     if (selected_categorie):        
         liste_materiel = [materiel for materiel in liste_materiel if materiel.code_categorie == int(selected_categorie)]
 
@@ -191,7 +191,7 @@ def validate(validee, id):
 @app.route("/delivery/new/")
 @login_required
 def new_commande():
-    liste_materiel = Materiel.query.all()
+    liste_materiel = MaterielGenerique.query.all()
     choix_materiel = [(m.reference, m.nom) for m in liste_materiel]
     choix_materiel.insert(0, ("", "-- Choisir le matériel --"))
     f = CommandeForm()
@@ -233,7 +233,7 @@ def ecole_home():
 
 @app.route("/get_info_Materiel/<int:reference>", methods=["GET"])
 def get_info_Materiel(reference):
-    materiel = Materiel.query.get(reference)
+    materiel = MaterielGenerique.query.get(reference)
     if materiel:
         image_data = materiel.get_image()
         materiel_info = {

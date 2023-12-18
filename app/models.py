@@ -101,19 +101,17 @@ class Categorie(db.Model):
         return "<Categorie (%d) %s %r>" % (self.code, self.nom, self.code_domaine)
 
 
-class Materiel(db.Model):
-    __tablename__ = "materiel"
+class MaterielGenerique(db.Model):
+    __tablename__ = "materiel_generique"
     reference = db.Column(db.Integer, primary_key=True)
     nom = db.Column(db.String(100))
     rangement = db.Column(db.String(100))
     commentaire = db.Column(db.String(100))
-    quantite_globale = db.Column(db.Integer)
-    quantite_max = db.Column(db.Integer)
+    quantite = db.Column(db.Float)
     unite = db.Column(db.String(100))
-    quantite_restante = db.Column(db.Float)
+    quantite_max = db.Column(db.Float)
     complements = db.Column(db.String(500))
     fiche_fds = db.Column(db.LargeBinary)
-    date_peremption = db.Column(db.Date)
     seuil_quantite = db.Column(db.Integer)
     seuil_peremption = db.Column(db.Integer)
     image = db.Column(db.LargeBinary)
@@ -138,16 +136,52 @@ class Materiel(db.Model):
         return {
             'reference': self.reference,
             'nom': self.nom,
-            'quantite_globale': self.quantite_globale,
             'quantite_max': self.quantite_max,
             'unite': self.unite,
-            'quantite_restante': self.quantite_restante,
+            'quantite': self.quantite,
             'complements': self.complements,
             'code_categorie': self.code_categorie,
             'code_domaine': self.code_domaine,
             'image': self.get_image(),
         }
 
+    def __repr__(self):
+        return "<Materiel (%d)>" % (self.reference)
+
+
+class MaterielInstance(db.Model):
+    __tablename__ = "materiel_instance"
+    id = db.Column(db.Integer, primary_key=True)
+    quantite_restante = db.Column(db.Float)
+    unite = db.Column(db.String(100))
+    date_peremption = db.Column(db.Float)
+    image = db.Column(db.LargeBinary)
+    reference_mat = db.Column(db.Integer, db.ForeignKey("materiel_generique.reference"), primary_key=True)
+    mat_generique = db.relationship("MaterielGenerique",
+                                backref=db.backref("matériels",
+                                                   lazy="dynamic"))
+
+    def get_image(self):
+        if self.image is not None:
+            return b64encode(self.image).decode("utf-8")
+        else:
+            default_image_path = "static/images/black_square.png"
+            with open(default_image_path, 'rb') as f:
+                default_image_data = f.read()
+            return b64encode(default_image_data).decode("utf-8")
+
+    def serialize(self):
+        return {
+            'reference': self.reference,
+            'nom': self.nom,
+            'quantite_max': self.quantite_max,
+            'unite': self.unite,
+            'quantite': self.quantite,
+            'complements': self.complements,
+            'code_categorie': self.code_categorie,
+            'code_domaine': self.code_domaine,
+            'image': self.get_image(),
+        }
 
     def __repr__(self):
         return "<Materiel (%d)>" % (self.reference)
@@ -172,18 +206,42 @@ class Commande(db.Model):
         return "<Commande (%d) %s %r %e %c %d>" % (self.numero, self.date_commande, self.statut, self.date_reception, self.id_util, self.ref_materiel)
 
 
-class Alerte(db.Model):
+class Statut(db.Model):
+    __tablename__ = "statut"
+    id = db.Column(db.Integer, primary_key=True)
+    nom = db.Column(db.String)
+
+    def __repr__(self):
+        return "<Statut (%d) %s>" % (self.id, self.nom)
+
+
+class AlerteSeuil(db.Model):
     __tablename__ = "alerte"
     id = db.Column(db.Integer, primary_key=True)
-    commentaire = db.Column(db.String(150))
+    description = db.Column(db.String(150))
     ref_materiel = db.Column(db.Integer,
-                             db.ForeignKey("materiel.reference"),
+                             db.ForeignKey("materiel_instance.reference"),
                              primary_key=True)
-    materiel = db.relationship("Materiel",
+    materiel = db.relationship("MaterielInstance",
                                backref=db.backref("alertes", lazy="dynamic"))
 
     def __repr__(self):
         return "<Alerte (%d) %s %r>" % (self.id, self.commentaire, self.ref_materiel)
+
+
+class AlerteQuantite(db.Model):
+    __tablename__ = "alerte"
+    id = db.Column(db.Integer, primary_key=True)
+    description = db.Column(db.String(150))
+    ref_materiel = db.Column(db.Integer,
+                             db.ForeignKey("materiel_generique.reference"),
+                             primary_key=True)
+    materiel = db.relationship("MaterielGenerique",
+                               backref=db.backref("alertes", lazy="dynamic"))
+
+    def __repr__(self):
+        return "<Alerte (%d) %s %r>" % (self.id, self.commentaire, self.ref_materiel)
+
 
 @login_manager.user_loader
 def load_user(user_id):
@@ -191,7 +249,7 @@ def load_user(user_id):
 
 def filter_commands(txt, domaine, categorie, statut, commandes):
     liste_materiel = []
-    for materiel in Materiel.query.all():
+    for materiel in MaterielGenerique.query.all():
         if txt.upper() in materiel.nom.upper():
             liste_materiel.append(materiel)
     liste_commandes = []
