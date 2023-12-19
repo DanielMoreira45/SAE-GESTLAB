@@ -1,6 +1,6 @@
 """Toute les routes et les Formulaires"""
 from .app import app, db
-from .models import Materiel, Utilisateur, Domaine, Categorie, Role, Commande , filter_commands
+from .models import Materiel, Utilisateur, Domaine, Categorie, Role, Commande, filter_commands
 
 from flask import jsonify, render_template, url_for, redirect, request, flash
 from flask_login import login_required, login_user, logout_user, current_user
@@ -9,6 +9,7 @@ from wtforms import StringField, HiddenField, PasswordField, SelectField, RadioF
 from wtforms.validators import DataRequired, NumberRange
 from hashlib import sha256
 from datetime import datetime
+from fpdf import FPDF
 
 class LoginForm(FlaskForm):
     email = StringField('Email')
@@ -156,7 +157,7 @@ def update_materials():
     liste_materiel = [materiel.serialize() for materiel in liste_materiel]
     return jsonify({'materiels': liste_materiel})
 
-@app.route('/get_categories')
+@app.route('/get_categories/')
 def get_categories():
     selected_domaine = request.args.get('domaine')
     categories = Categorie.query.order_by(Categorie.nom).all()
@@ -164,6 +165,54 @@ def get_categories():
         categories = [categorie for categorie in categories if categorie.code_domaine == int(selected_domaine)]
     categories = [categorie.serialize() for categorie in categories]
     return jsonify({'categories': categories})
+
+@app.route('/commandes/creer_pdf/')
+def creer_pdf():
+    liste_commandes = filtrer_commandes(request.args.get('search'), request.args.get('domaine'), request.args.get('categorie'), request.args.get('statut'))
+    monPdf = FPDF()
+    monPdf.add_page()
+    monPdf.set_font("Arial", size=30)
+    monPdf.cell(0, 10, txt="Commandes", ln=1, align="C")
+    monPdf.cell(0, 20, ln=1)
+    monPdf.set_font("Arial", size=15)
+    monPdf.cell(0, 10, txt="Liste de toutes les commandes : ", ln=1, align="L")
+    monPdf.set_font("Arial", size=10)
+    for i in range(len(liste_commandes)):
+            monPdf.cell(100, 10, txt=" - "+liste_commandes[i].materiel.nom, ln=i%2, align="L")
+    
+    monPdf.cell(0, 10, ln=1)
+
+    for commande in liste_commandes:
+        monPdf.cell(0, 10, ln=1)
+        monPdf.set_font("Arial", size=15)
+        monPdf.cell(0, 10, txt=commande.materiel.nom, ln=1, align="L")
+        monPdf.set_font("Arial", size=10)
+        monPdf.cell(0, 10, txt="Numéro de commande : "+str(commande.numero), ln=1, align="L")
+        monPdf.cell(0, 10, txt="Statut : "+commande.statut, ln=1, align="L")
+        monPdf.cell(0, 10, txt="Domaine : "+commande.materiel.domaine.nom, ln=1, align="L")
+        monPdf.cell(0, 10, txt="Categorie : "+commande.materiel.categorie.nom, ln=1, align="L")
+        monPdf.cell(0, 10, txt="Quantité commandée : "+str(commande.quantite_commandee), ln=1, align="L")
+        monPdf.cell(0, 10, txt="Commande effectuée par : "+commande.utilisateur.nom, ln=1, align="L")
+
+    monPdf.output("commandes.pdf")
+    return jsonify({'nom_fichier' : 'commandes.pdf'})
+
+
+def filtrer_commandes(recherche, domaine, categorie, statut):
+    liste_commandes = Commande.query.order_by(Commande.date_commande).all()
+    if (categorie!="Categorie"):        
+        liste_commandes = [commande for commande in liste_commandes if commande.materiel.categorie.nom == categorie]
+
+    if (domaine!="Domaine"):
+        liste_commandes = [commande for commande in liste_commandes if commande.materiel.domaine.nom == domaine]
+
+    if (recherche):
+        liste_commandes = [commande for commande in liste_commandes if recherche.lower() in commande.materiel.nom.lower()]
+
+    if (statut!="Statut"):
+        liste_commandes = [commande for commande in liste_commandes if commande.statut == statut]
+
+    return liste_commandes
 
 
 @app.route("/ecole/commandes/", methods=("GET", "POST"))
