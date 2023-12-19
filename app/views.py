@@ -1,10 +1,9 @@
 """Toute les routes et les Formulaires"""
 from .app import app, db
 from .models import Statut, MaterielGenerique, MaterielInstance, Utilisateur, Domaine, Categorie, Role, Commande , filter_commands
-from .forms import LoginForm, UtilisateurForm, UserForm, CommandeForm
+from .forms import LoginForm, UtilisateurForm, UserForm, CommandeForm, MaterielForm
 from flask import jsonify, render_template, url_for, redirect, request, flash
 from flask_login import login_required, login_user, logout_user, current_user
-from hashlib import sha256
 from datetime import datetime
 from fpdf import FPDF
 
@@ -273,6 +272,34 @@ def save_new_commande():
     db.session.commit()
     flash("Commande effectuée avec succès !")
     return redirect(url_for('new_commande'))
+
+@app.route('/materiel/add/')
+@login_required
+def materiel_add():
+    f = MaterielForm()
+    return render_template("ajout-materiel.html", form=f)
+
+@app.route("/save/materiel/", methods=("POST",))
+def save_materiel():
+    f = MaterielForm()
+    m = MaterielGenerique(
+        reference = 1 + db.session.query(db.func.max(MaterielGenerique.reference)).scalar(),
+        nom = f.nom.data,
+        image = f.photo.data,
+        fiche_fds = f.ficheFDS.data,
+        rangement = f.rangement.data,
+        commentaire = f.commentaire.data,
+        quantite_globale = f.quantite.data,
+        unite = f.unite.data,
+        complements = f.complements.data,
+        seuil_quantite = f.seuil_quantite.data,
+        seuil_peremption = f.seuil_peremption.data,
+        code_domaine = f.domaine.data,
+        code_categorie = f.categorie.data
+    )    
+    db.session.add(m)
+    db.session.commit()
+    return redirect(url_for('consult'))
 
 @app.route("/admin/home/")
 @login_required
