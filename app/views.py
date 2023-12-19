@@ -137,6 +137,11 @@ def consult():
     materiels = Materiel.query.order_by(Materiel.nom).all()
     current = materiels[0]
     f = MaterielModificationForm(materiel=current)
+    
+    f.set_domaine_choices([(domaine.code, domaine.nom) for domaine in domaines])
+
+    # f.set_categorie_choices([(categorie.code, categorie.nom) for categorie in categories if categorie.domaine.code_domaine == domaine])
+    f.set_categorie_choices([(categorie.code, categorie.nom) for categorie in categories])
     return render_template("consultation.html",form = f ,domaines=domaines, categories=categories, materiels=materiels, current_mat=current)
 
 @app.route('/consult/recherche')
@@ -157,6 +162,33 @@ def update_materials():
 
     liste_materiel = [materiel.serialize() for materiel in liste_materiel]
     return jsonify({'materiels': liste_materiel})
+
+@app.route('/consult/enregistrer', methods=['POST'])
+def save_material():
+    materiel = Materiel.query.get(request.form["hiddenref"])
+    if materiel:
+        materiel.nom = request.form["nom"]
+        materiel.reference = request.form["reference"]
+        materiel.quantite_max = request.form["quantiteMax"]
+        materiel.quantite_globale = request.form["quantiteTot"]
+        materiel.quantite_restante = request.form["quantiteRes"]
+        materiel.complements = request.form["description"]
+        #Changer le domaine et la catégorie
+
+        db.session.commit()
+        return redirect(url_for('consult'))
+    return redirect(url_for('consult'))
+
+@app.route('/consult/supprimer/<int:id>')
+def delete_material(id):
+    materiel = Materiel.query.get(id)
+    if materiel:
+        db.session.delete(materiel)
+        db.session.commit()
+        response = {'status': 'success'}
+    else:
+        response = {'status': 'error'}
+    return jsonify(response)
 
 @app.route('/get_categories')
 def get_categories():
@@ -282,16 +314,20 @@ def ecole_home():
 def get_info_Materiel(reference):
     materiel = Materiel.query.get(reference)
     if materiel:
+        liste_categories = Categorie.query.filter_by(code_domaine=materiel.code_domaine).all()
+        liste_categories = [categorie.serialize() for categorie in liste_categories]
         image_data = materiel.get_image()
         materiel_info = {
             'reference': materiel.reference,
             'nom': materiel.nom,
-            'domaine': materiel.domaine.nom,
-            'categorie': materiel.categorie.nom,
+            'domaine': materiel.domaine.code,
+            'categorie': materiel.categorie.code,
+            'quantite_max': materiel.quantite_max,
             'quantite_global': materiel.quantite_globale,
             'quantite_restante': materiel.quantite_restante,
             'complements': materiel.complements,
-            'image': image_data
+            'image': image_data,
+            'categories': liste_categories
         }
         return jsonify(materiel_info)
     else:

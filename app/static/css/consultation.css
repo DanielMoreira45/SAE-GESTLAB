@@ -46,31 +46,29 @@ div.description{
 div.description>form>h2{
     margin: 0.5vw 0px 0.5vw 1rem;
 }
-div.description>form>div.chiffre{
-    display: flex;
-    flex-wrap: wrap;
-    margin: 1rem;
-}
-
 div.description>form>div.chiffre>label{
     display: inline;
     height: 5vh;
 }
 
-div.description>form>div.chiffre>label>input{
+div.description>form>div.chiffre input{
     margin: 0.0em 1em;
     border: hidden;
     min-width: 10vw;
 }
-
-div.description>form>div.textu{
+form>div{
     display: flex;
-    flex-wrap: nowrap;
     margin: 1rem;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
 }
 
-div.description>form>div.textu>p{
+div.description>form>div.textu>textarea{
     margin-left: 1rem;
+    max-height: 15vh;
+    min-width: 30vw;
+    border: hidden;
 }
 
 div.liste_mat{
@@ -109,6 +107,11 @@ div.info {
     max-width: 8 0vw;
 }
 
+#imagePresentation{
+    width: 12em;
+    height: 12em;
+}
+
 div.info img{
     width: 6em;
     height: 6em;
@@ -132,7 +135,7 @@ div.liste_mat::-webkit-scrollbar-thumb {
     border-radius: 8px;
 }
 
-#buttonModifier, #buttonSupp, #buttonImprimer, #buttonFDS{
+#buttonModifier, #buttonSupp, #buttonImprimer, #buttonFDS, #buttonvalider{
     background-color: rgb(255, 216, 131);
     font-family: "AgrandirWide";
     font-size: 1em;
@@ -225,4 +228,10 @@ div.recherche>*{
 
 #search::placeholder{
     font-size: 1.2rem;
+}
+
+#nom{
+    font-size: 1.2rem;
+    font-weight: bold;
+    width: 20vw;
 }
