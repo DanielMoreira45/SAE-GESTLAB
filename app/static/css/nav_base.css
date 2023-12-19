@@ -131,8 +131,7 @@ li > span {
     text-align: center;
     height: 48.8333px;
 }
-  
-/* The actual popup (appears on top) */
+
 .popup .popuptext {
     visibility: hidden;
     width: 160px;
@@ -149,8 +148,7 @@ li > span {
     font-family: "DM-Sans";
     font-size: 0.8em;
 }
-  
-/* Toggle this class when clicking on the popup container (hide and show the popup) */
+
 .popup .show {
     visibility: visible;
 }
