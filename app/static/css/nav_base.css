@@ -143,7 +143,7 @@ li > span {
     position: absolute;
     z-index: 1;
     top: 125%;
-    left: 50%;
+    left: -130%;
     margin-left: -80px;
     font-family: "DM-Sans";
     font-size: 0.8em;
@@ -153,3 +153,11 @@ li > span {
     visibility: visible;
 }
 
+#myPopup {
+    height: auto;
+    width: 280px;
+}
+
+#elemPopupNotif img {
+    margin-top: 10px;
+}
