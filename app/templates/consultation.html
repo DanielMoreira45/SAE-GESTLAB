@@ -15,13 +15,13 @@
     <select name="Domaine" id="Domaine" onchange="change()">
         <option value="">Domaine</option>
         {% for domaine in domaines %}
-        <option value="{{ domaine.code }}">{{ domaine.nom }}</option>
+        <option value="{{ domaine.codeD }}">{{ domaine.nomD }}</option>
         {% endfor %}
     </select>
     <select name="Catégorie" id="Categorie" onchange="change()">
         <option value="">Categorie</option>
         {% for categorie in categories %}
-        <option value="{{ categorie.code }}">{{ categorie.nom }}</option>
+        <option value="{{ categorie.codeC }}">{{ categorie.nomC }}</option>
         {% endfor %}
     </select>
     <button type="reset" id="searchButton">reset</button>
@@ -33,8 +33,8 @@
                 {% for materiel in materiels %}
                 <li>
                     <div class="item_mat">
-                        <img src="data:image/png;base64,{{ materiel.get_image() }}" alt="{{ materiel.nom }}">
-                        <h2 id="{{ materiel.reference }}" onclick="edit(this.id)">{{ materiel.nom }}</h2>
+                        <img src="data:image/png;base64,{{ materiel.get_image() }}" alt="{{ materiel.nomMateriel }}">
+                        <h2 id="{{ materiel.refMateriel }}" onclick="edit(this.id)">{{ materiel.nomMateriel }}</h2>
                     </div>
                 </li>
                 {% endfor %}
@@ -42,7 +42,7 @@
         </div>
         <div>
             {% if current_user.modifications == True %}
-            <button id="buttonAdd" type="button">Ajouter du Materiel</button>
+            <a href="{{ url_for('materiel_add') }}"><button id="buttonAdd" type="button">Ajouter du Materiel</button></a>
             {% endif %}
         </div>
     </div>
@@ -81,7 +81,6 @@
         </div>
     </div>
 </div>
-
 {% endif %}
 {% endif %}
 {% endblock %}
