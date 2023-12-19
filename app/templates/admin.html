@@ -6,7 +6,7 @@
 
 {% block content %}
     {% if current_user.is_authenticated %}
-    <h1 id="bjr-admin">BONJOUR <span class="nom-util">{{ current_user.nom }}</span> !</h1>
+    <h1 id="bjr-admin">BONJOUR <span class="nom-util">{{ current_user.nomUti }}</span> !</h1>
     {% else %}
     <h1 id="bjr-admin">BONJOUR !</h1>
     <h2>ofhz</h2>

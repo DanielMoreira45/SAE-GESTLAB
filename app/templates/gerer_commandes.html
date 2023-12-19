@@ -32,9 +32,9 @@
         <ul id="liste">
             {% for command in liste_commandes %}
             <li>
-                <button id="{{ command.numero }}" class="command_button" onclick="edit(this.id)">
+                <button id="{{ command.numeroCommande }}" class="command_button" onclick="edit(this.id)">
                     <img src="{{ url_for('static', filename='images/black_square.png') }}" alt="image commande" class="img">
-                    <p>{{ command.materiel.nom }}</p>
+                    <p>{{ command.materiel.nomMateriel }}</p>
                 </button>
             </li>
             {% endfor %}
