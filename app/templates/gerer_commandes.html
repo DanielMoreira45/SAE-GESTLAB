@@ -9,34 +9,32 @@
     <section class="search_buttons">
         <form class="search" role="search" method="POST">
             <input type="search" name="recherche" id="recherche" placeholder="Rechercher" oninput="update_categorie()">
-            <select name="domaine" id="domaine-select">
-                <option id="domaine" value="Domaine" onclick="update_categorie()">-- Domaine --</option>
+            <select name="domaine" id="domaine-select" onchange="update_categorie()">
+                <option id="domaine" value="">-- Domaine --</option>
                 {% for domaine in liste_domaines %}
-                    <option id="domaine" value="{{ domaine.nom }}" onclick="update_categorie()">{{ domaine.nom }}</option>
+                    <option id="domaine" value="{{ domaine.code }}">{{ domaine.nom }}</option>
                 {% endfor %}
             </select>
-            <select name="categorie" id="categorie-select">
-                <option id="categorie" value="Categorie" onclick="update_categorie()">-- Categorie --</option>
+            <select name="categorie" id="categorie-select" onchange="update_categorie()">
+                <option id="categorie" value="">-- Categorie --</option>
             </select>
-            <select name="statut" id="statut-select">
-                <option id="statut" value="Statut" onclick="update_categorie()">-- Statut --</option>
+            <select name="statut" id="statut-select" onchange="update_categorie()">
+                <option id="statut" value="">-- Statut --</option>
                 {% for statut in liste_statuts %}
-                    <option id="statut" value="{{ statut }}" onclick="update_categorie()">{{ statut }}</option>
+                    <option id="statut" value="{{ statut }}">{{ statut }}</option>
                 {% endfor %}
             </select>
             <input type="submit" name="btn-reset" value="reset" class="yellow-button">
         </form>
     </section>
     <section class="commands">
-        {% if liste_commandes is none %}
-            <p>Il n'y a pas de commandes pour cette recherche</p>
-        {% else %}
+        {% if liste_commandes is not none %}
         <ul id="liste">
             {% for command in liste_commandes %}
             <li>
-                <button id="{{ command.numero }}" class="command_button" onclick="edit(this.id)">
+                <button id="{{ command.numeroCommande }}" class="command_button" onclick="edit(this.id)">
                     <img src="{{ url_for('static', filename='images/black_square.png') }}" alt="image commande" class="img">
-                    <p>{{ command.materiel.nom }}</p>
+                    <p>{{ command.materiel.nomMateriel }}</p>
                 </button>
             </li>
             {% endfor %}
@@ -57,7 +55,8 @@
             </div>
         </div>
         <div class="action_buttons">
-            <input type="button" class="yellow-button" value="Imprimer" onclick="print()">
+            <input type="button" class="yellow-button" value="Imprimer" onclick='imprimer()'>
+            
             <input type="button" class="annuler" id="annuler" value="Annuler la commande" onclick="validate('False')">
             <input type="button" class="valider" id="valider" value="Valider la commande" onclick="validate('True')">
         </div>
@@ -82,7 +81,7 @@
             var labelQuantite = document.getElementById("quantite");
             var labelUser = document.getElementById("user");
             
-            fetch('/get_command_info/' + id + ",True")
+            fetch(`/commandes/get_command_info/?id=${id}&json=True`)
                 .then(response => response.json())
                 .then(data => {
                     labelNom.textContent = data.nom;
@@ -118,7 +117,7 @@
             domaine = document.getElementById("domaine-select").value
             categorie_selected = document.getElementById("categorie-select").value
             statut = document.getElementById("statut-select").value
-            fetch('/search/'+recherche+' ,'+domaine+','+categorie_selected+','+statut)
+            fetch(`/commandes/search/?recherche=${recherche}&domaine=${domaine}&categorie=${categorie_selected}&statut=${statut}`)
                 .then(response => response.json())
                 .then(data => {  
                     var liste_commandes_search = data.liste_commandes;
@@ -129,9 +128,6 @@
                         var button = document.createElement("button")
                         button.id = commande.numero
                         button.className = "command_button"
-                        button.onclick = function () {
-                            edit(this.id);
-                        }
                         var p = document.createElement("p");
                         p.textContent = commande.nom;
                         var image = document.createElement("img");
@@ -151,39 +147,46 @@
             domaine = document.getElementById("domaine-select").value
             categorie_selected = document.getElementById("categorie-select").value
             statut = document.getElementById("statut-select").value
-            fetch('/search/'+recherche+' ,'+domaine+','+categorie_selected+','+statut)
+            fetch(`/commandes/search/?recherche=${recherche}&domaine=${domaine}&categorie=${categorie_selected}&statut=${statut}`)
                 .then(response => response.json())
                 .then(data => {  
-                    document.getElementById("categorie-select").innerHTML = '<option id="categorie" value="Categorie" onclick="update_categorie()">-- Categorie --</option>';
+                    document.getElementById("categorie-select").innerHTML = '<option id="categorie" value="">-- Categorie --</option>';
                     data.liste_categories.forEach(function(categorie){
                         var option = document.createElement("option");
-                        option.id = "categorie";
-                        option.value = categorie;
-                        option.textContent = categorie;
-                        option.onclick = function () {
-                            search();
+                        option.value = categorie.codeC;
+                        option.textContent = categorie.nom;
+                        if (option.value == categorie_selected){
+                            option.selected = true;
                         }
                         document.getElementById("categorie-select").appendChild(option);
                     });
-                    if (data.liste_categories.includes(categorie_selected)){
-                        document.getElementById("categorie-select").value = categorie_selected;
-                    }
-                    else{
-                        document.getElementById("categorie-select").value = "Categorie";
-                    }
                     search()
                 })
                 .catch(error => console.error('Erreur : ' + error));     
         }
 
+        function imprimer(){
+            recherche = document.getElementById("recherche").value
+            domaine = document.getElementById("domaine-select").value
+            categorie_selected = document.getElementById("categorie-select").value
+            statut = document.getElementById("statut-select").value
+            fetch(`/commandes/creer_pdf?search=${recherche}&domaine=${domaine}&categorie=${categorie_selected}&statut=${statut}`)
+                .then(response => response.json())
+                .then(data => {
+                    //Afficher popup pour imprimer
+                })
+                .catch(error => console.error('Erreyr : ' + error));
+        }
+
         function validate(validee){
             var id = document.getElementById("label-numero").textContent
-            fetch('/validate/'+validee+','+id)
+            fetch(`/commandes/validate/?validee=${validee}&id=${id}`)
             .then(response => response.json())
             .then(data => {
                 edit(data.id)
             })
             .catch(error => console.errot('Erreur : ' + error))
         }
+
     </script>
 {% endblock %}

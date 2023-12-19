@@ -1,14 +1,17 @@
 -- create database if not exists `GestLab` default character set utf8 collate utf8_general_ci;
 -- use `GestLab`;
 
-
 drop table if exists `Commander`;
 drop table if exists `Commande`;
 drop table if exists `Utilisateur`;
 drop table if exists `Role`;
-drop table if exists `Materiel`;
+drop table if exists `AlerteSeuil`;
+drop table if exists `AlerteQuantite`;
+drop table if exists `MaterielInstance`;
+drop table if exists `MaterielGenerique`;
 drop table if exists `Categorie`;
 drop table if exists `Domaine`;
+drop table if exists `Statut`;
 
 
 create table `Role`(
@@ -23,7 +26,8 @@ create table `Utilisateur`(
     nomUti varchar(50),
     prenomUti varchar(50),
     emailUti varchar(50),
-    telUti varchar(50),
+    mdp varchar(50),
+    modifications boolean,
     primary key (idUti)
 )ENGINE=InnoDB DEFAULT CHARSET=UTF8;
 
@@ -40,7 +44,7 @@ create table `Categorie`(
     primary key (codeC, codeD)
 )ENGINE=InnoDB DEFAULT CHARSET=UTF8;
 
-create table `Materiel`(
+create table `MaterielGenerique`(
     refMateriel int(5),
     codeD int(5),
     codeC int(5),
@@ -50,13 +54,26 @@ create table `Materiel`(
     qteMateriel int(5),    -- quantité globale du matériel
     qteMax int(5),    -- quantité maximale stockée dans l'établissement
     unite varchar(25),
-    qteRestante float(5),
     complements varchar(350),
     ficheFDS longblob,
-    datePeremption date check (datePeremption > NOW()),
     seuilQte int(5),    -- à environ 25% de la quantité du produit
     seuilPeremption int(3),    -- nombre de jours avant la date de péremption
+    imageMateriel longblob,
     primary key (refMateriel)
+)ENGINE=InnoDB DEFAULT CHARSET=UTF8;
+
+create table `MaterielInstance`(
+    idMateriel int(5),
+    qteRestante int(5),
+    datePeremption date, -- check (datePeremption > NOW()),
+    refMateriel int(5),
+    primary key (idMateriel, refMateriel)
+)ENGINE=InnoDB DEFAULT CHARSET=UTF8;
+
+create table `Statut`(
+    idStatut int(5),
+    nomStatut varchar(50),
+    primary key (idStatut)
 )ENGINE=InnoDB DEFAULT CHARSET=UTF8;
 
 create table `Commande`(
@@ -65,32 +82,42 @@ create table `Commande`(
     refMateriel int(5),
     dateCommande date,
     dateReception date,
-    statut varchar(20),
+    qteCommandee int(5),
+    idStatut int(5),
     primary key (numeroCommande, idUti, refMateriel)
 )ENGINE=InnoDB DEFAULT CHARSET=UTF8;
 
 create table `Commander`(
-    numeroCommande int(5),
+    numCommande int(5),
     idUti int(5),
     refMateriel int(5),
     qteCommandee int(5),
-    primary key (numeroCommande, idUti, refMateriel)
+    primary key (numCommande, idUti, refMateriel)
 )ENGINE=InnoDB DEFAULT CHARSET=UTF8;
 
-create table `Alerte`(
-    idAlerte int(5),
+create table `AlerteQuantite`(
+    idAlerteQ int(5),
     refMateriel int(5),
-    commentaire varchar(20),
-    statut varchar(20),
-    primary key (idAlerte)
+    commentaire varchar(50),
+    primary key (idAlerteQ)
+)ENGINE=InnoDB DEFAULT CHARSET=UTF8;
+
+create table `AlerteSeuil`(
+    idAlerteS int(5),
+    idMateriel int(5),
+    commentaire varchar(50),
+    primary key (idAlerteS)
 )ENGINE=InnoDB DEFAULT CHARSET=UTF8;
 
 alter table `Utilisateur` add constraint fk_id_role foreign key (idRole) references `Role`(idRole);
 alter table `Categorie` add constraint fk_code_domaine foreign key (codeD) references `Domaine`(codeD);
-alter table `Materiel` add constraint fk_code_d_cat foreign key (codeD) references `Categorie`(codeD);
-alter table `Materiel` add constraint fk_code_cat foreign key (codeC) references `Categorie`(codeC);
+alter table `MaterielGenerique` add constraint fk_code_d_cat foreign key (codeD) references `Categorie`(codeD);
+alter table `MaterielGenerique` add constraint fk_code_cat foreign key (codeC) references `Categorie`(codeC);
+alter table `MaterielInstance` add constraint fk_reference_materiel foreign key (refMateriel) references `MaterielGenerique`(refMateriel);
 alter table `Commande` add constraint fk_id_util foreign key (idUti) references `Utilisateur`(idUti);
-alter table `Commande` add constraint fk_ref_mat foreign key (refMateriel) references `Materiel`(refMateriel);
+alter table `Commande` add constraint fk_ref_mat foreign key (refMateriel) references `MaterielGenerique`(refMateriel);
+alter table `Commande` add constraint fk_id_statut foreign key (idStatut) references `Statut`(idStatut);
 alter table `Commander` add constraint fk_id_uti foreign key (idUti) references `Utilisateur`(idUti);
-alter table `Commander` add constraint fk_reference_mat foreign key (refMateriel) references `Materiel`(refMateriel);
-alter table `Alerte` add constraint fk_ref_mater foreign key (refMateriel) references `Materiel`(refMateriel);
+alter table `Commander` add constraint fk_reference_mat foreign key (refMateriel) references `MaterielGenerique`(refMateriel);
+alter table `AlerteQuantite` add constraint fk_ref_mater foreign key (refMateriel) references `MaterielGenerique`(refMateriel);
+alter table `AlerteSeuil` add constraint fk_ref_materiel foreign key (idMateriel) references `MaterielInstance`(idMateriel);
