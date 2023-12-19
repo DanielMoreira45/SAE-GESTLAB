@@ -1,0 +1,27 @@
+{% extends "consul_base.html" %}
+{% block styles %}
+{{ super() }}
+<link rel="stylesheet" href="{{ url_for('static', filename ='css/ajout-util.css') }}">
+{% endblock %}
+{% block content %}
+    <h1 id="ajout-u">Ajouter un matériel</h1>
+    <form role="form" method="POST" action="{{ url_for('save_materiel') }}" id="formulaire">
+        <div class="champ">
+            <span>{{ form.nom.label }} <br> {{ form.nom(size=40, class="form-control") }}</span>
+            <span>{{ form.domaine.label }} <br> {{ form.domaine(class="form-control") }}</span>
+            <span>{{ form.categorie.label }} <br> {{ form.categorie(class="form-control") }}</span>
+            <span>{{ form.quantite.label }} <br> {{ form.quantite(class="form-control") }}</span>
+            <span>{{ form.unite.label }} <br> {{ form.unite(class="form-control") }}</span>
+            <span>{{ form.seuil_quantite.label }} <br> {{ form.seuil_quantite(class="form-control") }}</span>
+            <span>{{ form.seuil_peremption.label }} <br> {{ form.seuil_peremption(class="form-control") }}</span>
+            <span>{{ form.rangement.label }} <br> {{ form.rangement(class="form-control") }}</span>
+            <span>{{ form.commentaire.label }} <br> {{ form.commentaire(size=40, class="form-control") }}</span>
+            <span>{{ form.complements.label }} <br> {{ form.complements(size=40, class="form-control") }}</span>
+            <span>{{ form.photo.label }} <br> {{ form.photo(size=40, class="form-control") }}</span>
+            <span>{{ form.ficheFDS.label }} <br> {{ form.ficheFDS(size=40, class="form-control") }}</span>
+        </div>
+        <div id="ajt">
+            <a href=""><button>Ajouter</button></a>
+        </div>
+    </form>
+{% endblock %}
