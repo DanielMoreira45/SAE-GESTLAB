@@ -124,7 +124,7 @@ def update_materials():
 
 @app.route('/consult/enregistrer', methods=['POST'])
 def save_material():
-    materiel = Materiel.query.get(request.form["hiddenref"])
+    materiel = MaterielGenerique.query.get(request.form["hiddenref"])
     if materiel:
         materiel.nom = request.form["nom"]
         materiel.reference = request.form["reference"]
@@ -140,7 +140,7 @@ def save_material():
 
 @app.route('/consult/supprimer/<int:id>')
 def delete_material(id):
-    materiel = Materiel.query.get(id)
+    materiel = MaterielGenerique.query.get(id)
     if materiel:
         db.session.delete(materiel)
         db.session.commit()
@@ -149,7 +149,7 @@ def delete_material(id):
         response = {'status': 'error'}
     return jsonify(response)
 
-@app.route('/get_categories/'))
+@app.route('/get_categories/')
 def get_categories():
     selected_domaine = request.args.get('domaine')
     categories = Categorie.query.order_by(Categorie.nomC).all()
