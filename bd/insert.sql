@@ -61,7 +61,7 @@ VALUES
 (30, 'Divers', 6);
 
 insert into MATERIELGENERIQUE(refMateriel, codeD, codeC, nomMateriel, rangement, commentaire, qteMateriel, qteMax, unite, complements, ficheFDS, seuilQte, seuilPeremption, imageMateriel) values 
-(1, 1, 1, 'Microscope Électronique', 'Armoire 1 Tiroir A', '', 10, 10, null, "observer des échantillons à l'échelle microscopique", null, 2, null, null),
+(1, 1, 1, 'Microscope Électronique', 'Armoire 1 Tiroir A', 'Voici le commentaire', 10, 10, null, "observer des échantillons à l'échelle microscopique", null, 2, null, null),
 (2, 1, 2, 'Spectrophotomètre', 'Armoire 1 Tiroir A', '', 10, 10, null, "mesure l'absorbance ou la transmission de la lumière", null, 2, null, null),
 (3, 1, 3, 'Ordinateur', 'Armoire 1 Tiroir B', '', 50, 50, null, "enregistrer, analyser et afficher les données", null, 2, null, null),
 (4, 1, 4, 'Projecteur', 'Armoire 1 Tiroir C', '', 5, 5, null, "donner des présentations et des cours interactifs", null, 2, null, null),

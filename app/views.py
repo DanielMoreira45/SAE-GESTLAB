@@ -214,17 +214,16 @@ def search():
 
 @app.route("/commandes/validate/")
 def validate():
-    id = request.args.get("id")
-    id = id[21:]
-    commande = Commande.query.get(id)
+    id = request.args.get("id")[21:]
+    commande = Commande.query.get(int(id))
     validee = request.args.get("validee")
     if eval(validee):
-        if commande.statut == "En cours":
-            commande.statut = "Livrée"
+        if commande.statut.nomStatut == "En cours":
+            commande.statut = Statut.query.filter(Statut.nomStatut == "Livrée").scalar()
         else:
-            commande.statut = "En cours"
+            commande.statut = Statut.query.filter(Statut.nomStatut == "En cours").scalar()
     else:
-        commande.statut = "Annulée"
+        commande.statut = Statut.query.filter(Statut.nomStatut == "Non validée").scalar()
     db.session.commit()
     return jsonify({'id':id})
 

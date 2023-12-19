@@ -7,25 +7,23 @@
 {% block content %}
     <h1>Gérer les commandes</h1>
     <section class="search_buttons">
-        <!--<form class="search" role="search" method="POST">-->
-            <input type="search" name="recherche" id="recherche" placeholder="Rechercher" oninput="update_categorie()">
-            <select name="domaine" id="domaine-select" onchange="update_categorie()">
-                <option id="domaine" value="">-- Domaine --</option>
-                {% for domaine in liste_domaines %}
-                    <option id="domaineOption" value="{{ domaine.codeD }}">{{ domaine.nomD }}</option>
-                {% endfor %}
-            </select>
-            <select name="categorie" id="categorie-select" onchange="update_categorie()">
-                <option id="categorie" value="">-- Categorie --</option>
-            </select>
-            <select name="statut" id="statut-select" onchange="update_categorie()">
-                <option id="statut" value="">-- Statut --</option>
-                {% for statut in liste_statuts %}
-                    <option id="statut" value="{{ statut.idStatut }}">{{ statut.nomStatut }}</option>
-                {% endfor %}
-            </select>
-            <button name="btn-reset" value="reset" class="yellow-button" onclick="reset()">Reset</button>
-        <!--</form>-->
+        <input type="search" name="recherche" id="recherche" placeholder="Rechercher" oninput="update_categorie()">
+        <select name="domaine" id="domaine-select" onchange="update_categorie()">
+            <option id="domaine" value="">-- Domaine --</option>
+            {% for domaine in liste_domaines %}
+                <option id="domaineOption" value="{{ domaine.codeD }}">{{ domaine.nomD }}</option>
+            {% endfor %}
+        </select>
+        <select name="categorie" id="categorie-select" onchange="update_categorie()">
+            <option id="categorie" value="">-- Categorie --</option>
+        </select>
+        <select name="statut" id="statut-select" onchange="update_categorie()">
+            <option id="statut" value="">-- Statut --</option>
+            {% for statut in liste_statuts %}
+                <option id="statut" value="{{ statut.idStatut }}">{{ statut.nomStatut }}</option>
+            {% endfor %}
+        </select>
+        <button name="btn-reset" value="reset" class="yellow-button" onclick="reset()">Reset</button>
     </section>
     <section class="commands">
         {% if liste_commandes is not none %}
@@ -186,7 +184,8 @@
             fetch(`/commandes/validate/?validee=${validee}&id=${id}`)
             .then(response => response.json())
             .then(data => {
-                edit(data.id)
+                edit(data.id); //peut etre à supprimer ?
+                update_categorie();
             })
             .catch(error => console.errot('Erreur : ' + error))
         }
