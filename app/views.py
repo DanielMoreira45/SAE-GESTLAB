@@ -5,8 +5,8 @@ from .models import Materiel, Utilisateur, Domaine, Categorie, Role, Commande , 
 from flask import jsonify, render_template, url_for, redirect, request, flash
 from flask_login import login_required, login_user, logout_user, current_user
 from flask_wtf import FlaskForm
-from wtforms import StringField, HiddenField, PasswordField, SelectField, RadioField, IntegerField, TextAreaField
-from wtforms.validators import DataRequired, NumberRange, AnyOf
+from wtforms import StringField, HiddenField, PasswordField, SelectField, RadioField, IntegerField, TextAreaField, SubmitField
+from wtforms.validators import DataRequired, NumberRange
 from hashlib import sha256
 from datetime import datetime
 from flask_wtf.file import FileField
@@ -325,21 +325,21 @@ def save_materiel():
     m = Materiel(
         reference = 1 + db.session.query(db.func.max(Materiel.reference)).scalar(),
         nom = f.nom.data,
-	    # photo = f.photo.data,
+        image = f.photo.data,
+        fiche_fds = f.ficheFDS.data,
         rangement = f.rangement.data,
         commentaire = f.commentaire.data,
         quantite_globale = f.quantite.data,
         unite = f.unite.data,
         complements = f.complements.data,
-        # fiche_fds = f.ficheFDS.data,
         seuil_quantite = f.seuil_quantite.data,
         seuil_peremption = f.seuil_peremption.data,
         code_domaine = f.domaine.data,
         code_categorie = f.categorie.data
-    )
+    )    
     db.session.add(m)
     db.session.commit()
-    return redirect(url_for('materiel_add'))
+    return redirect(url_for('consult'))
 
 @app.route("/admin/home/")
 @login_required
