@@ -194,6 +194,19 @@ class Commande(db.Model):
                                                      lazy="dynamic"))
     materiel = db.relationship("MaterielGenerique",
                                backref=db.backref("commandes", lazy="dynamic"))
+    
+    def serialize(self):
+        return {
+            'numero': self.numero,
+            'nom': self.materiel.nom,
+            'domaine': self.materiel.domaine.nom,
+            'categorie': self.materiel.categorie.nom,
+            'statut': self.statut,
+            'quantite': self.quantite_commandee,
+            'unite': self.materiel.unite,
+            'user': self.utilisateur.nom
+        }
+
 
     def __repr__(self):
         return "<Commande (%d) %s %r %e %c %d>" % (self.numeroCommande, self.dateCommande, self.idStatut, self.dateReception, self.idUti, self.refMateriel)
