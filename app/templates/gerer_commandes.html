@@ -7,12 +7,12 @@
 {% block content %}
     <h1>Gérer les commandes</h1>
     <section class="search_buttons">
-        <form class="search" role="search" method="POST">
+        <!--<form class="search" role="search" method="POST">-->
             <input type="search" name="recherche" id="recherche" placeholder="Rechercher" oninput="update_categorie()">
             <select name="domaine" id="domaine-select" onchange="update_categorie()">
                 <option id="domaine" value="">-- Domaine --</option>
                 {% for domaine in liste_domaines %}
-                    <option id="domaine" value="{{ domaine.code }}">{{ domaine.nom }}</option>
+                    <option id="domaineOption" value="{{ domaine.codeD }}">{{ domaine.nomD }}</option>
                 {% endfor %}
             </select>
             <select name="categorie" id="categorie-select" onchange="update_categorie()">
@@ -21,11 +21,11 @@
             <select name="statut" id="statut-select" onchange="update_categorie()">
                 <option id="statut" value="">-- Statut --</option>
                 {% for statut in liste_statuts %}
-                    <option id="statut" value="{{ statut }}">{{ statut }}</option>
+                    <option id="statut" value="{{ statut.idStatut }}">{{ statut.nomStatut }}</option>
                 {% endfor %}
             </select>
-            <input type="submit" name="btn-reset" value="reset" class="yellow-button">
-        </form>
+            <button name="btn-reset" value="reset" class="yellow-button" onclick="reset()">Reset</button>
+        <!--</form>-->
     </section>
     <section class="commands">
         {% if liste_commandes is not none %}
@@ -81,7 +81,7 @@
             var labelQuantite = document.getElementById("quantite");
             var labelUser = document.getElementById("user");
             
-            fetch(`/commandes/get_command_info/?id=${id}&json=True`)
+            fetch(`/commandes/get_command_info/?id=${id}`)
                 .then(response => response.json())
                 .then(data => {
                     labelNom.textContent = data.nom;
@@ -125,9 +125,12 @@
                     ul.innerHTML = "";
                     liste_commandes_search.forEach(function(commande) {
                         var li = document.createElement("li");
-                        var button = document.createElement("button")
-                        button.id = commande.numero
-                        button.className = "command_button"
+                        var button = document.createElement("button");
+                        button.id = commande.numero;
+                        button.className = "command_button";
+                        button.addEventListener("click", function(){
+                            edit(commande.numero)
+                        });
                         var p = document.createElement("p");
                         p.textContent = commande.nom;
                         var image = document.createElement("img");
@@ -154,7 +157,7 @@
                     data.liste_categories.forEach(function(categorie){
                         var option = document.createElement("option");
                         option.value = categorie.codeC;
-                        option.textContent = categorie.nom;
+                        option.textContent = categorie.nomC;
                         if (option.value == categorie_selected){
                             option.selected = true;
                         }
@@ -179,13 +182,21 @@
         }
 
         function validate(validee){
-            var id = document.getElementById("label-numero").textContent
+            var id = document.getElementById("label-numero").textContent;
             fetch(`/commandes/validate/?validee=${validee}&id=${id}`)
             .then(response => response.json())
             .then(data => {
                 edit(data.id)
             })
             .catch(error => console.errot('Erreur : ' + error))
+        }
+
+        function reset(){
+            document.getElementById("recherche").value = "";
+            document.getElementById("domaine").selected = true;
+            document.getElementById("categorie").selected = true;
+            document.getElementById("statut").selected = true;
+            update_categorie();
         }
 
     </script>

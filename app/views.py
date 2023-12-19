@@ -1,6 +1,6 @@
 """Toute les routes et les Formulaires"""
 from .app import app, db
-from .models import Statut, MaterielGenerique, MaterielInstance, Utilisateur, Domaine, Categorie, Role, Commande , filter_commands
+from .models import Statut, MaterielGenerique, MaterielInstance, Utilisateur, Domaine, Categorie, Role, Commande
 from .forms import LoginForm, UtilisateurForm, UserForm, CommandeForm
 from flask import jsonify, render_template, url_for, redirect, request, flash
 from flask_login import login_required, login_user, logout_user, current_user
@@ -112,6 +112,7 @@ def update_materials():
 
     if (search):
         liste_materiel = [materiel for materiel in liste_materiel if search.lower() in materiel.nom.lower()]
+    ####liste_materiel = filtrer(liste_materiel, search, selected_domaine, selected_categorie) ### POUR REFACTORISER LE FILTRAGE
 
     liste_materiel = [materiel.serialize() for materiel in liste_materiel]
     return jsonify({'materiels': liste_materiel})
@@ -127,7 +128,8 @@ def get_categories():
 
 @app.route('/commandes/creer_pdf/')
 def creer_pdf():
-    liste_commandes = filtrer_commandes(request.args.get('search'), request.args.get('domaine'), request.args.get('categorie'), request.args.get('statut'))
+    liste_commandes = Commande.query.order_by(Commande.dateCommande).all()
+    liste_commandes = filtrer(liste_commandes, request.args.get('search'), request.args.get('domaine'), request.args.get('categorie'), request.args.get('statut'))
     monPdf = FPDF()
     monPdf.add_page()
     monPdf.set_font("Arial", size=30)
@@ -137,41 +139,40 @@ def creer_pdf():
     monPdf.cell(0, 10, txt="Liste de toutes les commandes : ", ln=1, align="L")
     monPdf.set_font("Arial", size=10)
     for i in range(len(liste_commandes)):
-            monPdf.cell(100, 10, txt=" - "+liste_commandes[i].materiel.nom, ln=i%2, align="L")
+        monPdf.cell(100, 10, txt=" - "+liste_commandes[i].materiel.nomMateriel, ln=i%2, align="L")
     
     monPdf.cell(0, 10, ln=1)
 
     for commande in liste_commandes:
         monPdf.cell(0, 10, ln=1)
         monPdf.set_font("Arial", size=15)
-        monPdf.cell(0, 10, txt=commande.materiel.nom, ln=1, align="L")
+        monPdf.cell(0, 10, txt=commande.materiel.nomMateriel, ln=1, align="L")
         monPdf.set_font("Arial", size=10)
-        monPdf.cell(0, 10, txt="Numéro de commande : "+str(commande.numero), ln=1, align="L")
-        monPdf.cell(0, 10, txt="Statut : "+commande.statut, ln=1, align="L")
-        monPdf.cell(0, 10, txt="Domaine : "+commande.materiel.domaine.nom, ln=1, align="L")
-        monPdf.cell(0, 10, txt="Categorie : "+commande.materiel.categorie.nom, ln=1, align="L")
-        monPdf.cell(0, 10, txt="Quantité commandée : "+str(commande.quantite_commandee), ln=1, align="L")
-        monPdf.cell(0, 10, txt="Commande effectuée par : "+commande.utilisateur.nom, ln=1, align="L")
+        monPdf.cell(0, 10, txt="Numéro de commande : "+str(commande.numeroCommande), ln=1, align="L")
+        monPdf.cell(0, 10, txt="Statut : "+commande.statut.nomStatut, ln=1, align="L")
+        monPdf.cell(0, 10, txt="Domaine : "+commande.materiel.domaine.nomD, ln=1, align="L")
+        monPdf.cell(0, 10, txt="Categorie : "+commande.materiel.categorie.nomC, ln=1, align="L")
+        monPdf.cell(0, 10, txt="Quantité commandée : "+str(commande.qteCommandee), ln=1, align="L")
+        monPdf.cell(0, 10, txt="Commande effectuée par : "+commande.utilisateur.nomUti, ln=1, align="L")
 
     monPdf.output("commandes.pdf")
     return jsonify({'nom_fichier' : 'commandes.pdf'})
 
 
-def filtrer_commandes(recherche, domaine, categorie, statut):
-    liste_commandes = Commande.query.order_by(Commande.date_commande).all()
-    if (categorie!="Categorie"):        
-        liste_commandes = [commande for commande in liste_commandes if commande.materiel.categorie.nom == categorie]
+def filtrer(liste, recherche, domaine, categorie, statut=None):
+    if (categorie):        
+        liste = [commande for commande in liste if commande.materiel.codeC == int(categorie)]
 
-    if (domaine!="Domaine"):
-        liste_commandes = [commande for commande in liste_commandes if commande.materiel.domaine.nom == domaine]
+    if (domaine):
+        liste = [commande for commande in liste if commande.materiel.codeD == int(domaine)]
 
     if (recherche):
-        liste_commandes = [commande for commande in liste_commandes if recherche.lower() in commande.materiel.nom.lower()]
+        liste = [commande for commande in liste if recherche.lower() in commande.materiel.nomMateriel.lower()]
 
-    if (statut!="Statut"):
-        liste_commandes = [commande for commande in liste_commandes if commande.statut == statut]
+    if (statut):
+        liste = [commande for commande in liste if commande.idStatut == int(statut)]
 
-    return liste_commandes
+    return liste
 
 
 @app.route("/commandes/", methods=("GET", "POST"))
@@ -179,52 +180,33 @@ def delivery():
     liste_commandes = Commande.query.all()
     liste_domaines = Domaine.query.order_by(Domaine.nomD).all()
     liste_categories = Categorie.query.distinct(Categorie.nomC).order_by(Categorie.nomC).all()
-    liste_statuts = []
-    for commande in liste_commandes:
-        if commande.statut.nomStatut not in liste_statuts:
-            liste_statuts.append(commande.statut)
+    liste_statuts = Statut.query.distinct(Statut.nomStatut).all()
     return render_template("gerer_commandes.html",liste_statuts=liste_statuts, liste_commandes=liste_commandes, liste_domaines=liste_domaines, liste_categories=liste_categories)
 
 @app.route("/commandes/get_command_info/", methods=["GET"])
 def get_command_info():
     numero = request.args.get("id")
     command = Commande.query.get(numero)
-    statut = Statut.query.get(command.idStatut)
     if command:
         command_info = command.serialize()
-        json = request.args.get("json")
-        if json == "True":
-            return jsonify(command_info)
-        else:
-            return command_info
+        return jsonify(command_info)
     else:
         return jsonify({'error': 'Commande non trouvé'}), 404
     
 @app.route("/commandes/search/", methods=["GET"])
 def search():
-    liste_commandes = Commande.query.all()
+    liste_commandes = Commande.query.order_by(Commande.dateCommande).all()
     liste_categories = Categorie.query.all()
-    print(liste_categories)
     recherche = request.args.get("recherche")
-    recherche = recherche[:len(recherche)]
     domaine = request.args.get("domaine")
     categorie = request.args.get("categorie")
-    print(categorie)
     statut = request.args.get("statut")
-
-    if (domaine):
-        liste_commandes = [commande for commande in liste_commandes if commande.materiel.code_domaine == int(domaine)]
-        liste_categories = [categorie for categorie in liste_categories if categorie.code_domaine == int(domaine)]
-
-    if (categorie):        
-        liste_commandes = [commande for commande in liste_commandes if commande.materiel.code_categorie == int(categorie)]
-
-    if (statut):
-        liste_commandes = [commande for commande in liste_commandes if commande.statut == statut]
-
-    if (recherche):
-        liste_commandes = [commande for commande in liste_commandes if recherche.lower() in commande.materiel.nom.lower()]
     
+    if (domaine):
+        liste_categories = [categorie for categorie in liste_categories if categorie.codeD == int(domaine)]
+
+    
+    liste_commandes = filtrer(liste_commandes, recherche, domaine, categorie, statut)    
     liste_commandes = [commande.serialize() for commande in liste_commandes]
     liste_categories = [categorie.serialize() for categorie in liste_categories]
 
