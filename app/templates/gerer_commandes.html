@@ -55,7 +55,8 @@
             </div>
         </div>
         <div class="action_buttons">
-            <input type="button" class="yellow-button" value="Imprimer" onclick="print()">
+            <input type="button" class="yellow-button" value="Imprimer" onclick='imprimer()'>
+            
             <input type="button" class="annuler" id="annuler" value="Annuler la commande" onclick="validate('False')">
             <input type="button" class="valider" id="valider" value="Valider la commande" onclick="validate('True')">
         </div>
@@ -164,6 +165,19 @@
                 .catch(error => console.error('Erreur : ' + error));     
         }
 
+        function imprimer(){
+            recherche = document.getElementById("recherche").value
+            domaine = document.getElementById("domaine-select").value
+            categorie_selected = document.getElementById("categorie-select").value
+            statut = document.getElementById("statut-select").value
+            fetch(`/commandes/creer_pdf?search=${recherche}&domaine=${domaine}&categorie=${categorie_selected}&statut=${statut}`)
+                .then(response => response.json())
+                .then(data => {
+                    //Afficher popup pour imprimer
+                })
+                .catch(error => console.error('Erreyr : ' + error));
+        }
+
         function validate(validee){
             var id = document.getElementById("label-numero").textContent
             fetch(`/commandes/validate/?validee=${validee}&id=${id}`)
@@ -173,5 +187,6 @@
             })
             .catch(error => console.errot('Erreur : ' + error))
         }
+
     </script>
 {% endblock %}
