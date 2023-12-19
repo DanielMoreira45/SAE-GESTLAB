@@ -11,7 +11,7 @@
             {% for user in liste_users %}
             <div class="user_item">
                 <img src="{{ url_for('static', filename='images/user.png') }}" alt="Un utilisateur">
-                <input type="button" value="{{ user.nom }} {{ user.prenom }}" class="user_bouton" id="{{ user.id }}"
+                <input type="button" value="{{ user.nomUti }} {{ user.prenomUti }}" class="user_bouton" id="{{ user.idUti }}"
                     onclick="edit(this.id)" autofocus>
             </div>
             {% endfor %}
@@ -19,20 +19,20 @@
     </div>
     <form action="{{ url_for('update_user') }}" role="form" method="POST" class="user_infos">
         <section class="wrapper">
-            <input type="hidden" value="{{ current_user_selected.id }}" name="id" id="id">
+            <input type="hidden" value="{{ current_user_selected.idUti }}" name="id" id="id">
             <label class="nom" for="nom">Nom :</label>
-            <input class="nom_input" name="nom" id="nom" type="text" value="{{ current_user_selected.nom }}">
+            <input class="nom_input" name="nom" id="nom" type="text" value="{{ current_user_selected.nomUti }}">
             <label class="prenom" for="prenom">Prénom :</label>
-            <input class ="prenom_input" name="prenom" id="prenom" type="text" value="{{ current_user_selected.prenom }}">
+            <input class ="prenom_input" name="prenom" id="prenom" type="text" value="{{ current_user_selected.prenomUti }}">
             <label class="passwd" for="password">Mot de passe :</label>
-            <input class ="passwd_input" name="password" id="password" type="password" value="{{ current_user_selected.password }}">
+            <input class ="passwd_input" name="password" id="password" type="password" value="{{ current_user_selected.mdp }}">
             <label class="role" for="role-select">Rôle :</label>
             <select name="id_role" id="id_role">
                 {% for role in roles %}
-                {% if current_user_selected.id_role == role.id %}
-                <option value="{{ role.id }}" selected>{{ role.intitule }}</option>
+                {% if current_user_selected.idRole == role.idRole %}
+                <option value="{{ role.idRole }}" selected>{{ role.intitule }}</option>
                 {% else %}
-                <option value="{{ role.id }}">{{ role.intitule }}</option>
+                <option value="{{ role.idRole }}">{{ role.intitule }}</option>
                 {% endif %}
                 {% endfor %}
             </select>

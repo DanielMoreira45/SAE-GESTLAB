@@ -12,17 +12,17 @@
     <select name="Domaine" id="Domaine" onchange="change()">
         <option value="">Domaine</option>
         {% for domaine in domaines %}
-        <option value="{{ domaine.code }}">{{ domaine.nom }}</option>
+        <option value="{{ domaine.codeD }}">{{ domaine.nomD }}</option>
         {% endfor %}
     </select>
     <select name="Catégorie" id="Categorie" onchange="change()">
         <option value="">Categorie</option>
         {% for categorie in categories %}
-        <option value="{{ categorie.code }}">{{ categorie.nom }}</option>
+        <option value="{{ categorie.codeC }}">{{ categorie.nomC }}</option>
         {% endfor %}
     </select>
     <button type="reset" id="searchButton">reset</button>
-    <!-- recherche pas fonctionnel -->
+    <!-- recherche pas fonctionnelle -->
 </form>
 <div class="info">
     <div>
@@ -31,8 +31,8 @@
                 {% for materiel in materiels %}
                 <li>
                     <div class="item_mat">
-                        <img src="data:image/png;base64,{{ materiel.get_image() }}" alt="{{ materiel.nom }}">
-                        <h2 id="{{ materiel.reference }}" onclick="edit(this.id)">{{ materiel.nom }}</h2>
+                        <img src="data:image/png;base64,{{ materiel.get_image() }}" alt="{{ materiel.nomMateriel }}">
+                        <h2 id="{{ materiel.refMateriel }}" onclick="edit(this.id)">{{ materiel.nomMateriel }}</h2>
                     </div>
                 </li>
                 {% endfor %}
@@ -46,18 +46,18 @@
     </div>
     <div>
         <div class="description">
-            <h2 id="nom">{{ current_mat.nom }}</h2>
+            <h2 id="nom">{{ current_mat.nomMateriel }}</h2>
             <div class="chiffre">
-                <label id="domaine">Domaine : {{ current_mat.domaine.nom }}</label>
-                <label id="categorie">Categorie : {{ current_mat.categorie.nom }}</label>
-                <label id="reference">Reference : {{ current_mat.reference }}</label>
-                {% if current_mat.domaine.nom == "Produits Chimiques" %}
-                <label id="quantiteR">Quantité restante : {{ current_mat.quantite_restante }}</label>
+                <label id="domaine">Domaine : {{ current_mat.domaine.nomD }}</label>
+                <label id="categorie">Categorie : {{ current_mat.categorie.nomC }}</label>
+                <label id="reference">Reference : {{ current_mat.refMateriel }}</label>
+                {% if current_mat.domaine.nomD == "Produits Chimiques" %}
+                <label id="quantiteR">Quantité restante : {{ current_mat.quantiteRestante }}</label>
                 {% endif %}
-                <label id="quantiteT">Quantité totale : {{ current_mat.quantite_globale }}</label>
+                <label id="quantiteT">Quantité totale : {{ current_mat.qteMateriel }}</label>
             </div>
             <div class="textu">
-                <img id="image" src="data:image/png;base64,{{ current_mat.get_image() }}" alt="{{ current_mat.nom }}">
+                <img id="image" src="data:image/png;base64,{{ current_mat.get_image() }}" alt="{{ current_mat.nomMateriel }}">
                 <p id="complements">{{ current_mat.complements }}</p>
             </div>
         </div>
@@ -155,8 +155,8 @@
                 labelNom.textContent = data.nom;
                 labelDomaine.textContent = "Domaine : " + data.domaine;
                 labelCategorie.textContent = "Catégorie : " + data.categorie;
-                labelQuanT.textContent = "Quantité totale : " + data.quantite_global;
-                labelReference.textContent = "Reference : " + data.reference;
+                labelQuanT.textContent = "Quantité totale : " + data.qteMax;
+                labelReference.textContent = "Reference : " + data.refMateriel;
                 if (labelQuanR) {
                     labelQuanR.textContent = "Quantité restante : " + data.quantite_restante;
                 }
