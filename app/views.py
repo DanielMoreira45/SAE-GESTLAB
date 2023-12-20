@@ -1,6 +1,6 @@
 """Toute les routes et les Formulaires"""
 from .app import app, db
-from .models import AlerteQuantite, Statut, MaterielGenerique, MaterielInstance, Utilisateur, Domaine, Categorie, Role, Commande, filter_commands
+from .models import AlerteQuantite, Statut, MaterielGenerique, MaterielInstance, Utilisateur, Domaine, Categorie, Role, Commande, filter_commands, getToutesLesAlertes
 from .forms import LoginForm, UtilisateurForm, UserForm, CommandeForm, MaterielForm, MaterielModificationForm
 from flask import jsonify, render_template, url_for, redirect, request, flash
 from flask_login import login_required, login_user, logout_user, current_user
@@ -33,7 +33,7 @@ def login():
             elif user.is_etablissement():
                 next = f.next.data or url_for("ecole_home")
             return redirect(next)
-    return render_template("connexion.html", form=f)
+    return render_template("connexion.html", form=f, alertes=getToutesLesAlertes())
 
 @app.route('/logout/')
 def logout():
@@ -44,7 +44,7 @@ def logout():
 @login_required
 def admin_add():
     f = UtilisateurForm()
-    return render_template("ajout-util.html", form=f)
+    return render_template("ajout-util.html", form=f, alertes=getToutesLesAlertes())
 
 @app.route("/admin/manage/")
 @login_required
@@ -99,7 +99,7 @@ def consult():
     f.set_domaine_choices([(domaine.codeD, domaine.nomD) for domaine in domaines])
     f.set_categorie_choices([(categorie.codeC, categorie.nomC) for categorie in categories if categorie.codeD == current.codeD])
     # f.set_categorie_choices([(categorie.codeC, categorie.nomC) for categorie in categories])
-    return render_template("consultation.html",form = f ,domaines=domaines, categories=categories, materiels=materiels, current_mat=current)
+    return render_template("consultation.html",form = f ,domaines=domaines, categories=categories, materiels=materiels, current_mat=current, alertes=getToutesLesAlertes())
 
 @app.route('/consult/recherche')
 def update_materials():
@@ -284,7 +284,7 @@ def new_commande():
     f = CommandeForm()
     f.materiel_field.choices = choix_materiel
     f.materiel_field.default = ""
-    return render_template("new_commande.html", form=f)
+    return render_template("new_commande.html", form=f, alertes=getToutesLesAlertes())
 
 @app.route("/delivery/new/save", methods=("POST",))
 def save_new_commande():
@@ -307,7 +307,7 @@ def save_new_commande():
 @login_required
 def materiel_add():
     f = MaterielForm()
-    return render_template("ajout-materiel.html", form=f)
+    return render_template("ajout-materiel.html", form=f, alertes=getToutesLesAlertes())
 
 @app.route("/save/materiel/", methods=("POST",))
 def save_materiel():
@@ -334,17 +334,17 @@ def save_materiel():
 @app.route("/admin/home/")
 @login_required
 def admin_home():
-    return render_template("admin.html")
+    return render_template("admin.html", alertes=getToutesLesAlertes())
   
 @app.route("/prof/home/")
 @login_required
 def prof_home():
-    return render_template("prof.html")
+    return render_template("prof.html", alertes=getToutesLesAlertes())
 
 @app.route("/ecole/home/", methods=("GET","POST",))
 @login_required
 def ecole_home():
-    return render_template("ecole.html")
+    return render_template("ecole.html", alertes=getToutesLesAlertes())
 
 @app.route("/get_info_Materiel/<int:reference>", methods=["GET"])
 def get_info_Materiel(reference):
