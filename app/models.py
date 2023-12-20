@@ -153,7 +153,7 @@ class MaterielInstance(db.Model):
     __tablename__ = "MATERIELINSTANCE"
     idMateriel = db.Column(db.Integer, primary_key=True)
     qteRestante = db.Column(db.Float)
-    datePeremption = db.Column(db.Float)
+    datePeremption = db.Column(db.Date)
     refMateriel = db.Column(db.Integer, db.ForeignKey("MATERIELGENERIQUE.refMateriel"), primary_key=True)
     mat_generique = db.relationship("MaterielGenerique",
                                 backref=db.backref("matériels",
