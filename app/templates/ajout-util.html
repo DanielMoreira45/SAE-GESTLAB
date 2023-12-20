@@ -2,6 +2,9 @@
 {% block styles %}
 {{ super() }}
 <link rel="stylesheet" href="{{ url_for('static', filename ='css/ajout-util.css') }}">
+<script type="text/javascript"
+    src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js">
+</script>
 {% endblock %}
 {% block content %}
     <h1 id="ajout-u">Ajouter un utilisateur</h1>
@@ -9,14 +12,48 @@
         <div class="champ">
             <span>{{ form.nomUti.label }} <br> {{ form.nomUti(size=40, class="form-control") }}</span>
             <span>{{ form.prenomUti.label }} <br> {{ form.prenomUti(size=40, class="form-control") }}</span>
-            <span>{{ form.emailUti.label }} <br> {{ form.emailUti(size=40, class="form-control") }}</span>
-            <span>{{ form.mdp.label }} <br> {{ form.mdp(size=40, class="form-control") }}</span>
+            <span id="emailUti">{{ form.emailUti.label }} <br> {{ form.emailUti(size=40, class="form-control") }}</span>
+            <span id="mdpUti">{{ form.mdp.label }} <br> {{ form.mdp(size=40, class="form-control") }}</span>
             <span>{{ form.role.label }} <br> {{ form.role(class="form-control") }}</span>
             <span>{{ form.modif.label }} <br> {{ form.modif(size=40, class="form-control") }}</span>
         </div>
         <div id="ajt">
-            <a href=""><button>Ajouter</button></a>
+            <input type="submit" id="ajouter_util" value="Ajouter">
         </div>
-        
     </form>
+    <script type="text/javascript">
+        async function getUserEmail() {
+            try {
+                const response = await fetch('/get_last_user_info/');
+                const data = await response.json();
+                var email = data.email;
+                return email;
+            } catch (error) {
+                console.error('Erreur : ' + error);
+            }
+        }
+
+        async function getUserMdp() {
+            try {
+                const response = await fetch('/get_last_user_info/');
+                const data = await response.json();
+                var mdp = data.password;
+                return mdp;
+            } catch (error) {
+                console.error('Erreur : ' + error);
+            }
+        }
+
+        document.getElementById("formulaire").addEventListener('submit', (function(){
+            emailjs.init("FLCWfGzjhSIMLmML1");
+            var email = getUserEmail();
+            var passwd = getUserMdp();
+            var params = {
+                name: email,
+                mdp: passwd
+            };
+            emailjs.send("service_kvw3ho3", "template_5okli8n", params)
+            .then(alert(params));
+        }));
+    </script>
 {% endblock %}
