@@ -61,7 +61,7 @@ VALUES
 (30, 'Divers', 6);
 
 insert into MATERIELGENERIQUE(refMateriel, codeD, codeC, nomMateriel, rangement, commentaire, qteMateriel, qteMax, unite, complements, ficheFDS, seuilQte, seuilPeremption, imageMateriel) values 
-(1, 1, 1, 'Microscope Électronique', 'Armoire 1 Tiroir A', '', 10, 10, null, "observer des échantillons à l'échelle microscopique", null, 2, null, null),
+(1, 1, 1, 'Microscope Électronique', 'Armoire 1 Tiroir A', 'Voici le commentaire', 10, 10, null, "observer des échantillons à l'échelle microscopique", null, 2, null, null),
 (2, 1, 2, 'Spectrophotomètre', 'Armoire 1 Tiroir A', '', 10, 10, null, "mesure l'absorbance ou la transmission de la lumière", null, 2, null, null),
 (3, 1, 3, 'Ordinateur', 'Armoire 1 Tiroir B', '', 50, 50, null, "enregistrer, analyser et afficher les données", null, 2, null, null),
 (4, 1, 4, 'Projecteur', 'Armoire 1 Tiroir C', '', 5, 5, null, "donner des présentations et des cours interactifs", null, 2, null, null),
@@ -108,9 +108,10 @@ INSERT INTO COMMANDE(numeroCommande, dateCommande, dateReception, qteCommandee, 
 VALUES
 (1, '2023-10-23', '2023-10-30', 2, 1, 2, 1),
 (2, '2023-10-23', '2023-10-30', 3, 1, 2, 2),
-(3, '2023-10-25', '2023-11-25', 1, 2, 3, 14),
+(3, '2023-10-25', '2023-11-25', 3000, 2, 2, 14),
 (4, '2023-10-25', '2023-11-25', 6, 2, 2, 18),
-(5, '2023-10-27', '2023-11-23', 8, 2, 3, 33);
+(5, '2023-10-27', '2023-11-23', 8, 2, 3, 33),
+(6, '2023-11-24', '2023-11-24', 15, 3, 2, 32);
 
 INSERT INTO COMMANDER(numCommande, idUti, refMateriel, qteCommandee)
 VALUES

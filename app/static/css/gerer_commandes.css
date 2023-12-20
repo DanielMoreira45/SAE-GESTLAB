@@ -78,6 +78,15 @@ p{
     margin-right: 2%;
 }
 
+input, select, button{
+    background-color: white;
+    border-style: solid;
+    border-color: black;
+    border-radius: 0.5em;
+    height: 3em;
+    padding: 0.5em;
+}
+
 .commands button{
     border-radius: 3em;
     border: solid white;
@@ -147,7 +156,7 @@ p{
     margin-right: 10%;
 }
 
-input, select{
+input, select, button{
     background-color: white;
     border-style: solid;
     border-color: black;
@@ -186,4 +195,8 @@ input:hover, button:hover, select:hover{
 
 #recherche:hover{
     cursor: vertical-text;
+}
+
+footer>p{
+    text-align: center;
 }

@@ -62,7 +62,7 @@ a{
     flex-wrap: nowrap;
 }
 
-button {
+#btn-navi {
     display: flex;
     flex-wrap: nowrap;
     border-radius: 20px;

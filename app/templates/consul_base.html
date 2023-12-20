@@ -31,14 +31,43 @@
                     {% elif current_user.is_prof() %}
                     <li><a href="{{ url_for('consult') }}">Consulter le matériel</a></li>
                     <li><a href="{{ url_for('delivery') }}">Voir les commandes</a></li>
-                    <li><a href="{{ url_for('new_commande') }}">Commander matériel</a></li>
+                    <li><a href="{{ url_for('new_commande') }}">Commander matériel</a></li>                    
                     {% elif current_user.is_etablissement() %}
                     <li><a href="{{ url_for('consult') }}">Consulter le matériel</a></li>
-                    <li><a href="{{ url_for('delivery') }}">Gérer les commandes</a></li>
+                    <li><a href="{{ url_for('delivery') }}">Gérer les commandes</a></li> 
                     {% endif %}
-                    <li><button id="logoutButton">Déconnexion</button></li>
+                    <li>
+                      {% if not current_user.is_admin() %}
+                        <div class="popup" onclick="gestionNotifs()">
+                          {% if alertes|length == 0 %}
+                            <button id="notifButton">
+                              <img src="{{ url_for('static', filename='images/notifications.png') }}" alt="Icone notifications" id="img-notifs">
+                            </button>
+                            <div class="popuptext" id="myPopup">Aucune nouvelle notification.</div>
+                          {% else %}
+                            <button id="notifButton">
+                              <img src="{{ url_for('static', filename='images/notifications_pastille.png') }}" alt="Icone notifications" id="img-notifs">
+                            </button>
+                            <div class="popuptext" id="myPopup">
+                              {% for a in alertes %}
+                                <img src="{{ url_for('static', filename='images/warning_icon.png') }}" alt="Icone d'alerte">
+                                <p>{{ a }}</p>
+                                {% if not loop.last %}
+                                  <hr>
+                                {% endif %}
+                              {% endfor %}
+                            </div>
+                          {% endif %}
+                        </div>
+                      {% endif %}
+                      <a href="{{ url_for('logout') }}" id="liensBoutons"><button id="logoutButton">Déconnexion</button></a>
+                    </li>
+                    <!-- <li>
+                    </li> -->
                     {% else %}
-                    <li><button id="BackButton">Retour accueil</button></li>
+                    <li>
+                      <a href="{{ url_for('home') }}" id="liensBoutons"><button id="BackButton">Retour accueil</button></a>
+                    </li>
                     {% endif %}
                 </ul>
             </nav>

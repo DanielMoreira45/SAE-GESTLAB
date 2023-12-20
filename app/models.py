@@ -93,7 +93,7 @@ class Categorie(db.Model):
     def serialize(self):
         return {
             'codeC': self.codeC,
-            'nom': self.nomC,
+            'nomC': self.nomC,
             'codeD': self.codeD,
         }
 
@@ -199,14 +199,14 @@ class Commande(db.Model):
     
     def serialize(self):
         return {
-            'numero': self.numero,
-            'nom': self.materiel.nom,
-            'domaine': self.materiel.domaine.nom,
-            'categorie': self.materiel.categorie.nom,
-            'statut': self.statut,
-            'quantite': self.quantite_commandee,
+            'numero': self.numeroCommande,
+            'nom': self.materiel.nomMateriel,
+            'domaine': self.materiel.domaine.nomD,
+            'categorie': self.materiel.categorie.nomC,
+            'statut': self.statut.nomStatut,
+            'quantite': self.qteCommandee,
             'unite': self.materiel.unite,
-            'user': self.utilisateur.nom
+            'user': self.utilisateur.nomUti
         }
 
 
@@ -225,7 +225,7 @@ class AlerteSeuil(db.Model):
                                backref=db.backref("alertes", lazy="dynamic"))
 
     def __repr__(self):
-        return "<Alerte (%d) %s %r>" % (self.idAlerteQ, self.commentaire, self.idMateriel)
+        return "<Alerte (%d) %s %r>" % (self.idAlertes, self.commentaire, self.idMateriel)
 
 
 class AlerteQuantite(db.Model):
@@ -239,25 +239,37 @@ class AlerteQuantite(db.Model):
                                backref=db.backref("alertes", lazy="dynamic"))
 
     def __repr__(self):
-        return "<Alerte (%d) %s %r>" % (self.idAlerteS, self.commentaire, self.refMateriel)
+        return "<Alerte (%d) %s %r>" % (self.idAlerteQ, self.commentaire, self.refMateriel)
 
 
 @login_manager.user_loader
 def load_user(user_id):
     return Utilisateur.query.get(int(user_id))
 
-def filter_commands(txt, domaine, categorie, statut, commandes):
-    liste_materiel = []
-    for materiel in MaterielGenerique.query.all():
-        if txt.upper() in materiel.nom.upper():
-            liste_materiel.append(materiel)
-    liste_commandes = []
-    
-    for commande in commandes:
-        if commande.materiel in liste_materiel:
-            if commande.materiel.domaine.nom == domaine or domaine == "Domaine":
-                if commande.materiel.categorie.nom == categorie or categorie == "Categorie":
-                    if commande.statut == statut or statut == "Statut":
-                        liste_commandes.append(commande)
+def getAlertesQuantite():
+    res = []
+    for alerte_qte in AlerteQuantite.query.all():
+        res.append(alerte_qte.commentaire +
+                   " pour " +
+                   MaterielGenerique.query.get(alerte_qte.refMateriel).nomMateriel +
+                   ".")
+    return res
 
-    return liste_commandes
+def getAlertesSeuil():
+    res = []
+    # for mat_inst in MaterielInstance.query.all():
+    #     res.append(AlerteSeuil.query.get(mat_inst.idMateriel).commentaire +
+    #                 " pour " +
+    #                 mat_inst.nomMateriel +
+    #                 ".")
+    for alerte_seuil in AlerteSeuil.query.all():
+        ref_materiel = MaterielInstance.query.filter(MaterielInstance.idMateriel == alerte_seuil.idMateriel)[0].refMateriel
+        nom_materiel = MaterielGenerique.query.get(ref_materiel).nomMateriel
+        res.append(alerte_seuil.commentaire +
+                   " pour " +
+                   nom_materiel +
+                   ".")
+    return res
+
+def getToutesLesAlertes():
+    return getAlertesQuantite() + getAlertesSeuil()
