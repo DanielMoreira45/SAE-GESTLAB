@@ -1,16 +1,16 @@
-INSERT INTO Role(idRole, intitule)
+INSERT INTO ROLE(idRole, intitule)
 VALUES
 (1, 'Administrateur'),
 (2, 'Professeur'),
 (3, 'Etablissement');
 
-insert into Statut(idStatut, nomStatut) values
+insert into STATUT(idStatut, nomStatut) values
 (1, 'Livrée'),
 (2, 'En cours'),
 (3, 'A valider'),
 (4, 'Non validée');
 
-INSERT INTO Utilisateur(idUti, idRole, nomUti, prenomUti, emailUti, mdp, modifications)
+INSERT INTO UTILISATEUR(idUti, idRole, nomUti, prenomUti, emailUti, mdp, modifications)
 VALUES
 (1, 1, 'Doe', 'John', 'johndoe@gmail.com', 'admin', 1),
 (2, 2, 'Obi', 'Leo', 'leoobi@gmail.com', 'Password', 1),
@@ -18,7 +18,7 @@ VALUES
 (4, 3, 'Jr.', 'Tim', 'timjr@gmail.com', '1234', 0),
 (5, 3, 'Zed', 'Zoey', 'zoeyzed@gmail.com', 'Dalaigre', 1);
 
-INSERT INTO Domaine(codeD, nomD)
+INSERT INTO DOMAINE(codeD, nomD)
 VALUES
 (1, 'Appareillage'),
 (2, 'Verrerie et associés'),
@@ -27,7 +27,7 @@ VALUES
 (5, 'Média'),
 (6, 'Matériel Électrique');
 
-INSERT INTO Categorie(codeC, nomC, codeD)
+INSERT INTO CATEGORIE(codeC, nomC, codeD)
 VALUES
 (1, 'Observation', 1),
 (2, 'Mesures', 1),
@@ -60,7 +60,7 @@ VALUES
 (29, 'Métaux', 6),
 (30, 'Divers', 6);
 
-insert into MaterielGenerique(refMateriel, codeD, codeC, nomMateriel, rangement, commentaire, qteMateriel, qteMax, unite, complements, ficheFDS, seuilQte, seuilPeremption, imageMateriel) values 
+insert into MATERIELGENERIQUE(refMateriel, codeD, codeC, nomMateriel, rangement, commentaire, qteMateriel, qteMax, unite, complements, ficheFDS, seuilQte, seuilPeremption, imageMateriel) values 
 (1, 1, 1, 'Microscope Électronique', 'Armoire 1 Tiroir A', '', 10, 10, null, "observer des échantillons à l'échelle microscopique", null, 2, null, null),
 (2, 1, 2, 'Spectrophotomètre', 'Armoire 1 Tiroir A', '', 10, 10, null, "mesure l'absorbance ou la transmission de la lumière", null, 2, null, null),
 (3, 1, 3, 'Ordinateur', 'Armoire 1 Tiroir B', '', 50, 50, null, "enregistrer, analyser et afficher les données", null, 2, null, null),
@@ -95,7 +95,7 @@ insert into MaterielGenerique(refMateriel, codeD, codeC, nomMateriel, rangement,
 (32, 6, 30, 'Fusibles électriques', 'Armoire 6 Tiroir C', '', 5, 10, null, "protéger les circuits électriques sensibles", null, 2, null, null),
 (33, 2, 7, 'Burette', 'Armoire 2 Tiroir B', '', 50, 50, null, "mesurer précisément le volume d'une solution versée dans une autre", null, 12, null, null);
 
-insert into MaterielInstance(idMateriel, qteRestante, datePeremption, refMateriel) values
+insert into MATERIELINSTANCE(idMateriel, qteRestante, datePeremption, refMateriel) values
 (1, 1000, '2023-12-30', 10),
 (2, 1000, '2023-12-30', 11),
 (3, 1000, '2023-12-30', 12),
@@ -103,7 +103,7 @@ insert into MaterielInstance(idMateriel, qteRestante, datePeremption, refMaterie
 (5, 500, '2023-12-30', 14),
 (6, 1000, '2023-12-30', 15);
 
-INSERT INTO Commande(numeroCommande, dateCommande, dateReception, qteCommandee, idStatut, idUti, refMateriel)
+INSERT INTO COMMANDE(numeroCommande, dateCommande, dateReception, qteCommandee, idStatut, idUti, refMateriel)
 VALUES
 (1, '2023-10-23', '2023-10-30', 2, 1, 2, 1),
 (2, '2023-10-23', '2023-10-30', 3, 1, 2, 2),
@@ -111,7 +111,7 @@ VALUES
 (4, '2023-10-25', '2023-11-25', 6, 2, 2, 18),
 (5, '2023-10-27', '2023-11-23', 8, 2, 3, 33);
 
-INSERT INTO Commander(numCommande, idUti, refMateriel, qteCommandee)
+INSERT INTO COMMANDER(numCommande, idUti, refMateriel, qteCommandee)
 VALUES
 (1, 2, 1, 10),
 (2, 2, 2, 10),
@@ -119,11 +119,11 @@ VALUES
 (4, 2, 18, 10),
 (5, 3, 33, 10);
 
-INSERT INTO AlerteQuantite(idAlerteQ, refMateriel, commentaire)
+INSERT INTO ALERTEQUANTITE(idAlerteQ, refMateriel, commentaire)
 VALUES
 (1, 25, 'Alerte de quantité'),
 (2, 26, 'Alerte de quantité');
 
-insert into AlerteSeuil(idAlerteS, idMateriel, commentaire) values
+insert into ALERTESEUIL(idAlerteS, idMateriel, commentaire) values
 (1, 3, 'Alerte : Seuil de peremption atteint'),
 (2, 6, 'Alerte : Seuil de peremption atteint');

@@ -153,7 +153,8 @@ class MaterielInstance(db.Model):
     __tablename__ = "MATERIELINSTANCE"
     idMateriel = db.Column(db.Integer, primary_key=True)
     qteRestante = db.Column(db.Float)
-    datePeremption = db.Column(db.Float)
+    # datePeremption = db.Column(db.Float)
+    datePeremption = db.Column(db.Date)
     refMateriel = db.Column(db.Integer, db.ForeignKey("MATERIELGENERIQUE.refMateriel"), primary_key=True)
     mat_generique = db.relationship("MaterielGenerique",
                                 backref=db.backref("matériels",
@@ -223,7 +224,7 @@ class AlerteSeuil(db.Model):
                                backref=db.backref("alertes", lazy="dynamic"))
 
     def __repr__(self):
-        return "<Alerte (%d) %s %r>" % (self.idAlerteQ, self.commentaire, self.idMateriel)
+        return "<Alerte (%d) %s %r>" % (self.idAlertes, self.commentaire, self.idMateriel)
 
 
 class AlerteQuantite(db.Model):
@@ -237,7 +238,7 @@ class AlerteQuantite(db.Model):
                                backref=db.backref("alertes", lazy="dynamic"))
 
     def __repr__(self):
-        return "<Alerte (%d) %s %r>" % (self.idAlerteS, self.commentaire, self.refMateriel)
+        return "<Alerte (%d) %s %r>" % (self.idAlerteQ, self.commentaire, self.refMateriel)
 
 
 @login_manager.user_loader
@@ -250,7 +251,7 @@ def filter_commands(txt, domaine, categorie, statut, commandes):
         if txt.upper() in materiel.nom.upper():
             liste_materiel.append(materiel)
     liste_commandes = []
-    
+
     for commande in commandes:
         if commande.materiel in liste_materiel:
             if commande.materiel.domaine.nom == domaine or domaine == "Domaine":
@@ -259,3 +260,31 @@ def filter_commands(txt, domaine, categorie, statut, commandes):
                         liste_commandes.append(commande)
 
     return liste_commandes
+
+def getAlertesQuantite():
+    res = []
+    for alerte_qte in AlerteQuantite.query.all():
+        res.append(alerte_qte.commentaire +
+                   " pour " +
+                   MaterielGenerique.query.get(alerte_qte.refMateriel).nomMateriel +
+                   ".")
+    return res
+
+def getAlertesSeuil():
+    res = []
+    # for mat_inst in MaterielInstance.query.all():
+    #     res.append(AlerteSeuil.query.get(mat_inst.idMateriel).commentaire +
+    #                 " pour " +
+    #                 mat_inst.nomMateriel +
+    #                 ".")
+    for alerte_seuil in AlerteSeuil.query.all():
+        ref_materiel = MaterielInstance.query.filter(MaterielInstance.idMateriel == alerte_seuil.idMateriel)[0].refMateriel
+        nom_materiel = MaterielGenerique.query.get(ref_materiel).nomMateriel
+        res.append(alerte_seuil.commentaire +
+                   " pour " +
+                   nom_materiel +
+                   ".")
+    return res
+
+def getToutesLesAlertes():
+    return getAlertesQuantite() + getAlertesSeuil()
