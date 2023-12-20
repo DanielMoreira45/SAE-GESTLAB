@@ -47,7 +47,8 @@
                             </button>
                             <div class="popuptext" id="myPopup">
                               {% for a in alertes %}
-                                <span id="elemPopupNotif"><img src="{{ url_for('static', filename='images/warning_icon.png') }}" alt="Icone d'alerte"> {{ a }}</span>
+                                <img src="{{ url_for('static', filename='images/warning_icon.png') }}" alt="Icone d'alerte">
+                                <p>{{ a }}</p>
                                 {% if not loop.last %}
                                   <hr>
                                 {% endif %}
