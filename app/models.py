@@ -161,6 +161,8 @@ class MaterielInstance(db.Model):
 
     def serialize(self):
         return {
+            'nomMateriel': self.mat_generique.nomMateriel,
+            'unite': self.mat_generique.unite,
             'reference': self.idMateriel,
             'quantite_restante': self.qteRestante,
             'date_peremption': self.datePeremption,

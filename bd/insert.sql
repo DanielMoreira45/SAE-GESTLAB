@@ -101,6 +101,7 @@ insert into MATERIELINSTANCE(idMateriel, qteRestante, datePeremption, refMaterie
 (3, 1000, '2023-12-30', 12),
 (4, 1000, '2023-12-30', 13),
 (5, 500, '2023-12-30', 14),
+(7, 2000, '2024-12-30', 11),
 (6, 1000, '2023-12-30', 15);
 
 INSERT INTO COMMANDE(numeroCommande, dateCommande, dateReception, qteCommandee, idStatut, idUti, refMateriel)

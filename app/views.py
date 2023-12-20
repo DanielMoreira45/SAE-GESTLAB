@@ -1,7 +1,8 @@
 """Toute les routes et les Formulaires"""
 from .app import app, db
 from .models import AlerteQuantite, Statut, MaterielGenerique, MaterielInstance, Utilisateur, Domaine, Categorie, Role, Commande, filter_commands, getToutesLesAlertes
-from .forms import LoginForm, UtilisateurForm, UserForm, CommandeForm, MaterielForm, MaterielModificationForm
+from .forms import LoginForm, UtilisateurForm, UserForm, CommandeForm, MaterielForm, MaterielModificationForm, MaterielInstanceForm
+
 from flask import jsonify, render_template, url_for, redirect, request, flash
 from flask_login import login_required, login_user, logout_user, current_user
 from datetime import datetime
@@ -94,12 +95,16 @@ def consult():
     categories = Categorie.query.order_by(Categorie.nomC).all()
     materiels = MaterielGenerique.query.order_by(MaterielGenerique.nomMateriel).all()
     current = materiels[0]
-    f = MaterielModificationForm(materiel=current)
-    
+    f = MaterielModificationForm(materielG=current)
     f.set_domaine_choices([(domaine.codeD, domaine.nomD) for domaine in domaines])
     f.set_categorie_choices([(categorie.codeC, categorie.nomC) for categorie in categories if categorie.codeD == current.codeD])
-    # f.set_categorie_choices([(categorie.codeC, categorie.nomC) for categorie in categories])
-    return render_template("consultation.html",form = f ,domaines=domaines, categories=categories, materiels=materiels, current_mat=current, alertes=getToutesLesAlertes())
+    instances = MaterielInstance.query.order_by(MaterielInstance.idMateriel).filter_by(refMateriel=current.refMateriel).all()
+    if (len(instances) <= 0):
+        f2 = MaterielInstanceForm()
+        return render_template("consultation.html",form = f, formInstance = f2, domaines=domaines, categories=categories, materiels=materiels, current_mat=current, instances=instances)
+    instance = instances[0]
+    f2 = MaterielInstanceForm(materielI=instance)
+    return render_template("consultation.html",form = f, formInstance = f2, domaines=domaines, categories=categories, materiels=materiels, current_mat=current, instances=instances)
 
 @app.route('/consult/recherche')
 def update_materials():
@@ -129,12 +134,23 @@ def save_material():
         materiel.reference = request.form["reference"]
         materiel.quantite_max = request.form["quantiteMax"]
         materiel.quantite_globale = request.form["quantiteTot"]
-        # materiel.quantite_restante = request.form["quantiteRes"]
         materiel.complements = request.form["description"]
-        #Changer le domaine et la catégorie
         materiel.codeD = request.form["domaine"]
         materiel.codeC = request.form["categorie"]
 
+        db.session.commit()
+        return redirect(url_for('consult'))
+    return redirect(url_for('consult'))
+
+
+@app.route('/consult/enregistrerinstance/', methods=['POST'])
+def save_instance():
+    hiddenref2 = request.form["hiddenref2"]
+    hiddenrefMat = request.form["hiddenrefMat"]
+    instance = MaterielInstance.query.filter_by(idMateriel=hiddenref2, refMateriel=hiddenrefMat).first()
+    if instance:
+        instance.datePeremption = request.form["datePeremption"]
+        instance.qteRestante = request.form["quantiteRestante"]
         db.session.commit()
         return redirect(url_for('consult'))
     return redirect(url_for('consult'))
@@ -143,9 +159,12 @@ def save_material():
 def delete_material(id):
     materiel = MaterielGenerique.query.get(id)
     alertes = AlerteQuantite.query.filter_by(refMateriel=id).all()
+    materiel_instances = MaterielInstance.query.filter_by(refMateriel=id).all()
     if materiel:
         for alerte in alertes:
             db.session.delete(alerte)
+        for materiel_instance in materiel_instances:
+            db.session.delete(materiel_instance)
         db.session.delete(materiel)
         db.session.commit()
         response = {'status': 'success'}
@@ -352,6 +371,8 @@ def get_info_Materiel(reference):
     if materiel:
         liste_categories = Categorie.query.filter_by(codeD=materiel.codeD).all()
         liste_categories = [categorie.serialize() for categorie in liste_categories]
+        liste_materiel_instance = MaterielInstance.query.filter_by(refMateriel=reference).all()
+        liste_materiel_instance = [materiel_instance.serialize() for materiel_instance in liste_materiel_instance]
         image_data = materiel.get_image()
         materiel_info = {
             'reference': materiel.refMateriel,
@@ -360,12 +381,21 @@ def get_info_Materiel(reference):
             'categorie': materiel.categorie.codeC,
             'quantite_max': materiel.qteMax,
             'quantite_global': materiel.qteMateriel,
-            # 'quantite_restante': materiel.quantite_restante,
             'complements': materiel.complements,
             'image': image_data,
-            'categories': liste_categories
+            'categories': liste_categories,
+            'instances': liste_materiel_instance
         }
         return jsonify(materiel_info)
+    else:
+        return jsonify({'error': 'Materiel non trouvé'}), 404
+
+@app.route("/get_info_Instance/<int:id>/<int:ref>", methods=["GET"])
+def get_info_Materiel_Instance(id, ref):
+    materiel_instance = MaterielInstance.query.get((id,ref))
+    if materiel_instance:
+        materiel_instance_info = materiel_instance.serialize()
+        return jsonify(materiel_instance_info)
     else:
         return jsonify({'error': 'Materiel non trouvé'}), 404
 

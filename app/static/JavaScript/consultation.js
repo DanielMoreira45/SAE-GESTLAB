@@ -51,7 +51,7 @@ function ListeMateriauxMAJ() {
                 img.alt = material.nom;
                 const h2 = document.createElement('h2');
                 h2.id = material.reference;
-                h2.onclick = function () { edit(this.id) };
+                h2.onclick = function () { editMateriauxGenerique(this.id) };
                 h2.textContent = material.nom;
 
                 div.appendChild(img);
@@ -63,12 +63,11 @@ function ListeMateriauxMAJ() {
         .catch(error => console.error('Erreur : ' + error));
 }
 
-function edit(id) {
+function editMateriauxGenerique(id) {
     var labelNom = document.getElementById("nom");
     var labelDomaine = document.getElementById("domaine");
     var labelCategorie = document.getElementById("categorie");
     var labelReference = document.getElementById("reference");
-    var labelQuanR = document.getElementById("quantiteR");
     var labelQuanT = document.getElementById("quantiteT");
     var lavelQuantiteMax = document.getElementById("quantiteMax");
     var labelComplements = document.getElementById("complements");
@@ -89,11 +88,61 @@ function edit(id) {
             labelImage.src = "data:image/png;base64," + data.image;
             labelImage.alt = data.nom;
             hiddenid.value = reference;
-
+            construitMaterielInstance(data.instances, data.reference);
         })
         .catch(error => console.error('Erreur : ' + error));
-
 }
+
+function editMateriauxInstance(id, ref) {
+    var labelQuantiteRes = document.getElementById("qteRestante");
+    var labelDatePeremption = document.getElementById("datePeremption");
+    var hiddenref = document.getElementById("hiddenref2");
+    var hiddenMat = document.getElementById("hiddenrefMat");
+    console.log("editMateriauxInstance");
+    console.log(id);
+    console.log(ref);
+    fetch('/get_info_Instance/' + id + '/' + ref)
+        .then(response => response.json())
+        .then(data => {
+            labelQuantiteRes.value = data.quantite_restante;
+            var datePeremption = new Date(data.date_peremption);
+            var formattedDate = datePeremption.toISOString().split('T')[0];
+            labelDatePeremption.value = formattedDate;
+            hiddenref.value = data.reference;
+            hiddenMat.value = ref;            
+        })
+        .catch(error => console.error('Erreur : ' + error));
+}
+
+function construitMaterielInstance(listeInstance , reference) {
+    var ul = document.getElementById("instanceList");
+    ul.innerHTML = "";
+    listeInstance.forEach(instance => {
+        var li = document.createElement("li");
+        var div = document.createElement("div");
+        div.classList.add("item_instance");
+
+        var h2 = document.createElement("h2");
+        h2.textContent = instance.nomMateriel;
+        h2.id = instance.reference;
+        h2.onclick = function () { editMateriauxInstance(this.id, reference) };
+
+        var div2 = document.createElement("div");
+
+        var p = document.createElement("p");
+        p.textContent = "Quantité : " + instance.quantite_restante;
+        var p2 = document.createElement("p");
+        p2.textContent = "Unité : " + instance.unite;
+
+        div2.appendChild(p);
+        div2.appendChild(p2);
+        div.appendChild(h2);
+        div.appendChild(div2);
+        li.appendChild(div);
+        ul.appendChild(li);
+    });
+}
+
 function toggleInputField(elementId) {
     var inputField = document.getElementById(elementId);
     if (inputField) {
@@ -111,10 +160,16 @@ function inputsdisabled() {
     toggleInputField("complements");
     toggleInputField("nom");
     toggleInputField("quantiteMax");
+    toggleInputField("qteRestante");
+    toggleInputField("datePeremption");
 
     var buttonValider = document.getElementById("buttonvalider");
     if (buttonValider) {
         buttonValider.disabled = !buttonValider.disabled;
+    }
+    var buttonvalider2 = document.getElementById("buttonvalider2");
+    if (buttonvalider2) {
+        buttonvalider2.disabled = !buttonvalider2.disabled;
     }
 }
 
@@ -144,6 +199,8 @@ window.onload = function() {
 function disabledOnLoad() {
     toggleInputField("domaine");
     toggleInputField("categorie");
+    toggleInputField("datePeremption");
+    
 };
 
 function majCategorieInstance(){
