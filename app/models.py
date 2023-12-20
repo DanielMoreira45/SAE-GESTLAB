@@ -153,7 +153,7 @@ class MaterielInstance(db.Model):
     __tablename__ = "MATERIELINSTANCE"
     idMateriel = db.Column(db.Integer, primary_key=True)
     qteRestante = db.Column(db.Float)
-    datePeremption = db.Column(db.Float)
+    datePeremption = db.Column(db.Date)
     refMateriel = db.Column(db.Integer, db.ForeignKey("MATERIELGENERIQUE.refMateriel"), primary_key=True)
     mat_generique = db.relationship("MaterielGenerique",
                                 backref=db.backref("matériels",
@@ -161,6 +161,8 @@ class MaterielInstance(db.Model):
 
     def serialize(self):
         return {
+            'nomMateriel': self.mat_generique.nomMateriel,
+            'unite': self.mat_generique.unite,
             'reference': self.idMateriel,
             'quantite_restante': self.qteRestante,
             'date_peremption': self.datePeremption,

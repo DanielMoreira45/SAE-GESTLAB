@@ -10,7 +10,7 @@
 {% if current_user.is_authenticated %}
 {% if current_user.is_prof %}
 <h1>Consulter le matériel</h1>
-<form id="search" action="recherche" role="search" method="post">
+<form id="search" role="search" method="post">
     <input type="search" name="search" id="searchinput" placeholder="Rechercher un matériel ..." oninput="change()">
     <select name="Domaine" id="Domaine" onchange="change()">
         <option value="">Domaine</option>
@@ -27,59 +27,82 @@
     <button type="reset" id="searchButton">reset</button>
 </form>
 <div class="info">
-    <div>
-        <div class="liste_mat">
-            <ul id="materielsList">
-                {% for materiel in materiels %}
-                <li>
-                    <div class="item_mat">
-                        <img src="data:image/png;base64,{{ materiel.get_image() }}" alt="{{ materiel.nomMateriel }}">
-                        <h2 id="{{ materiel.refMateriel }}" onclick="edit(this.id)">{{ materiel.nomMateriel }}</h2>
-                    </div>
-                </li>
-                {% endfor %}
-            </ul>
-        </div>
-        <div>
-            {% if current_user.modifications == True %}
-            <a href="{{ url_for('materiel_add') }}"><button id="buttonAdd" type="button">Ajouter du Materiel</button></a>
-            {% endif %}
-        </div>
+    <div class="liste_mat">
+        <ul id="materielsList">
+            {% for materiel in materiels %}
+            <li>
+                <div class="item_mat">
+                    <img src="data:image/png;base64,{{ materiel.get_image() }}" alt="{{ materiel.nomMateriel }}">
+                    <h2 id="{{ materiel.refMateriel }}" onclick="editMateriauxGenerique(this.id)">{{
+                        materiel.nomMateriel }}</h2>
+                </div>
+            </li>
+            {% endfor %}
+        </ul>
     </div>
-    <div>
-        <div class="description">
-            <form action="{{ url_for('save_material')}}" method="post" role="form">
-                {{ form.csrf_token }}
-                <input type="text" name="nom" id="nom" value="{{ form.nom.data }}" disabled>
-                <input type="hidden" name="hiddenref" id="hiddenref" value="{{ form.hiddenref.data }}">
+    <div class="liste_instance">
+        <ul id="instanceList">
+            {% for instance in instances %}
+            <li>
+                <div class="item_instance">
+                    <h2 id="{{ instance.idMateriel }}" onclick="editMateriauxInstance(this.id)">{{ instance.mat_generique.nomMateriel }}</h2>
+                    <div>
+                        <p>Quantité : {{ instance.qteRestante }}</p>
+                        <p>Unité : {{ instance.mat_generique.unite }}</p>
+                    </div>
+                </div>
+            </li>
+            {% endfor %}
+        </ul>
+    </div>
+    <div class="description">
+        <form action="{{ url_for('save_material')}}" method="post" role="form" class="formdescription">
+            <input type="text" name="nom" id="nom" value="{{ form.nom.data }}" disabled>
+            <input type="hidden" name="hiddenref" id="hiddenref" value="{{ form.hiddenref.data }}">
+            <div class="Materiel">
                 <div class="chiffre">
                     <label for="domaine">Domaine : {{ form.domaine }}</label>
                     <label for="categorie">Categorie : {{ form.categorie }}</label>
-                    <label for="reference">Reférence : <input type="text" name="reference" id="reference" value="{{ form.reference.data }}" disabled></label>
-                    {% if form.domaine.data == "Produits Chimiques" %}
-                    <!-- <label for="quantiteRes">Quantité Restante : <input type="text" name="quantiteRes" id="quantiteR" value="{{form.quantiteRes.data }}" disabled></label> -->
-                    {% endif %}
-                    <label for="quantiteTot">Quantité Totale :<input type="text" name="quantiteTot" id="quantiteT" value="{{ form.quantiteTot.data }}" disabled></label>
-                    <label for="quantiteMax">Quantité Maximal : <input type="text" name="quantiteMax" id="quantiteMax" value="{{ form.quantiteMax.data }}" disabled></label>
+                    <label for="reference">Reférence : <input type="text" name="reference" id="reference"
+                            value="{{ form.reference.data }}" disabled></label>
+                    <label for="quantiteTot">Quantité Totale :<input type="text" name="quantiteTot" id="quantiteT"
+                            value="{{ form.quantiteTot.data }}" disabled></label>
+                    <label for="quantiteMax">Quantité Maximal : <input type="text" name="quantiteMax" id="quantiteMax"
+                            value="{{ form.quantiteMax.data }}" disabled></label>
                 </div>
                 <div class="textu">
-                    <img id="imagePresentation" src="data:image/png;base64,{{ current_mat.get_image() }}" alt="{{ current_mat.nom }}">
-                    <textarea id="complements" cols="40" rows="10" name="description" disabled>{{ form.description.data }}</textarea>
+                    <img id="imagePresentation" src="data:image/png;base64,{{ current_mat.get_image() }}"
+                        alt="{{ current_mat.nom }}">
+                    <textarea id="complements" cols="40" rows="5" name="description"
+                        disabled>{{ form.description.data }}</textarea>
                 </div>
                 <div class="submit">
                     <input type="submit" value="Valider" id="buttonvalider" disabled>
                 </div>
-            </form>
-        </div>
-        <div class="button">
-            {% if current_user.modifications == True %}
-            <button id="buttonModifier" onclick="inputsdisabled()">Modifier</button>
-            <button id="buttonSupp" onclick="suppression()" >Supprimer</button>
-            {% endif %}
-            <button id="buttonImprimer">Imprimer</button>
-            <button id="buttonFDS">Voir FDS</button>
-        </div>
+            </div>
+        </form>
+        <div class="ligne-noir"></div>
+        <form action="{{ url_for('save_materiel_instance')}}" method="post" role="form" class="formdescriptionI">
+            <div class="forminstance">
+                <input type="hidden" name="hiddenref2" id="hiddenref2" value="{{ form2.reference.data }}">
+                <label for="quantiteRestante">Quantité Restante : <input type="text" name="quantiteRestante"
+                        id="qteRestante" value="{{ form2.quantiteRes.data }}" disabled></label>
+                <label for="datePeremption">Date : {{ form2.datePeremption }}</label>
+                <div class="submit">
+                    <input type="submit" value="Valider" id="buttonvalider2" disabled>
+                </div>
+            </div>
+        </form>
     </div>
+</div>
+<div class="button">
+    {% if current_user.modifications == True %}
+    <a href="{{ url_for('materiel_add') }}"><button id="buttonAdd" type="button">Ajouter du Materiel</button></a>
+    <button id="buttonModifier" onclick="inputsdisabled()">Modifier</button>
+    <button id="buttonSupp" onclick="suppression()">Supprimer</button>
+    {% endif %}
+    <button id="buttonImprimer">Imprimer</button>
+    <button id="buttonFDS">Voir FDS</button>
 </div>
 {% endif %}
 {% endif %}

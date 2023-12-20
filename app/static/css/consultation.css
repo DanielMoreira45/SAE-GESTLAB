@@ -16,6 +16,13 @@ body {
     background-size: cover;
     background-attachment: fixed;
 }
+
+div.ligne-noir{
+    border: 2px black solid;
+    border-radius: 9px;
+    width: 80%;
+}
+
 div.content {
     display: flex;
     flex-direction: column;
@@ -35,28 +42,40 @@ div.search{
 
 div.description{
     height: 50vh;
+    width: 40vw;
     padding: 1px;
     margin-bottom: 2vh;
-    background-color: white;
     margin-left: 1rem;
-    width: 50vw;
+    background-color: white;
     border: none;
     border-radius: 9px;
 }
-div.description>form>h2{
-    margin: 0.5vw 0px 0.5vw 1rem;
-}
-div.description>form>div.chiffre>label{
+
+div.chiffre>label{
     display: inline;
-    height: 5vh;
+    height: 3vh;
+    margin-right: 1vw;
 }
 
-div.description>form>div.chiffre input{
+div.chiffre input{
     margin: 0.0em 1em;
     border: hidden;
-    min-width: 10vw;
+    width: 5vw;
 }
-form>div{
+
+form.formdescription, form.formdescriptionI{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+}
+
+form.formdescriptionI{
+    margin-top: 1vh;
+
+}
+
+form>div>div{
     display: flex;
     margin: 1rem;
     flex-wrap: wrap;
@@ -64,17 +83,16 @@ form>div{
     justify-content: center;
 }
 
-div.description>form>div.textu>textarea{
+div.textu>textarea{
     margin-left: 1rem;
     max-height: 15vh;
-    min-width: 30vw;
+    min-width: 20vw;
     border: hidden;
 }
 
 div.liste_mat{
-    
     height: 50vh;
-    width: 30vw;
+    width: 25vw;
     overflow: auto;
     background-color: white;
     border: 2px white solid;
@@ -99,6 +117,35 @@ div.liste_mat ul li{
     list-style: none;
 }
 
+div.liste_instance{
+    height: 50vh;
+    width: 25vw;
+    overflow: auto;
+    background-color: white;
+    margin-bottom: 2vh;
+    margin-left: 1rem;
+    border: 2px white solid;
+    scroll-snap-type: y proximity;
+    scrollbar-color: #EDF0F2;
+    border-top-left-radius: 40px;
+    border-bottom-left-radius: 40px;
+    border-top-right-radius: 25px;
+    border-bottom-right-radius: 25px;
+}
+div.liste_instance h2{
+    margin-left: 1rem;
+    font-size: large;
+}
+
+div.liste_instance ul{
+    padding: 0;
+    margin: 0;
+}
+
+div.liste_instance ul li{
+    list-style: none;
+}
+
 div.info {
     display: flex;
     flex-wrap: nowrap;
@@ -108,8 +155,8 @@ div.info {
 }
 
 #imagePresentation{
-    width: 12em;
-    height: 12em;
+    width: 5em;
+    height: 5em;
 }
 
 div.info img{
@@ -135,7 +182,25 @@ div.liste_mat::-webkit-scrollbar-thumb {
     border-radius: 8px;
 }
 
-#buttonModifier, #buttonSupp, #buttonImprimer, #buttonFDS, #buttonvalider{
+div.liste_instance::-webkit-scrollbar {
+    scrollbar-gutter: both;
+    width: 0.7em;
+}
+
+div.liste_instance::-webkit-scrollbar-thumb:hover{
+    background-color: #ABABAB;
+}
+
+div.liste_instance::-webkit-scrollbar-thumb:active{
+    background-color: grey;
+}
+
+div.liste_instance::-webkit-scrollbar-thumb {
+    background: rgb(217, 217, 217);;
+    border-radius: 8px;
+}
+
+#buttonModifier, #buttonSupp, #buttonImprimer, #buttonFDS, #buttonvalider, #buttonvalider2{
     background-color: rgb(255, 216, 131);
     font-family: "AgrandirWide";
     font-size: 1em;
@@ -234,4 +299,22 @@ div.recherche>*{
     font-size: 1.2rem;
     font-weight: bold;
     width: 20vw;
+}
+
+div.item_instance{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+div.item_instance div{
+    display: flex;
+    flex-direction: row;
+}
+div.item_instance div>*{
+    margin: 0 1vw;
+}
+
+div.item_instance h2{
+    cursor: pointer;
 }

@@ -1,37 +1,43 @@
 from flask_wtf import FlaskForm
-from wtforms import FileField, StringField, HiddenField, PasswordField, SelectField, RadioField, IntegerField, TextAreaField
+from wtforms import DateField, FileField, StringField, HiddenField, PasswordField, SelectField, RadioField, IntegerField, TextAreaField
 from wtforms.validators import DataRequired, NumberRange
 from .models import Utilisateur
+
+"Formulaires de l'application"
 
 class MaterielModificationForm(FlaskForm):
     """Formulaire de modification du matériel."""
 
     nom = StringField('Nom', validators=[DataRequired()])
+    hiddenref = HiddenField('hiddenref')
+    reference = StringField('Référence', validators=[DataRequired()])
+    rangement = StringField('Rangement', validators=[DataRequired()])
+    commentaire = StringField('Commentaire', validators=[DataRequired()])
     domaine = SelectField('Domaine', validators=[DataRequired()])
     categorie = SelectField('Catégorie', validators=[DataRequired()])
-    reference = StringField('Référence', validators=[DataRequired()])
-    hiddenref = HiddenField('hiddenref')
-    
-    quantiteRes = IntegerField('Quantité restante')
     quantiteTot = IntegerField('Quantité totale', validators=[DataRequired()])
     quantiteMax = IntegerField('Quantité maximale', validators=[DataRequired()])
-
     description = StringField('Description', validators=[DataRequired()])
+    seuil_peremption = IntegerField('Seuil de péremption', validators=[DataRequired()])
+    seuil_quantite = IntegerField('Seuil de quantité', validators=[DataRequired()])
 
-    def __init__(self, materiel=None, *args, **kwargs):
+    def __init__(self, materielG=None, *args, **kwargs):
         super(MaterielModificationForm, self).__init__(*args, **kwargs)
         
         # Définir les valeurs par défaut en fonction de l'instance 'materiel' fournie
-        if materiel:
-            self.nom.default = materiel.nomMateriel
-            self.reference.default = materiel.refMateriel
-            self.quantiteTot.default = materiel.qteMateriel
-            self.description.default = materiel.complements
-            self.hiddenref.default = materiel.refMateriel
-            self.quantiteMax.default = materiel.qteMax
-            self.categorie.default = materiel.categorie.codeC
-            self.domaine.default = materiel.domaine.codeD
-
+        if materielG:
+            self.nom.default = materielG.nomMateriel
+            self.reference.default = materielG.refMateriel
+            self.quantiteTot.default = materielG.qteMateriel
+            self.description.default = materielG.complements
+            self.hiddenref.default = materielG.refMateriel
+            self.quantiteMax.default = materielG.qteMax
+            self.categorie.default = materielG.categorie.codeC
+            self.domaine.default = materielG.domaine.codeD
+            self.rangement.default = materielG.rangement
+            self.commentaire.default = materielG.commentaire
+            self.seuil_peremption.default = materielG.seuilPeremption
+            self.seuil_quantite.default = materielG.seuilQte
         self.process()
 
     def set_domaine_choices(self, choices):
@@ -40,10 +46,23 @@ class MaterielModificationForm(FlaskForm):
     def set_categorie_choices(self, choices):
         self.categorie.choices = choices
 
-    def get_domaine(self):
-        return self.domaine.data
+class MaterielInstanceForm(FlaskForm):
+    """Formulaire d'ajout d'une instance de matériel."""
 
-"Formulaires de l'application"
+    reference = StringField('Référence', validators=[DataRequired()])
+    datePeremption = DateField('Date de péremption', validators=[DataRequired()])
+    quantiteRes = IntegerField('Quantité restante', validators=[DataRequired()])
+
+    def __init__(self, materielI=None, *args, **kwargs):
+        super(MaterielInstanceForm, self).__init__(*args, **kwargs)
+        
+        if materielI:
+            self.datePeremption.default = materielI.datePeremption
+            self.quantiteRes.default = materielI.qteRestante
+            self.reference.default = materielI.idMateriel
+
+    def set_reference(self, reference):
+        self.reference.data = reference
 
 class LoginForm(FlaskForm):
     email = StringField('Email')
