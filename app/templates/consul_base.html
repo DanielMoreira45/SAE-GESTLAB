@@ -37,16 +37,16 @@
                     <li><a href="{{ url_for('delivery') }}">Gérer les commandes</a></li> 
                     {% endif %}
                     <li>
-                      <span>
+                      {% if not current_user.is_admin() %}
                         <div class="popup" onclick="gestionNotifs()">
                           {% if alertes|length == 0 %}
                             <button id="notifButton">
-                                <img src="{{ url_for('static', filename='images/notifications.png') }}" alt="Icone notifications" id="img-notifs">
+                              <img src="{{ url_for('static', filename='images/notifications.png') }}" alt="Icone notifications" id="img-notifs">
                             </button>
                             <div class="popuptext" id="myPopup">Aucune nouvelle notification.</div>
                           {% else %}
                             <button id="notifButton">
-                                <img src="{{ url_for('static', filename='images/notifications_pastille.png') }}" alt="Icone notifications" id="img-notifs">
+                              <img src="{{ url_for('static', filename='images/notifications_pastille.png') }}" alt="Icone notifications" id="img-notifs">
                             </button>
                             <div class="popuptext" id="myPopup">
                               {% for a in alertes %}
@@ -59,11 +59,15 @@
                             </div>
                           {% endif %}
                         </div>
-                        <button id="logoutButton">Déconnexion</button>
-                      </span>
+                      {% endif %}
+                      <a href="{{ url_for('logout') }}" id="liensBoutons"><button id="logoutButton">Déconnexion</button></a>
                     </li>
+                    <!-- <li>
+                    </li> -->
                     {% else %}
-                    <li><button id="BackButton">Retour accueil</button></li>
+                    <li>
+                      <a href="{{ url_for('home') }}" id="liensBoutons"><button id="BackButton">Retour accueil</button></a>
+                    </li>
                     {% endif %}
                 </ul>
             </nav>

@@ -166,3 +166,9 @@ li > span {
 #myPopup p {
     margin-top: 0.2em;
 }
+
+#liensBoutons {
+    display: inline-block;
+    margin-left: 0;
+    margin-right: 0;
+}
