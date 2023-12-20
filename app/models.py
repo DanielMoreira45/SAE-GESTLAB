@@ -134,14 +134,14 @@ class MaterielGenerique(db.Model):
 
     def serialize(self):
         return {
-            'reference': self.reference,
-            'nom': self.nom,
-            'quantite_max': self.quantite_max,
+            'reference': self.refMateriel,
+            'nom': self.nomMateriel,
+            'quantite_max': self.qteMax,
             'unite': self.unite,
-            'quantite': self.quantite,
+            'quantite': self.qteMateriel,
             'complements': self.complements,
-            'code_categorie': self.code_categorie,
-            'code_domaine': self.code_domaine,
+            'code_categorie': self.codeC,
+            'code_domaine': self.codeD,
             'image': self.get_image(),
         }
 
@@ -264,7 +264,7 @@ def getToutesLesAlertes():
     res = []
     for aQte in AlerteQuantite.query.all():
         res.append(aQte.commentaire + " pour " + MaterielGenerique.query.get(aQte.refMateriel).nomMateriel + ".")
-    for aSl in AlerteSeuil.query.all():
-        res.append(aSl.commentaire + " pour " + MaterielInstance.query.get(aSl.idMateriel).nomMateriel + ".")
+    # for aSl in AlerteSeuil.query.all():
+    #     res.append(aSl.commentaire + " pour " + MaterielInstance.query.get(aSl.idMateriel).nomMateriel + ".")
     print(res)
     return res

@@ -8,6 +8,9 @@
     {% endblock %}
     {% block styles %}
     {% endblock %}
+    {% block scripts %}
+    <script src="{{url_for('static', filename='JavaScript/base.js')}}"></script>
+    {% endblock %}
     <link rel="stylesheet" href="{{ url_for('static', filename='css/nav_base.css') }}">
     <link rel="icon" href="{{ url_for('static', filename='images/faviconMICRO.ico')}}">
     <title>Gest-LAB</title>
@@ -76,29 +79,6 @@
     <footer>
         <p>© 2023-2024 GESTLAB.</p>
     </footer>
-    {% block scripts %}
-    {% endblock %}
-
-    <script>
-        var ButtonBack = document.getElementById("BackButton");
-        var ButtonLogout = document.getElementById("logoutButton");
-
-        function gestionNotifs() {
-            var popup = document.getElementById("myPopup");
-            popup.classList.toggle("show");
-        }
-
-        if (ButtonBack) {
-            ButtonBack.addEventListener("click", function () {
-                window.location.href = "{{ url_for('home') }}";
-            });
-        }
-        if (ButtonLogout) {
-            ButtonLogout.addEventListener("click", function () {
-                window.location.href = "{{ url_for('logout') }}";
-            });
-        }
-    </script>
 </body>
 
 </html>
