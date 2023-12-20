@@ -1,9 +1,49 @@
-"Formulaires de l'application"
-
 from flask_wtf import FlaskForm
-from wtforms import StringField, HiddenField, PasswordField, SelectField, RadioField, IntegerField
+from wtforms import FileField, StringField, HiddenField, PasswordField, SelectField, RadioField, IntegerField, TextAreaField
 from wtforms.validators import DataRequired, NumberRange
 from .models import Utilisateur
+
+class MaterielModificationForm(FlaskForm):
+    """Formulaire de modification du matériel."""
+
+    nom = StringField('Nom', validators=[DataRequired()])
+    domaine = SelectField('Domaine', validators=[DataRequired()])
+    categorie = SelectField('Catégorie', validators=[DataRequired()])
+    reference = StringField('Référence', validators=[DataRequired()])
+    hiddenref = HiddenField('hiddenref')
+    
+    quantiteRes = IntegerField('Quantité restante')
+    quantiteTot = IntegerField('Quantité totale', validators=[DataRequired()])
+    quantiteMax = IntegerField('Quantité maximale', validators=[DataRequired()])
+
+    description = StringField('Description', validators=[DataRequired()])
+
+    def __init__(self, materiel=None, *args, **kwargs):
+        super(MaterielModificationForm, self).__init__(*args, **kwargs)
+        
+        # Définir les valeurs par défaut en fonction de l'instance 'materiel' fournie
+        if materiel:
+            self.nom.default = materiel.nomMateriel
+            self.reference.default = materiel.refMateriel
+            self.quantiteTot.default = materiel.qteMateriel
+            self.description.default = materiel.complements
+            self.hiddenref.default = materiel.refMateriel
+            self.quantiteMax.default = materiel.qteMax
+            self.categorie.default = materiel.categorie.codeC
+            self.domaine.default = materiel.domaine.codeD
+
+        self.process()
+
+    def set_domaine_choices(self, choices):
+        self.domaine.choices = choices
+
+    def set_categorie_choices(self, choices):
+        self.categorie.choices = choices
+
+    def get_domaine(self):
+        return self.domaine.data
+
+"Formulaires de l'application"
 
 class LoginForm(FlaskForm):
     email = StringField('Email')
@@ -45,3 +85,54 @@ class UtilisateurForm(FlaskForm):
 class CommandeForm(FlaskForm):
     materiel_field = SelectField('Matériel', validators=[DataRequired("Merci de sélectionner une option.")])
     quantity_field = IntegerField("Quantité", validators=[DataRequired(), NumberRange(1, 1000)], default=1)
+
+class MaterielForm(FlaskForm):
+    nom = StringField('Nom', validators=[DataRequired()])
+    photo = FileField('Photo')
+    lesD = [(1, 'Appareillage'),
+            (2, 'Verrerie et associés'),
+            (3, 'Produits Chimiques'),
+            (4, 'Matériel de Laboratoire'),
+            (5, 'Média'),
+            (6, 'Matériel Électrique')]
+    lesC = [(1, 'Observation'),
+            (2, 'Mesures'),
+            (3, 'ExAO'),
+            (4, 'Multimédia'),
+            (5, 'Expérimentation'),
+            (6, 'Divers'),
+            (7, 'Verrerie'),
+            (8, 'Produits Organiques'),
+            (9, 'Produits Minéraux'),
+            (10, 'Enzymes'),
+            (11, 'Colorants'),
+            (12, 'Entretien'),
+            (13, 'Autres'),
+            (14, 'Appareils de labo'),
+            (15, 'Sécurité'),
+            (16, 'Fournitures'),
+            (17, 'Mobilier'),
+            (18, 'Divers'),
+            (19, 'Logiciels'),
+            (20, 'DVD/VHS'),
+            (21, 'Manuels Scolaires'),
+            (22, 'Livres Scientifiques'),
+            (23, 'Cartes/Posters'),
+            (24, 'Divers'),
+            (25, 'Générateurs'),
+            (26, 'Mesures'),
+            (27, 'Récepteurs'),
+            (28, 'Connectique'),
+            (29, 'Métaux'),
+            (30, 'Divers')]
+
+    rangement = StringField('Rangement', validators=[DataRequired()])
+    commentaire = TextAreaField('Description' , validators=[DataRequired()])
+    quantite = IntegerField('Quantité', validators=[DataRequired(), NumberRange(min=0)])
+    unite = SelectField('Unité', choices=[None,'cm','g','ml'])
+    complements = StringField('Compléments', validators=[DataRequired()])
+    ficheFDS = FileField('Fiche De Sécurité')
+    seuil_quantite = IntegerField('Seuil de Quantité', validators=[NumberRange(min=0)])
+    seuil_peremption = IntegerField('Seuil de Péremption (nb jours)', validators=[NumberRange(min=0)])
+    categorie = SelectField('Catégorie', choices=lesC, validators=[DataRequired()])
+    domaine = SelectField('Domaine', choices=lesD, validators=[DataRequired()])

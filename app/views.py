@@ -1,10 +1,9 @@
 """Toute les routes et les Formulaires"""
 from .app import app, db
-from .models import Statut, MaterielGenerique, MaterielInstance, Utilisateur, Domaine, Categorie, Role, Commande
-from .forms import LoginForm, UtilisateurForm, UserForm, CommandeForm
+from .models import AlerteQuantite, Statut, MaterielGenerique, MaterielInstance, Utilisateur, Domaine, Categorie, Role, Commande, filter_commands
+from .forms import LoginForm, UtilisateurForm, UserForm, CommandeForm, MaterielForm, MaterielModificationForm
 from flask import jsonify, render_template, url_for, redirect, request, flash
 from flask_login import login_required, login_user, logout_user, current_user
-from hashlib import sha256
 from datetime import datetime
 from fpdf import FPDF
 
@@ -95,7 +94,12 @@ def consult():
     categories = Categorie.query.order_by(Categorie.nomC).all()
     materiels = MaterielGenerique.query.order_by(MaterielGenerique.nomMateriel).all()
     current = materiels[0]
-    return render_template("consultation.html", domaines=domaines, categories=categories, materiels=materiels, current_mat=current)
+    f = MaterielModificationForm(materiel=current)
+    
+    f.set_domaine_choices([(domaine.codeD, domaine.nomD) for domaine in domaines])
+    f.set_categorie_choices([(categorie.codeC, categorie.nomC) for categorie in categories if categorie.codeD == current.codeD])
+    # f.set_categorie_choices([(categorie.codeC, categorie.nomC) for categorie in categories])
+    return render_template("consultation.html",form = f ,domaines=domaines, categories=categories, materiels=materiels, current_mat=current)
 
 @app.route('/consult/recherche')
 def update_materials():
@@ -105,17 +109,49 @@ def update_materials():
     search = request.args.get('search')
     liste_materiel = MaterielGenerique.query.order_by(MaterielGenerique.nomMateriel).all()
     if (selected_categorie):        
-        liste_materiel = [materiel for materiel in liste_materiel if materiel.code_categorie == int(selected_categorie)]
+        liste_materiel = [materiel for materiel in liste_materiel if materiel.codeC == int(selected_categorie)]
 
     if (selected_domaine):
-        liste_materiel = [materiel for materiel in liste_materiel if materiel.code_domaine == int(selected_domaine)]
+        liste_materiel = [materiel for materiel in liste_materiel if materiel.codeD == int(selected_domaine)]
 
     if (search):
-        liste_materiel = [materiel for materiel in liste_materiel if search.lower() in materiel.nom.lower()]
+        liste_materiel = [materiel for materiel in liste_materiel if search.lower() in materiel.nomMateriel.lower()]
     ####liste_materiel = filtrer(liste_materiel, search, selected_domaine, selected_categorie) ### POUR REFACTORISER LE FILTRAGE
 
     liste_materiel = [materiel.serialize() for materiel in liste_materiel]
     return jsonify({'materiels': liste_materiel})
+
+@app.route('/consult/enregistrer', methods=['POST'])
+def save_material():
+    materiel = MaterielGenerique.query.get(request.form["hiddenref"])
+    if materiel:
+        materiel.nom = request.form["nom"]
+        materiel.reference = request.form["reference"]
+        materiel.quantite_max = request.form["quantiteMax"]
+        materiel.quantite_globale = request.form["quantiteTot"]
+        # materiel.quantite_restante = request.form["quantiteRes"]
+        materiel.complements = request.form["description"]
+        #Changer le domaine et la catégorie
+        materiel.codeD = request.form["domaine"]
+        materiel.codeC = request.form["categorie"]
+
+        db.session.commit()
+        return redirect(url_for('consult'))
+    return redirect(url_for('consult'))
+
+@app.route('/consult/supprimer/<int:id>')
+def delete_material(id):
+    materiel = MaterielGenerique.query.get(id)
+    alertes = AlerteQuantite.query.filter_by(refMateriel=id).all()
+    if materiel:
+        for alerte in alertes:
+            db.session.delete(alerte)
+        db.session.delete(materiel)
+        db.session.commit()
+        response = {'status': 'success'}
+    else:
+        response = {'status': 'error'}
+    return jsonify(response)
 
 @app.route('/get_categories/')
 def get_categories():
@@ -267,6 +303,34 @@ def save_new_commande():
     flash("Commande effectuée avec succès !")
     return redirect(url_for('new_commande'))
 
+@app.route('/materiel/add/')
+@login_required
+def materiel_add():
+    f = MaterielForm()
+    return render_template("ajout-materiel.html", form=f)
+
+@app.route("/save/materiel/", methods=("POST",))
+def save_materiel():
+    f = MaterielForm()
+    m = MaterielGenerique(
+        reference = 1 + db.session.query(db.func.max(MaterielGenerique.reference)).scalar(),
+        nom = f.nom.data,
+        image = f.photo.data,
+        fiche_fds = f.ficheFDS.data,
+        rangement = f.rangement.data,
+        commentaire = f.commentaire.data,
+        quantite_globale = f.quantite.data,
+        unite = f.unite.data,
+        complements = f.complements.data,
+        seuil_quantite = f.seuil_quantite.data,
+        seuil_peremption = f.seuil_peremption.data,
+        code_domaine = f.domaine.data,
+        code_categorie = f.categorie.data
+    )    
+    db.session.add(m)
+    db.session.commit()
+    return redirect(url_for('consult'))
+
 @app.route("/admin/home/")
 @login_required
 def admin_home():
@@ -286,16 +350,20 @@ def ecole_home():
 def get_info_Materiel(reference):
     materiel = MaterielGenerique.query.get(reference)
     if materiel:
+        liste_categories = Categorie.query.filter_by(codeD=materiel.codeD).all()
+        liste_categories = [categorie.serialize() for categorie in liste_categories]
         image_data = materiel.get_image()
         materiel_info = {
-            'refMateriel': materiel.refMateriel,
-            'nomMateriel': materiel.nomMateriel,
-            'domaine': materiel.domaine.nomD,
-            'categorie': materiel.categorie.nomC,
-            'qteMateriel': materiel.qteMateriel,
-            'qteMax' : materiel.qteMax,
+            'reference': materiel.refMateriel,
+            'nom': materiel.nomMateriel,
+            'domaine': materiel.domaine.codeD,
+            'categorie': materiel.categorie.codeC,
+            'quantite_max': materiel.qteMax,
+            'quantite_global': materiel.qteMateriel,
+            # 'quantite_restante': materiel.quantite_restante,
             'complements': materiel.complements,
-            'image': image_data
+            'image': image_data,
+            'categories': liste_categories
         }
         return jsonify(materiel_info)
     else:

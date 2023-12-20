@@ -214,7 +214,7 @@ class Commande(db.Model):
 
 class AlerteSeuil(db.Model):
     __tablename__ = "ALERTESEUIL"
-    idAlerteQ = db.Column(db.Integer, primary_key=True)
+    idAlerteS = db.Column(db.Integer, primary_key=True)
     commentaire = db.Column(db.String(150))
     idMateriel = db.Column(db.Integer,
                              db.ForeignKey("MATERIELINSTANCE.idMateriel"),
@@ -228,7 +228,7 @@ class AlerteSeuil(db.Model):
 
 class AlerteQuantite(db.Model):
     __tablename__ = "ALERTEQUANTITE"
-    idAlerteS = db.Column(db.Integer, primary_key=True)
+    idAlerteQ = db.Column(db.Integer, primary_key=True)
     commentaire = db.Column(db.String(150))
     refMateriel = db.Column(db.Integer,
                              db.ForeignKey("MATERIELGENERIQUE.refMateriel"),
