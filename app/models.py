@@ -260,11 +260,23 @@ def filter_commands(txt, domaine, categorie, statut, commandes):
 
     return liste_commandes
 
-def getToutesLesAlertes():
+def getAlertesQuantite():
     res = []
-    for aQte in AlerteQuantite.query.all():
-        res.append(aQte.commentaire + " pour " + MaterielGenerique.query.get(aQte.refMateriel).nomMateriel + ".")
-    # for aSl in AlerteSeuil.query.all():
-    #     res.append(aSl.commentaire + " pour " + MaterielInstance.query.get(aSl.idMateriel).nomMateriel + ".")
-    print(res)
+    for alerte_qte in AlerteQuantite.query.all():
+        res.append(alerte_qte.commentaire +
+                   " pour "+
+                   MaterielGenerique.query.get(alerte_qte.refMateriel).nomMateriel +
+                   ".")
     return res
+
+def getAlertesSeuil():
+    res = []
+    for mat_inst in MaterielInstance.query.all():
+        res.append(AlerteSeuil.query.get(mat_inst).commentaire +
+                    " pour " +
+                    mat_inst.nomMateriel +
+                    ".")
+    return res
+
+def getToutesLesAlertes():
+    return getAlertesQuantite() + getAlertesSeuil()
