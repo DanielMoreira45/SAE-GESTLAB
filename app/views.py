@@ -1,6 +1,6 @@
 """Toute les routes et les Formulaires"""
 from .app import app, db
-from .models import Statut, MaterielGenerique, MaterielInstance, Utilisateur, Domaine, Categorie, Role, Commande , filter_commands
+from .models import AlerteQuantite, Statut, MaterielGenerique, MaterielInstance, Utilisateur, Domaine, Categorie, Role, Commande, filter_commands
 from .forms import LoginForm, UtilisateurForm, UserForm, CommandeForm, MaterielForm, MaterielModificationForm
 
 from flask import jsonify, render_template, url_for, redirect, request, flash
@@ -97,10 +97,9 @@ def consult():
     current = materiels[0]
     f = MaterielModificationForm(materiel=current)
     
-    f.set_domaine_choices([(domaine.code, domaine.nom) for domaine in domaines])
-
-    # f.set_categorie_choices([(categorie.code, categorie.nom) for categorie in categories if categorie.domaine.code_domaine == domaine])
-    f.set_categorie_choices([(categorie.code, categorie.nom) for categorie in categories])
+    f.set_domaine_choices([(domaine.codeD, domaine.nomD) for domaine in domaines])
+    f.set_categorie_choices([(categorie.codeC, categorie.nomC) for categorie in categories if categorie.codeD == current.codeD])
+    # f.set_categorie_choices([(categorie.codeC, categorie.nomC) for categorie in categories])
     return render_template("consultation.html",form = f ,domaines=domaines, categories=categories, materiels=materiels, current_mat=current)
 
 @app.route('/consult/recherche')
@@ -111,13 +110,13 @@ def update_materials():
     search = request.args.get('search')
     liste_materiel = MaterielGenerique.query.order_by(MaterielGenerique.nomMateriel).all()
     if (selected_categorie):        
-        liste_materiel = [materiel for materiel in liste_materiel if materiel.code_categorie == int(selected_categorie)]
+        liste_materiel = [materiel for materiel in liste_materiel if materiel.codeC == int(selected_categorie)]
 
     if (selected_domaine):
-        liste_materiel = [materiel for materiel in liste_materiel if materiel.code_domaine == int(selected_domaine)]
+        liste_materiel = [materiel for materiel in liste_materiel if materiel.codeD == int(selected_domaine)]
 
     if (search):
-        liste_materiel = [materiel for materiel in liste_materiel if search.lower() in materiel.nom.lower()]
+        liste_materiel = [materiel for materiel in liste_materiel if search.lower() in materiel.nomMateriel.lower()]
 
     liste_materiel = [materiel.serialize() for materiel in liste_materiel]
     return jsonify({'materiels': liste_materiel})
@@ -130,9 +129,11 @@ def save_material():
         materiel.reference = request.form["reference"]
         materiel.quantite_max = request.form["quantiteMax"]
         materiel.quantite_globale = request.form["quantiteTot"]
-        materiel.quantite_restante = request.form["quantiteRes"]
+        # materiel.quantite_restante = request.form["quantiteRes"]
         materiel.complements = request.form["description"]
         #Changer le domaine et la catégorie
+        materiel.codeD = request.form["domaine"]
+        materiel.codeC = request.form["categorie"]
 
         db.session.commit()
         return redirect(url_for('consult'))
@@ -141,7 +142,10 @@ def save_material():
 @app.route('/consult/supprimer/<int:id>')
 def delete_material(id):
     materiel = MaterielGenerique.query.get(id)
+    alertes = AlerteQuantite.query.filter_by(refMateriel=id).all()
     if materiel:
+        for alerte in alertes:
+            db.session.delete(alerte)
         db.session.delete(materiel)
         db.session.commit()
         response = {'status': 'success'}
@@ -354,17 +358,17 @@ def ecole_home():
 def get_info_Materiel(reference):
     materiel = MaterielGenerique.query.get(reference)
     if materiel:
-        liste_categories = Categorie.query.filter_by(code_domaine=materiel.code_domaine).all()
+        liste_categories = Categorie.query.filter_by(codeD=materiel.codeD).all()
         liste_categories = [categorie.serialize() for categorie in liste_categories]
         image_data = materiel.get_image()
         materiel_info = {
-            'reference': materiel.reference,
-            'nom': materiel.nom,
-            'domaine': materiel.domaine.code,
-            'categorie': materiel.categorie.code,
-            'quantite_max': materiel.quantite_max,
-            'quantite_global': materiel.quantite_globale,
-            'quantite_restante': materiel.quantite_restante,
+            'reference': materiel.refMateriel,
+            'nom': materiel.nomMateriel,
+            'domaine': materiel.domaine.codeD,
+            'categorie': materiel.categorie.codeC,
+            'quantite_max': materiel.qteMax,
+            'quantite_global': materiel.qteMateriel,
+            # 'quantite_restante': materiel.quantite_restante,
             'complements': materiel.complements,
             'image': image_data,
             'categories': liste_categories

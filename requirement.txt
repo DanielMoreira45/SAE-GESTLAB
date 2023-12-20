@@ -6,3 +6,4 @@ pyYAML
 werkzeug==2.3.7
 flask-login
 fpdf
+pymysql

@@ -23,15 +23,14 @@ class MaterielModificationForm(FlaskForm):
         
         # Définir les valeurs par défaut en fonction de l'instance 'materiel' fournie
         if materiel:
-            self.nom.default = materiel.nom
-            self.reference.default = materiel.reference
-            self.quantiteRes.default = materiel.quantite_restante
-            self.quantiteTot.default = materiel.quantite_globale
+            self.nom.default = materiel.nomMateriel
+            self.reference.default = materiel.refMateriel
+            self.quantiteTot.default = materiel.qteMateriel
             self.description.default = materiel.complements
-            self.hiddenref.default = materiel.reference
-            self.quantiteMax.default = materiel.quantite_max
-            self.categorie.default = materiel.categorie.code
-            self.domaine.default = materiel.domaine.code
+            self.hiddenref.default = materiel.refMateriel
+            self.quantiteMax.default = materiel.qteMax
+            self.categorie.default = materiel.categorie.codeC
+            self.domaine.default = materiel.domaine.codeD
 
         self.process()
 

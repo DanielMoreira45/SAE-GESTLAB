@@ -57,7 +57,7 @@
                     <label for="categorie">Categorie : {{ form.categorie }}</label>
                     <label for="reference">Reférence : <input type="text" name="reference" id="reference" value="{{ form.reference.data }}" disabled></label>
                     {% if form.domaine.data == "Produits Chimiques" %}
-                    <label for="quantiteRes">Quantité Restante : <input type="text" name="quantiteRes" id="quantiteR" value="{{form.quantiteRes.data }}" disabled></label>
+                    <!-- <label for="quantiteRes">Quantité Restante : <input type="text" name="quantiteRes" id="quantiteR" value="{{form.quantiteRes.data }}" disabled></label> -->
                     {% endif %}
                     <label for="quantiteTot">Quantité Totale :<input type="text" name="quantiteTot" id="quantiteT" value="{{ form.quantiteTot.data }}" disabled></label>
                     <label for="quantiteMax">Quantité Maximal : <input type="text" name="quantiteMax" id="quantiteMax" value="{{ form.quantiteMax.data }}" disabled></label>

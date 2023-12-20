@@ -85,9 +85,6 @@ function edit(id) {
             lavelQuantiteMax.value = data.quantite_max;
             labelQuanT.value = data.quantite_global;
             labelReference.value = reference;
-            if (labelQuanR) {
-                labelQuanR.value = data.quantite_restante;
-            }
             labelComplements.value = data.complements;
             labelImage.src = "data:image/png;base64," + data.image;
             labelImage.alt = data.nom;
@@ -140,9 +137,40 @@ function suppression() {
 
 window.onload = function() {
     disabledOnLoad();
+    var selectDomaine = document.getElementById('domaine');
+    selectDomaine.addEventListener('change', majCategorieInstance);
 };
 
 function disabledOnLoad() {
     toggleInputField("domaine");
     toggleInputField("categorie");
 };
+
+function majCategorieInstance(){
+    const selectedDomaine = document.getElementById('domaine').value;
+    const selectedCategorie = document.getElementById('categorie').value;
+    const optionC = document.createElement('option');
+    optionC.value = "";
+    optionC.textContent = "Catégorie";
+    console.log(selectedDomaine);
+
+    fetch(`/get_categories?domaine=${selectedDomaine}`)
+        .then(response => response.json())
+        .then(data => {
+            dataCategories = data.categories;
+            const CatList = document.getElementById('categorie');
+            CatList.innerHTML = "";
+
+            CatList.appendChild(optionC);
+            dataCategories.forEach(categorie => {
+                const option = document.createElement('option');
+                option.value = categorie.codeC;
+                option.textContent = categorie.nom;
+                if (option.value == selectedCategorie) {
+                    option.selected = true;
+                }
+                CatList.appendChild(option);
+            });
+        })
+        .catch(error => console.error('Erreur : ' + error));
+}
