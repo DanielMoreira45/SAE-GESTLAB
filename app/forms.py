@@ -1,9 +1,49 @@
-"Formulaires de l'application"
-
 from flask_wtf import FlaskForm
 from wtforms import FileField, StringField, HiddenField, PasswordField, SelectField, RadioField, IntegerField, TextAreaField
 from wtforms.validators import DataRequired, NumberRange
 from .models import Utilisateur
+
+class MaterielModificationForm(FlaskForm):
+    """Formulaire de modification du matériel."""
+
+    nom = StringField('Nom', validators=[DataRequired()])
+    domaine = SelectField('Domaine', validators=[DataRequired()])
+    categorie = SelectField('Catégorie', validators=[DataRequired()])
+    reference = StringField('Référence', validators=[DataRequired()])
+    hiddenref = HiddenField('hiddenref')
+    
+    quantiteRes = IntegerField('Quantité restante')
+    quantiteTot = IntegerField('Quantité totale', validators=[DataRequired()])
+    quantiteMax = IntegerField('Quantité maximale', validators=[DataRequired()])
+
+    description = StringField('Description', validators=[DataRequired()])
+
+    def __init__(self, materiel=None, *args, **kwargs):
+        super(MaterielModificationForm, self).__init__(*args, **kwargs)
+        
+        # Définir les valeurs par défaut en fonction de l'instance 'materiel' fournie
+        if materiel:
+            self.nom.default = materiel.nomMateriel
+            self.reference.default = materiel.refMateriel
+            self.quantiteTot.default = materiel.qteMateriel
+            self.description.default = materiel.complements
+            self.hiddenref.default = materiel.refMateriel
+            self.quantiteMax.default = materiel.qteMax
+            self.categorie.default = materiel.categorie.codeC
+            self.domaine.default = materiel.domaine.codeD
+
+        self.process()
+
+    def set_domaine_choices(self, choices):
+        self.domaine.choices = choices
+
+    def set_categorie_choices(self, choices):
+        self.categorie.choices = choices
+
+    def get_domaine(self):
+        return self.domaine.data
+
+"Formulaires de l'application"
 
 class LoginForm(FlaskForm):
     email = StringField('Email')

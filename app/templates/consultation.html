@@ -3,6 +3,9 @@
 {{ super() }}
 <link rel="stylesheet" href="{{ url_for('static', filename='css/consultation.css') }}">
 {% endblock %}
+{% block scripts %}
+<script src="{{url_for('static', filename='JavaScript/consultation.js')}}"></script>
+{% endblock %}
 {% block content %}
 {% if current_user.is_authenticated %}
 {% if current_user.is_prof %}
@@ -22,7 +25,6 @@
         {% endfor %}
     </select>
     <button type="reset" id="searchButton">reset</button>
-    <!-- recherche pas fonctionnelle -->
 </form>
 <div class="info">
     <div>
@@ -46,129 +48,39 @@
     </div>
     <div>
         <div class="description">
-            <h2 id="nom">{{ current_mat.nomMateriel }}</h2>
-            <div class="chiffre">
-                <label id="domaine">Domaine : {{ current_mat.domaine.nomD }}</label>
-                <label id="categorie">Categorie : {{ current_mat.categorie.nomC }}</label>
-                <label id="reference">Reference : {{ current_mat.refMateriel }}</label>
-                {% if current_mat.domaine.nomD == "Produits Chimiques" %}
-                <label id="quantiteR">Quantité restante : {{ current_mat.quantiteRestante }}</label>
-                {% endif %}
-                <label id="quantiteT">Quantité totale : {{ current_mat.qteMateriel }}</label>
-            </div>
-            <div class="textu">
-                <img id="image" src="data:image/png;base64,{{ current_mat.get_image() }}" alt="{{ current_mat.nomMateriel }}">
-                <p id="complements">{{ current_mat.complements }}</p>
-            </div>
+            <form action="{{ url_for('save_material')}}" method="post" role="form">
+                {{ form.csrf_token }}
+                <input type="text" name="nom" id="nom" value="{{ form.nom.data }}" disabled>
+                <input type="hidden" name="hiddenref" id="hiddenref" value="{{ form.hiddenref.data }}">
+                <div class="chiffre">
+                    <label for="domaine">Domaine : {{ form.domaine }}</label>
+                    <label for="categorie">Categorie : {{ form.categorie }}</label>
+                    <label for="reference">Reférence : <input type="text" name="reference" id="reference" value="{{ form.reference.data }}" disabled></label>
+                    {% if form.domaine.data == "Produits Chimiques" %}
+                    <!-- <label for="quantiteRes">Quantité Restante : <input type="text" name="quantiteRes" id="quantiteR" value="{{form.quantiteRes.data }}" disabled></label> -->
+                    {% endif %}
+                    <label for="quantiteTot">Quantité Totale :<input type="text" name="quantiteTot" id="quantiteT" value="{{ form.quantiteTot.data }}" disabled></label>
+                    <label for="quantiteMax">Quantité Maximal : <input type="text" name="quantiteMax" id="quantiteMax" value="{{ form.quantiteMax.data }}" disabled></label>
+                </div>
+                <div class="textu">
+                    <img id="imagePresentation" src="data:image/png;base64,{{ current_mat.get_image() }}" alt="{{ current_mat.nom }}">
+                    <textarea id="complements" cols="40" rows="10" name="description" disabled>{{ form.description.data }}</textarea>
+                </div>
+                <div class="submit">
+                    <input type="submit" value="Valider" id="buttonvalider" disabled>
+                </div>
+            </form>
         </div>
         <div class="button">
             {% if current_user.modifications == True %}
-            <button id="buttonModifier">Modifier</button>
-            <button id="buttonSupp">Supprimer</button>
+            <button id="buttonModifier" onclick="inputsdisabled()">Modifier</button>
+            <button id="buttonSupp" onclick="suppression()" >Supprimer</button>
             {% endif %}
             <button id="buttonImprimer">Imprimer</button>
             <button id="buttonFDS">Voir FDS</button>
         </div>
     </div>
 </div>
-<script>
-
-    function change() {
-        const searchQuery = document.getElementById('searchinput').value;
-        const selectedDomaine = document.getElementById('Domaine').value;
-        const selectedCategorie = document.getElementById('Categorie').value;
-        
-        const optionC = document.createElement('option');
-        optionC.value = "";
-        optionC.textContent = "Catégorie";
-
-        fetch(`/get_categories?domaine=${selectedDomaine}`)
-            .then(response => response.json())
-            .then(data => {
-                dataCategories = data.categories;
-                const CatList = document.getElementById('Categorie');
-                CatList.innerHTML = "";
-
-                CatList.appendChild(optionC);
-                dataCategories.forEach(categorie => {
-                    const option = document.createElement('option');
-                    option.value = categorie.codeC;
-                    option.textContent = categorie.nom;
-                    if (option.value == selectedCategorie) {
-                        option.selected = true;
-                    }
-                    CatList.appendChild(option);
-                });                
-                ListeMateriauxMAJ();
-            })
-            .catch(error => console.error('Erreur : ' + error));
-    }
-
-    function ListeMateriauxMAJ() {
-        const searchQuery = document.getElementById('searchinput').value;
-        const selectedDomaine = document.getElementById('Domaine').value;
-        const selectedCategorie = document.getElementById('Categorie').value;
-        // Envoyer une requête Ajax pour mettre à jour la liste de matériaux
-        fetch(`/consult/recherche?search=${searchQuery}&domaine=${selectedDomaine}&categorie=${selectedCategorie}`)
-            .then(response => response.json())
-            .then(data => {
-                dataMateriels = data.materiels;
-                const materielsList = document.getElementById('materielsList');
-                materielsList.innerHTML = "";
-                dataMateriels.forEach(material => {
-                    const materialItem = document.createElement('li');
-
-                    const div = document.createElement('div');
-                    div.classList.add('item_mat');
-
-                    const img = document.createElement('img');
-                    img.src = "data:image/png;base64," + material.image;
-                    img.alt = material.nom;
-                    const h2 = document.createElement('h2');
-                    h2.id = material.reference;
-                    h2.onclick = function () { edit(this.id) };
-                    h2.textContent = material.nom;
-
-                    div.appendChild(img);
-                    div.appendChild(h2);
-                    materialItem.appendChild(div);
-                    materielsList.appendChild(materialItem);
-                });
-            })
-            .catch(error => console.error('Erreur : ' + error));
-    }
-
-    function edit(id) {
-        var labelNom = document.getElementById("nom");
-        var labelDomaine = document.getElementById("domaine");
-        var labelCategorie = document.getElementById("categorie");
-        var labelReference = document.getElementById("reference");
-        var labelQuanR = document.getElementById("quantiteR");
-        var labelQuanT = document.getElementById("quantiteT");
-        var labelComplements = document.getElementById("complements");
-        var labelImage = document.getElementById("image");
-
-
-        fetch('/get_info_Materiel/' + id)
-            .then(response => response.json())
-            .then(data => {
-                labelNom.textContent = data.nom;
-                labelDomaine.textContent = "Domaine : " + data.domaine;
-                labelCategorie.textContent = "Catégorie : " + data.categorie;
-                labelQuanT.textContent = "Quantité totale : " + data.qteMax;
-                labelReference.textContent = "Reference : " + data.refMateriel;
-                if (labelQuanR) {
-                    labelQuanR.textContent = "Quantité restante : " + data.quantite_restante;
-                }
-                labelComplements.textContent = data.complements;
-                labelImage.src = "data:image/png;base64," + data.image;
-                labelImage.alt = data.nom;
-
-            })
-            .catch(error => console.error('Erreur : ' + error));
-
-    }
-</script>
 {% endif %}
 {% endif %}
 {% endblock %}
