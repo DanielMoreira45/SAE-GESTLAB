@@ -212,6 +212,10 @@ div.liste_instance::-webkit-scrollbar-thumb {
     font-weight: bold;
 }
 
+#buttonModifier, #buttonSupp, #buttonImprimer, #buttonFDS{
+    width: 10vw;
+}
+
 #buttonAdd{
     margin: 2vh 0;
     padding: 10px 10px;
@@ -228,6 +232,7 @@ div.button{
     margin-left: 1em;
     display: flex;
     justify-content: space-around;
+    width: 85vw;
 }
 
 div.item_mat {

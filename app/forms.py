@@ -24,7 +24,6 @@ class MaterielModificationForm(FlaskForm):
     def __init__(self, materielG=None, *args, **kwargs):
         super(MaterielModificationForm, self).__init__(*args, **kwargs)
         
-        # Définir les valeurs par défaut en fonction de l'instance 'materiel' fournie
         if materielG:
             self.nom.default = materielG.nomMateriel
             self.reference.default = materielG.refMateriel
@@ -49,20 +48,18 @@ class MaterielModificationForm(FlaskForm):
 class MaterielInstanceForm(FlaskForm):
     """Formulaire d'ajout d'une instance de matériel."""
 
-    reference = StringField('Référence', validators=[DataRequired()])
+    reference = HiddenField('Référence')
+    hiddenrefMat = HiddenField('RéférenceMat')
     datePeremption = DateField('Date de péremption', validators=[DataRequired()])
     quantiteRes = IntegerField('Quantité restante', validators=[DataRequired()])
 
     def __init__(self, materielI=None, *args, **kwargs):
         super(MaterielInstanceForm, self).__init__(*args, **kwargs)
-        
         if materielI:
             self.datePeremption.default = materielI.datePeremption
             self.quantiteRes.default = materielI.qteRestante
             self.reference.default = materielI.idMateriel
-
-    def set_reference(self, reference):
-        self.reference.data = reference
+            self.hiddenrefMat.default = materielI.mat_generique.refMateriel
 
 class LoginForm(FlaskForm):
     email = StringField('Email')

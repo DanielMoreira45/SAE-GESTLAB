@@ -96,7 +96,11 @@ function editMateriauxGenerique(id) {
 function editMateriauxInstance(id, ref) {
     var labelQuantiteRes = document.getElementById("qteRestante");
     var labelDatePeremption = document.getElementById("datePeremption");
+    var hiddenref = document.getElementById("hiddenref2");
+    var hiddenMat = document.getElementById("hiddenrefMat");
+    console.log("editMateriauxInstance");
     console.log(id);
+    console.log(ref);
     fetch('/get_info_Instance/' + id + '/' + ref)
         .then(response => response.json())
         .then(data => {
@@ -104,7 +108,8 @@ function editMateriauxInstance(id, ref) {
             var datePeremption = new Date(data.date_peremption);
             var formattedDate = datePeremption.toISOString().split('T')[0];
             labelDatePeremption.value = formattedDate;
-            
+            hiddenref.value = data.reference;
+            hiddenMat.value = ref;            
         })
         .catch(error => console.error('Erreur : ' + error));
 }

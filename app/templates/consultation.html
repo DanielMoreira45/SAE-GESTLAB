@@ -82,12 +82,15 @@
             </div>
         </form>
         <div class="ligne-noir"></div>
-        <form action="{{ url_for('save_materiel_instance')}}" method="post" role="form" class="formdescriptionI">
+        <form action="{{ url_for('save_instance')}}" method="post" role="form" class="formdescriptionI">
             <div class="forminstance">
-                <input type="hidden" name="hiddenref2" id="hiddenref2" value="{{ form2.reference.data }}">
+                <label for=""></label>
+                <input type="hidden" name="hiddenref2" id="hiddenref2" value="{{ formInstance.reference.data }}">
+                
+                <input type="hidden" name="hiddenrefMat" id="hiddenrefMat" value="{{ formInstance.hiddenrefMat.data }}">
                 <label for="quantiteRestante">Quantité Restante : <input type="text" name="quantiteRestante"
-                        id="qteRestante" value="{{ form2.quantiteRes.data }}" disabled></label>
-                <label for="datePeremption">Date : {{ form2.datePeremption }}</label>
+                        id="qteRestante" value="{{ formInstance.quantiteRes.data }}" disabled></label>
+                <label for="datePeremption">Date : {{ formInstance.datePeremption }}</label>
                 <div class="submit">
                     <input type="submit" value="Valider" id="buttonvalider2" disabled>
                 </div>

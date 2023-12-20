@@ -95,14 +95,17 @@ def consult():
     categories = Categorie.query.order_by(Categorie.nomC).all()
     materiels = MaterielGenerique.query.order_by(MaterielGenerique.nomMateriel).all()
     current = materiels[0]
-    instances = MaterielInstance.query.order_by(MaterielInstance.idMateriel).filter_by(refMateriel=current.refMateriel).all()
-    instance = instances[0]
     f = MaterielModificationForm(materielG=current)
     f.set_domaine_choices([(domaine.codeD, domaine.nomD) for domaine in domaines])
     f.set_categorie_choices([(categorie.codeC, categorie.nomC) for categorie in categories if categorie.codeD == current.codeD])
-
+    instances = MaterielInstance.query.order_by(MaterielInstance.idMateriel).filter_by(refMateriel=current.refMateriel).all()
+    if (len(instances) <= 0):
+        f2 = MaterielInstanceForm()
+        return render_template("consultation.html",form = f, formInstance = f2, domaines=domaines, categories=categories, materiels=materiels, current_mat=current, instances=instances)
+    instance = instances[0]
     f2 = MaterielInstanceForm(materielI=instance)
-    return render_template("consultation.html",form = f, form2 = f2, domaines=domaines, categories=categories, materiels=materiels, current_mat=current, instances=instances)
+
+    return render_template("consultation.html",form = f, formInstance = f2, domaines=domaines, categories=categories, materiels=materiels, current_mat=current, instances=instances)
 
 @app.route('/consult/recherche')
 def update_materials():
@@ -139,13 +142,15 @@ def save_material():
         return redirect(url_for('consult'))
     return redirect(url_for('consult'))
 
-# Pas testé
-@app.route('/consult/enregistrer/instance/', methods=['POST'])
-def save_materiel_instance():
-    instance = MaterielInstance.query.get(request.form["hiddenref2"])
+
+@app.route('/consult/enregistrerinstance/', methods=['POST'])
+def save_instance():
+    hiddenref2 = request.form["hiddenref2"]
+    hiddenrefMat = request.form["hiddenrefMat"]
+    instance = MaterielInstance.query.filter_by(idMateriel=hiddenref2, refMateriel=hiddenrefMat).first()
     if instance:
         instance.datePeremption = request.form["datePeremption"]
-        instance.quantiteRestante = request.form["quantiteRes"]
+        instance.qteRestante = request.form["quantiteRestante"]
         db.session.commit()
         return redirect(url_for('consult'))
     return redirect(url_for('consult'))
@@ -255,12 +260,10 @@ def get_command_info():
 def search():
     liste_commandes = Commande.query.all()
     liste_categories = Categorie.query.all()
-    print(liste_categories)
     recherche = request.args.get("recherche")
     recherche = recherche[:len(recherche)]
     domaine = request.args.get("domaine")
     categorie = request.args.get("categorie")
-    print(categorie)
     statut = request.args.get("statut")
 
     if (domaine):
