@@ -83,50 +83,61 @@
             var labelStatut = document.getElementById("label-statut");
             var labelQuantite = document.getElementById("quantite");
             var labelUser = document.getElementById("user");
-            
-            fetch(`/commandes/get_command_info/?id=${id}`)
-                .then(response => response.json())
-                .then(data => {
-                    labelNom.textContent = data.nom;
-                    labelNumero.textContent = "Numéro de commande : "+id
-                    labelDomaine.textContent = "Domaine : "+data.domaine;
-                    labelCategorie.textContent = "Catégorie : "+data.categorie;  
-                    labelStatut.textContent = "Statut : "+data.statut;   
-                    if (data.unite == null){
-                        labelQuantite.textContent = "Quantité commandée : "+data.quantite
-                    } else {labelQuantite.textContent = "Quantité commandée : "+data.quantite+" "+data.unite;}
-                    labelUser.textContent = "Commande effectuée par "+data.user;
-                    
-                    if (data.statut == "A valider"){
-                        document.getElementById("valider").value = "Valider la commande";
-                        document.getElementById("annuler").disabled = false;
-                        document.getElementById("valider").disabled = false;
-                    }
-                    else if (data.statut == "En cours"){
-                        document.getElementById("valider").value = "Commande livrée";
-                        document.getElementById("valider").disabled = false;
-                        document.getElementById("annuler").disabled = true;
-                    }
-                    else{
-                        document.getElementById("annuler").disabled = true;
-                        document.getElementById("valider").disabled = true;
-                    }
-                })
-                .catch(error => console.error('Erreur : ' + error));  
+            if (id == 0){
+                labelNom.textContent = "";
+                labelNumero.textContent = "";
+                labelDomaine.textContent = "";
+                labelCategorie.textContent = "";
+                labelStatut.textContent = "";
+                labelQuantite.textContent = "";
+                labelUser.textContent = "";
+            }
+            else {
+                fetch(`/commandes/get_command_info/?id=${id}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        labelNom.textContent = data.nom;
+                        labelNumero.textContent = "Numéro de commande : "+id
+                        labelDomaine.textContent = "Domaine : "+data.domaine;
+                        labelCategorie.textContent = "Catégorie : "+data.categorie;  
+                        labelStatut.textContent = "Statut : "+data.statut;   
+                        if (data.unite == null){
+                            labelQuantite.textContent = "Quantité commandée : "+data.quantite
+                        } else {labelQuantite.textContent = "Quantité commandée : "+data.quantite+" "+data.unite;}
+                        labelUser.textContent = "Commande effectuée par "+data.user;
+                        
+                        if (data.statut == "A valider"){
+                            document.getElementById("valider").value = "Valider la commande";
+                            document.getElementById("annuler").disabled = false;
+                            document.getElementById("valider").disabled = false;
+                        }
+                        else if (data.statut == "En cours"){
+                            document.getElementById("valider").value = "Commande livrée";
+                            document.getElementById("valider").disabled = false;
+                            document.getElementById("annuler").disabled = true;
+                        }
+                        else{
+                            document.getElementById("annuler").disabled = true;
+                            document.getElementById("valider").disabled = true;
+                        }
+                    })
+                    .catch(error => console.error('Erreur : ' + error));  
+            }
         }
 
         function search(){
-            recherche = document.getElementById("recherche").value
-            domaine = document.getElementById("domaine-select").value
-            categorie_selected = document.getElementById("categorie-select").value
-            statut = document.getElementById("statut-select").value
+            recherche = document.getElementById("recherche").value;
+            domaine = document.getElementById("domaine-select").value;
+            categorie_selected = document.getElementById("categorie-select").value;
+            statut = document.getElementById("statut-select").value;
             fetch(`/commandes/search/?recherche=${recherche}&domaine=${domaine}&categorie=${categorie_selected}&statut=${statut}`)
                 .then(response => response.json())
                 .then(data => {  
                     var liste_commandes_search = data.liste_commandes;
-                    var ul = document.getElementById("liste")
+                    var ul = document.getElementById("liste");
                     ul.innerHTML = "";
                     if (liste_commandes_search.length > 0){
+                        
                         liste_commandes_search.forEach(function(commande) {
                             var li = document.createElement("li");
                             var button = document.createElement("button");
@@ -142,10 +153,12 @@
                             image.alt = "image commande";
                             image.className = "img";
                             button.appendChild(image);
-                            button.appendChild(p)
-                            li.appendChild(button)
-                            ul.appendChild(li);  
+                            button.appendChild(p);
+                            li.appendChild(button);
+                            ul.appendChild(li);
+                            edit(liste_commandes_search[0].numero);
                         });
+                        
                     }
                     else{
                         var li = document.createElement("li");
@@ -153,6 +166,7 @@
                         p.textContent = "Aucunes commandes trouvées pour cette recherche.";
                         li.appendChild(p);
                         ul.appendChild(li);
+                        edit(0);
                     }
                     
                 })
@@ -177,6 +191,8 @@
                         document.getElementById("categorie-select").appendChild(option);
                     });
                     search()
+
+
                 })
                 .catch(error => console.error('Erreur : ' + error));     
         }
@@ -199,8 +215,8 @@
             fetch(`/commandes/validate/?validee=${validee}&id=${id}`)
             .then(response => response.json())
             .then(data => {
-                edit(data.id); //peut etre à supprimer ?
                 update_categorie();
+                edit(id);
             })
             .catch(error => console.errot('Erreur : ' + error))
         }
@@ -217,3 +233,4 @@
 {% endif %}
 {% endif %}
 {% endblock %}
+jjjjj

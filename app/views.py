@@ -217,6 +217,18 @@ def validate():
     id = request.args.get("id")[21:]
     commande = Commande.query.get(int(id))
     validee = request.args.get("validee")
+    materielGenerique = commande.materiel
+    materielGenerique.qteMateriel += commande.qteCommandee
+    materielInstance = MaterielInstance(
+        idMateriel = db.session.query(db.func.max(MaterielInstance.idMateriel)).scalar()+1,
+        qteRestante = commande.qteCommandee,
+        datePeremption = '2024-02-02',
+        refMateriel = materielGenerique.refMateriel
+        )
+    db.session.add(materielInstance)
+    db.session.commit()
+    flash("Commande effectuée avec succès !")
+        
     if eval(validee):
         if commande.statut.nomStatut == "En cours":
             commande.statut = Statut.query.filter(Statut.nomStatut == "Livrée").scalar()
