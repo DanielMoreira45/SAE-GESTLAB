@@ -153,7 +153,8 @@ class MaterielInstance(db.Model):
     __tablename__ = "MATERIELINSTANCE"
     idMateriel = db.Column(db.Integer, primary_key=True)
     qteRestante = db.Column(db.Float)
-    datePeremption = db.Column(db.Float)
+    # datePeremption = db.Column(db.Float)
+    datePeremption = db.Column(db.Date)
     refMateriel = db.Column(db.Integer, db.ForeignKey("MATERIELGENERIQUE.refMateriel"), primary_key=True)
     mat_generique = db.relationship("MaterielGenerique",
                                 backref=db.backref("matériels",
@@ -264,18 +265,25 @@ def getAlertesQuantite():
     res = []
     for alerte_qte in AlerteQuantite.query.all():
         res.append(alerte_qte.commentaire +
-                   " pour "+
+                   " pour " +
                    MaterielGenerique.query.get(alerte_qte.refMateriel).nomMateriel +
                    ".")
     return res
 
 def getAlertesSeuil():
     res = []
-    for mat_inst in MaterielInstance.query.all():
-        res.append(AlerteSeuil.query.get(mat_inst).commentaire +
-                    " pour " +
-                    mat_inst.nomMateriel +
-                    ".")
+    # for mat_inst in MaterielInstance.query.all():
+    #     res.append(AlerteSeuil.query.get(mat_inst.idMateriel).commentaire +
+    #                 " pour " +
+    #                 mat_inst.nomMateriel +
+    #                 ".")
+    for alerte_seuil in AlerteSeuil.query.all():
+        ref_materiel = MaterielInstance.query.filter(MaterielInstance.idMateriel == alerte_seuil.idMateriel)[0].refMateriel
+        nom_materiel = MaterielGenerique.query.get(ref_materiel).nomMateriel
+        res.append(alerte_seuil.commentaire +
+                   " pour " +
+                   nom_materiel +
+                   ".")
     return res
 
 def getToutesLesAlertes():
