@@ -264,7 +264,7 @@ def getToutesLesAlertes():
     res = []
     for aQte in AlerteQuantite.query.all():
         res.append(aQte.commentaire + " pour " + MaterielGenerique.query.get(aQte.refMateriel).nomMateriel + ".")
-    # for aSl in AlerteSeuil.query.all():
-        # res.append(aSl.commentaire + " pour " + MaterielInstance.query.get(aSl.idMateriel).nomMateriel + ".")
+    for aSl in AlerteSeuil.query.all():
+        res.append(aSl.commentaire + " pour " + MaterielInstance.query.get(aSl.idMateriel).nomMateriel + ".")
     print(res)
     return res
