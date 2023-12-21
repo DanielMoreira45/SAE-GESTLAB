@@ -192,7 +192,7 @@ def delete_material(id):
 @app.route('/consult/ouvreFDS/<int:id>')
 def open_FDS(id):
     materiel = MaterielGenerique.query.get(id)
-    if materiel:
+    if materiel and materiel.ficheFDS is not None:
         chemin = os.path.join('static','FDS')
         return send_from_directory(chemin, materiel.ficheFDS)
 
@@ -397,6 +397,7 @@ def materiel_add():
 @app.route("/save/materiel/", methods=("POST",))
 def save_materiel():
     f = MaterielForm()
+    ficheFDS_value = None
     if 'ficheFDS' in request.files:
         print("ficheFDS")
         file = request.files['ficheFDS']
@@ -412,7 +413,6 @@ def save_materiel():
         refMateriel = 1 + db.session.query(db.func.max(MaterielGenerique.refMateriel)).scalar(),
         nomMateriel = f.nom.data,
         imageMateriel = photo_value,
-        ficheFDS = ficheFDS_value,
         rangement = f.rangement.data,
         commentaire = f.commentaire.data,
         qteMateriel = 0,
@@ -423,7 +423,9 @@ def save_materiel():
         seuilPeremption = f.seuil_peremption.data,
         codeD = f.domaine.data,
         codeC = f.categorie.data
-    )    
+    )
+    if ficheFDS_value is not None:
+        m.ficheFDS = ficheFDS_value
     db.session.add(m)
     db.session.commit()
     return redirect(url_for('consult'))
