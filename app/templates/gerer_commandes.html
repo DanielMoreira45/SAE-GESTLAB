@@ -197,6 +197,8 @@
         }
 
         function imprimer(){
+
+            
             recherche = document.getElementById("recherche").value
             domaine = document.getElementById("domaine-select").value
             categorie_selected = document.getElementById("categorie-select").value
@@ -204,7 +206,10 @@
             fetch(`/commandes/creer_pdf?search=${recherche}&domaine=${domaine}&categorie=${categorie_selected}&statut=${statut}`)
                 .then(response => response.json())
                 .then(data => {
-                    //Afficher popup pour imprimer
+                    var frame = document.getElementById('frame');
+                    frame.contentWindow.focus();
+                    //frame.contentWindow.print();
+                    window.print("commandes.pdf")
                 })
                 .catch(error => console.error('Erreur : ' + error));
         }

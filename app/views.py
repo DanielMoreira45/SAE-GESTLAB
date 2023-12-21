@@ -1,9 +1,11 @@
 """Toute les routes et les Formulaires"""
+from io import BytesIO
+import os
 from .app import app, db
 from .models import AlerteQuantite, Statut, MaterielGenerique, MaterielInstance, Utilisateur, Domaine, Categorie, Role, Commande, getToutesLesAlertes
 from .forms import LoginForm, UtilisateurForm, UserForm, CommandeForm, MaterielForm, MaterielModificationForm, MaterielInstanceForm
 
-from flask import jsonify, render_template, url_for, redirect, request, flash
+from flask import jsonify, render_template, send_file, send_from_directory, url_for, redirect, request, flash
 from flask_login import login_required, login_user, logout_user, current_user
 from datetime import datetime
 from fpdf import FPDF
@@ -225,8 +227,14 @@ def creer_pdf_commandes():
         monPdf.cell(0, 10, txt="    Quantité commandée : "+str(commande.qteCommandee), ln=1, align="L")
         monPdf.cell(0, 10, txt="    Commande effectuée par : "+commande.utilisateur.nomUti, ln=1, align="L")
 
+        
+        
+
     monPdf.output("commandes.pdf")
-    return jsonify({'nom_fichier' : 'commandes.pdf'})
+    chemin = os.path.join('static','FDS')
+    return send_from_directory(chemin, "commandes.pdf")
+    
+    return jsonify({'nom_fichier' : "commandes.pdf"})
 
 @app.route('/consult/creer_pdf/')
 def creer_pdf_materiel():
