@@ -13,23 +13,19 @@
     {% endif %}
 
 <div>
-    <button id="buttonGestion"><img src="https://media-public.canva.com/QyDrY/MAFKfkQyDrY/1/t.png">Gérer les
+    <button id="buttonGestion" onclick="Gestion()"><img src="https://media-public.canva.com/QyDrY/MAFKfkQyDrY/1/t.png">Gérer les
         utilisateurs</button>
-    <button id="buttonAjout"><img src="https://media-public.canva.com/MGw9s/MAFTfiMGw9s/1/t.png">Ajouter un
+    <button id="buttonAjout" onclick="Ajout()"><img src="https://media-public.canva.com/MGw9s/MAFTfiMGw9s/1/t.png">Ajouter un
             utilisateur</button>
 </div>
 {% endblock %}
 {% block scripts %}
 <script>
-if (buttonAjout) {
-    buttonAjout.addEventListener("click", function () {
-        window.location.href = "{{ url_for('admin_add') }}";
-    });
+function Gestion() {
+    window.location.href = "{{ url_for('admin_manage') }}";
 }
-if (buttonGestion) {
-    buttonGestion.addEventListener("click", function () {
-        window.location.href = "{{ url_for('admin_manage') }}";
-    });
+function Ajout() {
+    window.location.href = "{{ url_for('admin_add') }}";
 }
 </script>
 {% endblock %}

@@ -1,6 +1,6 @@
 """Toute les routes et les Formulaires"""
 from .app import app, db
-from .models import AlerteQuantite, Statut, MaterielGenerique, MaterielInstance, Utilisateur, Domaine, Categorie, Role, Commande, filter_commands, getToutesLesAlertes
+from .models import AlerteQuantite, Statut, MaterielGenerique, MaterielInstance, Utilisateur, Domaine, Categorie, Role, Commande, getToutesLesAlertes
 from .forms import LoginForm, UtilisateurForm, UserForm, CommandeForm, MaterielForm, MaterielModificationForm, MaterielInstanceForm
 
 from flask import jsonify, render_template, url_for, redirect, request, flash
@@ -331,20 +331,24 @@ def materiel_add():
 @app.route("/save/materiel/", methods=("POST",))
 def save_materiel():
     f = MaterielForm()
+    photo_value = None if f.ficheFDS.data == '' else f.ficheFDS.data
+    ficheFDS_value = None if f.ficheFDS.data == '' else f.ficheFDS.data
+
     m = MaterielGenerique(
-        reference = 1 + db.session.query(db.func.max(MaterielGenerique.reference)).scalar(),
-        nom = f.nom.data,
-        image = f.photo.data,
-        fiche_fds = f.ficheFDS.data,
+        refMateriel = 1 + db.session.query(db.func.max(MaterielGenerique.refMateriel)).scalar(),
+        nomMateriel = f.nom.data,
+        imageMateriel = photo_value,
+        ficheFDS = ficheFDS_value,
         rangement = f.rangement.data,
         commentaire = f.commentaire.data,
-        quantite_globale = f.quantite.data,
+        qteMateriel = 0,
+        qteMax = f.quantite.data,
         unite = f.unite.data,
         complements = f.complements.data,
-        seuil_quantite = f.seuil_quantite.data,
-        seuil_peremption = f.seuil_peremption.data,
-        code_domaine = f.domaine.data,
-        code_categorie = f.categorie.data
+        seuilQte = f.seuil_quantite.data,
+        seuilPeremption = f.seuil_peremption.data,
+        codeD = f.domaine.data,
+        codeC = f.categorie.data
     )    
     db.session.add(m)
     db.session.commit()
