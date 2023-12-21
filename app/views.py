@@ -77,12 +77,13 @@ def get_user_info(user_id):
 def get_last_user_info():
     user = Utilisateur.query.get(db.session.query(db.func.max(Utilisateur.idUti)).scalar())
     print(db.session.query(db.func.max(Utilisateur.idUti)).scalar())
-    role_user = user.get_role()
     if user:
         user_info = {
             'email': user.emailUti,
             'password': user.mdp
         }
+        print(user_info)
+        print(jsonify(user_info))
         return jsonify(user_info)
     else:
         return jsonify({'error': 'Utilisateur non trouvé'}), 404
