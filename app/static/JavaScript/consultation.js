@@ -231,3 +231,13 @@ function majCategorieInstance(){
         })
         .catch(error => console.error('Erreur : ' + error));
 }
+
+function imprimer(){
+    ref = document.getElementById("reference").value
+    fetch(`/consult/creer_pdf?ref=${ref}`)
+        .then(response => response.json())
+        .then(data => {
+            //Afficher popup pour imprimer
+        })
+        .catch(error => console.error('Erreur : ' + error));
+}

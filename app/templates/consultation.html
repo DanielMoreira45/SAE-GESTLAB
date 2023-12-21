@@ -63,7 +63,7 @@
                 <div class="chiffre">
                     <label for="domaine">Domaine : {{ form.domaine }}</label>
                     <label for="categorie">Categorie : {{ form.categorie }}</label>
-                    <label for="reference">Reférence : <input type="text" name="reference" id="reference"
+                    <label for="reference">Référence : <input type="text" name="reference" id="reference"
                             value="{{ form.reference.data }}" disabled></label>
                     <label for="quantiteTot">Quantité Totale :<input type="text" name="quantiteTot" id="quantiteT"
                             value="{{ form.quantiteTot.data }}" disabled></label>
@@ -104,7 +104,7 @@
     <button id="buttonModifier" onclick="inputsdisabled()">Modifier</button>
     <button id="buttonSupp" onclick="suppression()">Supprimer</button>
     {% endif %}
-    <button id="buttonImprimer">Imprimer</button>
+    <button id="buttonImprimer" onclick="imprimer()">Imprimer</button>
     <button id="buttonFDS">Voir FDS</button>
 </div>
 {% endif %}
