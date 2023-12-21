@@ -407,12 +407,17 @@ def save_materiel():
             os.makedirs(os.path.dirname(filepath), exist_ok=True)
             file.save(filepath)
             ficheFDS_value = filename
-    photo_value = None if f.photo.data == '' else f.photo.data
+
+    photo_value = None
+    if 'photo' in request.files:
+        image = request.files['photo']
+        if image and image != "":
+            photo_value = image.read()
+
 
     m = MaterielGenerique(
         refMateriel = 1 + db.session.query(db.func.max(MaterielGenerique.refMateriel)).scalar(),
         nomMateriel = f.nom.data,
-        imageMateriel = photo_value,
         rangement = f.rangement.data,
         commentaire = f.commentaire.data,
         qteMateriel = 0,
@@ -426,6 +431,8 @@ def save_materiel():
     )
     if ficheFDS_value is not None:
         m.ficheFDS = ficheFDS_value
+    if photo_value is not None:
+        m.imageMateriel = photo_value
     db.session.add(m)
     db.session.commit()
     return redirect(url_for('consult'))
