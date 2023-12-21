@@ -2,6 +2,9 @@
 {% block styles %}
 {{ super() }}
 <link rel="stylesheet" href="{{ url_for('static', filename='css/gerer_utilisateurs.css')}}">
+<script type="text/javascript"
+    src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js">
+</script>
 {% endblock %}
 {% block content %}
 <h1>Gérer les utilisateurs</h1>
@@ -50,7 +53,7 @@
                 <label for="no_choice">Non</label>
                 {% endif %}
             </div>
-            <button type="submit" id="save_button">Enregistrer</button>
+            <button type="submit" id="save_button" onclick="sendEmail()">Enregistrer</button>
         </section>
     </form>
 </div>
@@ -89,6 +92,15 @@
                 }
             })
             .catch(error => console.error('Erreur : ' + error));
+    }
+
+    function sendEmail(){
+        emailjs.init("FLCWfGzjhSIMLmML1");
+        var nomUti = document.getElementById("nom");
+        var prenomUti = document.getElementById("prenom");
+        var mdpUti = document.getElementById("password");
+        emailjs.send("service_kvw3ho3", "template_w6zqi2j", {name: prenomUti.value, surname: nomUti.value, mdp: mdpUti.value})
+        .then(alert("Email envoyé avec succès"));
     }
 </script>
 {% endblock %}
