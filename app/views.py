@@ -1,13 +1,13 @@
 """Toute les routes et les Formulaires"""
 import os
 from .app import app, db
-from .models import AlerteQuantite, Statut, MaterielGenerique, MaterielInstance, Utilisateur, Domaine, Categorie, Role, Commande, getToutesLesAlertes
+from .models import AlerteQuantite, AlerteSeuil, Statut, MaterielGenerique, MaterielInstance, Utilisateur, Domaine, Categorie, Role, Commande, getToutesLesAlertes
 from .forms import LoginForm, UtilisateurForm, UserForm, CommandeForm, MaterielForm, MaterielModificationForm, MaterielInstanceForm
 
 from flask import jsonify, render_template, send_from_directory, url_for, redirect, request, flash
 from flask_login import login_required, login_user, logout_user, current_user
 from werkzeug.utils import secure_filename
-from datetime import datetime
+from datetime import datetime, timedelta
 from fpdf import FPDF
 
 @app.route("/")
@@ -492,3 +492,46 @@ def save_util():
     db.session.add(u)
     db.session.commit()
     return redirect(url_for('admin_add'))
+
+@app.route("/notif/maj/")
+def notif_maj():
+    listeNotifG = AlerteQuantite.query.all()
+    listeNotifS = AlerteSeuil.query.all()
+    qte = 0
+    listeMateriaux = MaterielGenerique.query.all()
+    for materiel in listeMateriaux:
+        materiel.seuilQte = 0 if materiel.seuilQte is None else materiel.seuilQte
+        if materiel.qteMateriel <= materiel.seuilQte:
+            dejanotéeG = any(notif.refMateriel == materiel.refMateriel for notif in listeNotifG)
+            if not dejanotéeG:
+                alerteG = AlerteQuantite(
+                    idAlerteQ = 1 + db.session.query(db.func.max(AlerteQuantite.idAlerteQ)).scalar(),
+                    refMateriel = materiel.refMateriel,
+                    commentaire = "Quantité en dessous du seuil"
+                )
+                qte+=1
+                db.session.add(alerteG)
+    
+    listeMateriauxInstance = MaterielInstance.query.all()
+    for materielInstance in listeMateriauxInstance:
+        delai_en_jours = timedelta(days=materielInstance.mat_generique.seuilPeremption)
+        date_peremption_limite = datetime.combine(materielInstance.datePeremption, datetime.min.time()) - delai_en_jours
+        if date_peremption_limite <= datetime.utcnow():
+            dejanotéeS = any(notif.idMateriel == materielInstance.idMateriel and notif.materiel.refMateriel == materielInstance.refMateriel for notif in listeNotifS)           
+            if not dejanotéeS:
+                idMateriel_value = materielInstance.idMateriel
+                refMateriel_value = materielInstance.refMateriel
+                existing_instance = MaterielInstance.query.get((idMateriel_value, refMateriel_value))
+                if existing_instance:
+                    newid = 1 + db.session.query(db.func.max(AlerteSeuil.idAlerteS)).scalar()
+                    alerteS = AlerteSeuil(
+                        idAlerteS=newid,
+                        idMateriel=idMateriel_value,
+                        commentaire="Date de péremption proche"
+                    )
+                    qte += 1
+                    db.session.add(alerteS)
+    db.session.commit()
+    return jsonify({'qte': qte})
+
+    

@@ -225,7 +225,7 @@ class AlerteSeuil(db.Model):
                                backref=db.backref("alertes", lazy="dynamic"))
 
     def __repr__(self):
-        return "<Alerte (%d) %s %r>" % (self.idAlertes, self.commentaire, self.idMateriel)
+        return "<Alerte (%d) %s %r>" % (self.idAlerteS, self.commentaire, self.idMateriel)
 
 
 class AlerteQuantite(db.Model):
