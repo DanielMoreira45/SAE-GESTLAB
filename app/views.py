@@ -73,6 +73,21 @@ def get_user_info(user_id):
         return jsonify(user_info)
     else:
         return jsonify({'error': 'Utilisateur non trouvé'}), 404
+    
+@app.route("/get_last_user_info/", methods=['GET'])
+def get_last_user_info():
+    user = Utilisateur.query.get(db.session.query(db.func.max(Utilisateur.idUti)).scalar())
+    print(db.session.query(db.func.max(Utilisateur.idUti)).scalar())
+    if user:
+        user_info = {
+            'email': user.emailUti,
+            'password': user.mdp
+        }
+        print(user_info)
+        print(jsonify(user_info))
+        return jsonify(user_info)
+    else:
+        return jsonify({'error': 'Utilisateur non trouvé'}), 404
 
 @app.route('/update_user/', methods=['POST'])
 def update_user():
