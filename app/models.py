@@ -111,7 +111,7 @@ class MaterielGenerique(db.Model):
     unite = db.Column(db.String(100))
     qteMax = db.Column(db.Float)
     complements = db.Column(db.String(500))
-    ficheFDS = db.Column(db.LargeBinary)
+    ficheFDS = db.Column(db.String(100))
     seuilQte = db.Column(db.Integer)
     seuilPeremption = db.Column(db.Integer)
     imageMateriel = db.Column(db.LargeBinary)

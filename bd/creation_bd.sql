@@ -55,7 +55,7 @@ create table `MATERIELGENERIQUE`(
     qteMax int(5),    -- quantité maximale stockée dans l'établissement
     unite varchar(25),
     complements varchar(350),
-    ficheFDS longblob,
+    ficheFDS varchar(50),
     seuilQte int(5),    -- à environ 25% de la quantité du produit
     seuilPeremption int(3),    -- nombre de jours avant la date de péremption
     imageMateriel longblob,
