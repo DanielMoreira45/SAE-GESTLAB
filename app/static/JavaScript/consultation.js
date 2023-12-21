@@ -241,3 +241,10 @@ function imprimer(){
         })
         .catch(error => console.error('Erreur : ' + error));
 }
+
+function ouvreFDS(){
+    var hiddenid = document.getElementById("hiddenref");
+    var reference = hiddenid.value;
+    var chemin = "/consult/ouvreFDS/" + reference;
+    window.open(chemin, '_blank');
+}

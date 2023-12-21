@@ -1,10 +1,12 @@
 """Toute les routes et les Formulaires"""
+import os
 from .app import app, db
 from .models import AlerteQuantite, Statut, MaterielGenerique, MaterielInstance, Utilisateur, Domaine, Categorie, Role, Commande, getToutesLesAlertes
 from .forms import LoginForm, UtilisateurForm, UserForm, CommandeForm, MaterielForm, MaterielModificationForm, MaterielInstanceForm
 
-from flask import jsonify, render_template, url_for, redirect, request, flash
+from flask import jsonify, render_template, send_from_directory, url_for, redirect, request, flash
 from flask_login import login_required, login_user, logout_user, current_user
+from werkzeug.utils import secure_filename
 from datetime import datetime
 from fpdf import FPDF
 
@@ -186,6 +188,13 @@ def delete_material(id):
     else:
         response = {'status': 'error'}
     return jsonify(response)
+
+@app.route('/consult/ouvreFDS/<int:id>')
+def open_FDS(id):
+    materiel = MaterielGenerique.query.get(id)
+    if materiel:
+        chemin = os.path.join('static','FDS')
+        return send_from_directory(chemin, materiel.ficheFDS)
 
 @app.route('/get_categories/')
 def get_categories():
@@ -388,8 +397,16 @@ def materiel_add():
 @app.route("/save/materiel/", methods=("POST",))
 def save_materiel():
     f = MaterielForm()
-    photo_value = None if f.ficheFDS.data == '' else f.ficheFDS.data
-    ficheFDS_value = None if f.ficheFDS.data == '' else f.ficheFDS.data
+    if 'ficheFDS' in request.files:
+        print("ficheFDS")
+        file = request.files['ficheFDS']
+        if file:
+            filename = secure_filename(file.filename)
+            filepath = os.path.join('static','FDS',filename)
+            os.makedirs(os.path.dirname(filepath), exist_ok=True)
+            file.save(filepath)
+            ficheFDS_value = filename
+    photo_value = None if f.photo.data == '' else f.photo.data
 
     m = MaterielGenerique(
         refMateriel = 1 + db.session.query(db.func.max(MaterielGenerique.refMateriel)).scalar(),

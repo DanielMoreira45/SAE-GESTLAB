@@ -147,7 +147,7 @@ class MaterielForm(FlaskForm):
     quantite = IntegerField('Quantité', validators=[DataRequired(), NumberRange(min=0)])
     unite = SelectField('Unité', choices=[None,'cm','g','ml'])
     complements = StringField('Compléments', validators=[DataRequired()])
-    ficheFDS = FileField('Fiche De Sécurité')
+    ficheFDS = FileField('Fiche De Sécurité', name='ficheFDS')
     seuil_quantite = IntegerField('Seuil de Quantité', validators=[NumberRange(min=0)])
     seuil_peremption = IntegerField('Seuil de Péremption (nb jours)', validators=[NumberRange(min=0)])
     categorie = SelectField('Catégorie', choices=lesC, validators=[DataRequired()])
