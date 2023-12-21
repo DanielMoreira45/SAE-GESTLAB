@@ -495,42 +495,38 @@ def save_util():
 
 @app.route("/notif/maj/")
 def notif_maj():
-    listeNotifG = AlerteQuantite.query.all()
-    listeNotifS = AlerteSeuil.query.all()
+    AlerteQuantite.query.delete()
+    AlerteSeuil.query.delete()
     qte = 0
     listeMateriaux = MaterielGenerique.query.all()
     for materiel in listeMateriaux:
         materiel.seuilQte = 0 if materiel.seuilQte is None else materiel.seuilQte
         if materiel.qteMateriel <= materiel.seuilQte:
-            dejanotéeG = any(notif.refMateriel == materiel.refMateriel for notif in listeNotifG)
-            if not dejanotéeG:
-                alerteG = AlerteQuantite(
-                    idAlerteQ = 1 + db.session.query(db.func.max(AlerteQuantite.idAlerteQ)).scalar(),
-                    refMateriel = materiel.refMateriel,
-                    commentaire = "Quantité en dessous du seuil"
-                )
-                qte+=1
-                db.session.add(alerteG)
+            alerteG = AlerteQuantite(
+                idAlerteQ = 1 + db.session.query(db.func.coalesce(db.func.max(AlerteQuantite.idAlerteQ), 0)).scalar(),
+                refMateriel = materiel.refMateriel,
+                commentaire = "Quantité en dessous du seuil"
+            )
+            qte+=1
+            db.session.add(alerteG)
     
     listeMateriauxInstance = MaterielInstance.query.all()
     for materielInstance in listeMateriauxInstance:
         delai_en_jours = timedelta(days=materielInstance.mat_generique.seuilPeremption)
         date_peremption_limite = datetime.combine(materielInstance.datePeremption, datetime.min.time()) - delai_en_jours
         if date_peremption_limite <= datetime.utcnow():
-            dejanotéeS = any(notif.idMateriel == materielInstance.idMateriel and notif.materiel.refMateriel == materielInstance.refMateriel for notif in listeNotifS)           
-            if not dejanotéeS:
-                idMateriel_value = materielInstance.idMateriel
-                refMateriel_value = materielInstance.refMateriel
-                existing_instance = MaterielInstance.query.get((idMateriel_value, refMateriel_value))
-                if existing_instance:
-                    newid = 1 + db.session.query(db.func.max(AlerteSeuil.idAlerteS)).scalar()
-                    alerteS = AlerteSeuil(
-                        idAlerteS=newid,
-                        idMateriel=idMateriel_value,
-                        commentaire="Date de péremption proche"
-                    )
-                    qte += 1
-                    db.session.add(alerteS)
+            idMateriel_value = materielInstance.idMateriel
+            refMateriel_value = materielInstance.refMateriel
+            existing_instance = MaterielInstance.query.get((idMateriel_value, refMateriel_value))
+            if existing_instance:
+                newid = 1 + db.session.query(db.func.coalesce(db.func.max(AlerteSeuil.idAlerteS), 0)).scalar()
+                alerteS = AlerteSeuil(
+                    idAlerteS=newid,
+                    idMateriel=idMateriel_value,
+                    commentaire="Date de péremption proche"
+                )
+                qte += 1
+                db.session.add(alerteS)
     db.session.commit()
     return jsonify({'qte': qte})
 
