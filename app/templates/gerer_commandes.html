@@ -196,9 +196,7 @@
                 .catch(error => console.error('Erreur : ' + error));     
         }
 
-        function imprimer(){
-
-            
+        function imprimer(){            
             recherche = document.getElementById("recherche").value
             domaine = document.getElementById("domaine-select").value
             categorie_selected = document.getElementById("categorie-select").value
@@ -206,10 +204,19 @@
             fetch(`/commandes/creer_pdf?search=${recherche}&domaine=${domaine}&categorie=${categorie_selected}&statut=${statut}`)
                 .then(response => response.json())
                 .then(data => {
-                    var frame = document.getElementById('frame');
-                    frame.contentWindow.focus();
-                    //frame.contentWindow.print();
-                    window.print("commandes.pdf")
+                    if (!this.printedIframe) {
+                        this.printedIframe = document.createElement('iframe');
+                        document.body.appendChild(this.printedIframe);
+                        this.printedIframe.style.display = 'none';
+                        this.printedIframe.onload = function() {
+                        setTimeout(function() {
+                            this.printedIframe.focus();
+                            this.printedIframe.contentWindow.print();
+                        }, 100);
+                        };
+                    }
+                    this.printedIframe.src = "/commandes/imprimer_pdf";                   
+                    
                 })
                 .catch(error => console.error('Erreur : ' + error));
         }
