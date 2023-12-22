@@ -71,9 +71,6 @@ function editMateriauxGenerique(id) {
     var labelComplements = document.getElementById("complements");
     var labelImage = document.getElementById("imagePresentation");
     var hiddenid = document.getElementById("hiddenref");
-    console.log(id)
-    console.log("Domaine", labelDomaine.value)
-    console.log("Categorie", labelCategorie.value)
 
     fetch('/get_info_Materiel/' + id)
         .then(response => response.json())
@@ -81,9 +78,7 @@ function editMateriauxGenerique(id) {
             var reference = data.reference;
             labelNom.value = data.nom;
             labelDomaine.value = data.domaine;
-            console.log("Categorie dans requete", data.categorie)
             construitListeCategorie(data.domaine, data.categorie);
-            console.log("Categorie apres requete", labelCategorie.value)
             labelCategorie.value = data.categorie;
             lavelQuantiteMax.value = data.quantite_max;
             labelQuanT.value = data.quantite_global;

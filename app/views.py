@@ -79,14 +79,11 @@ def get_user_info(user_id):
 @app.route("/get_last_user_info/", methods=['GET'])
 def get_last_user_info():
     user = Utilisateur.query.get(db.session.query(db.func.max(Utilisateur.idUti)).scalar())
-    print(db.session.query(db.func.max(Utilisateur.idUti)).scalar())
     if user:
         user_info = {
             'email': user.emailUti,
             'password': user.mdp
         }
-        print(user_info)
-        print(jsonify(user_info))
         return jsonify(user_info)
     else:
         return jsonify({'error': 'Utilisateur non trouvé'}), 404
@@ -198,14 +195,11 @@ def open_FDS(id):
 
 @app.route('/get_categories/')
 def get_categories():
-    print("aled")
     selected_domaine = request.args.get('domaine')
     categories = Categorie.query.order_by(Categorie.nomC).all()
     if (selected_domaine):
         categories = [categorie for categorie in categories if categorie.codeD == int(selected_domaine)]
     categories = [categorie.serialize() for categorie in categories]
-    print("aled")
-    print(categories)
     return jsonify({'categories': categories})
 
 @app.route('/commandes/creer_pdf/')
@@ -402,7 +396,6 @@ def save_materiel():
     f = MaterielForm()
     ficheFDS_value = None
     if 'ficheFDS' in request.files:
-        print("ficheFDS")
         file = request.files['ficheFDS']
         if file:
             filename = secure_filename(file.filename)

@@ -1,96 +1,69 @@
 @font-face {
-    font-family: "DM-Sans";
-    src: url("../font/DMSans.ttf");
-  }
-
-@font-face {
     font-family: "AgrandirWide";
     src: url("../font/Agrandir-Regular.otf");
 }
 
-body {
+body{
     background-image: linear-gradient(
         to bottom,
-        rgba(42, 42, 42, 0.5),
-        rgba(42, 42, 42, 0.5)), url("../images/home_background.png");
+        rgba(0,0,0,0.6),
+        rgba(0,0,0,0.6)
+    ),url('../images/background_prof.png');
     background-size: cover;
     background-repeat: no-repeat;
     background-attachment: fixed;
-    font-family: "DM-Sans";
-    background-color: black;
-    color: white;
+    margin-top: 10em;
+}
+
+main {
     text-align: center;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    height: 100vh;
+    margin-top: 4em;
 }
 
-header h1 {
+#bjr-prof{
     font-family: "AgrandirWide";
+    font-weight: 500;
     font-size: 6em;
-    margin-bottom: 0.2em;
-    margin-top: 0;
-}
-
-.h1-yellow-part {
-    color: #ffd883;
-}
-
-.img-home {
-    width: 1.5em;
-    height: 1.5em;
-    padding: 0.8em;
-}
-
-ul {
-    border-top: 0.1em solid white;
-    border-bottom: 0.1em solid white;
-    list-style-type: none;
+    font-style: normal;
+    text-decoration: none;
+    color: white;
     text-transform: uppercase;
-    font-weight: bold;
-    margin-right: 20%;
-    margin-left: 20%;
-    margin-bottom: 3em;
-    padding-left: 3%;
-    display: flex;
-    flex-wrap: nowrap;
 }
 
-ul li {
-    display: flex;
-    flex-basis: 50%;
-    flex-grow: 0;
-    flex-wrap: nowrap;
-    margin-right: 10%;
-    margin: 0;
-    margin-left: 10%;
-}
-
-ul li p {
-    text-align: left;
-    min-width: 19vw;
-    flex-basis: 60%;
-    flex-grow: 0;
-}
-
-img {
-    flex-basis: 5%;
-    flex-grow: 0;
-}
-
-button {
-    background-color: #ffd883;
-    border: none;
-    height: 2.8em;
-    width: 10.5em;
-    font-weight: bold;
-    border-radius: 0.5em;
+#btn-navi{
+    font-family: "AgrandirWide";
+    border-radius: 1.3em;
+    margin: 1.3em;
+    font-style: normal;
+    font-weight: 500;
     font-size: 1.3em;
+    display: inline-flex;
+    align-items: center;
+    padding: 1.3em;
+    border: none;
+    cursor: pointer;
 }
 
-button:hover {
-    /* font-weight: bolder;
-    letter-spacing: 0.1em; */
-    background-color: #edb742;
+#btn-navi img{
+    height: 1.9em;
+    margin: 0.6em;
+}
+
+.nom-util{
+    color: #FBEBA1;
+}
+
+main ul {
+    margin: auto;
+    width: 45em;
+    padding: 0.5em;
+    list-style: none;
+}
+
+h1 {
+    margin-bottom: 0.2em;
+}
+
+main {
+    margin-top: 4em;
 }
