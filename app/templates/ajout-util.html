@@ -6,6 +6,11 @@
     src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js">
 </script>
 {% endblock %}
+
+{% block scripts %}
+<script src="{{url_for('static', filename='JavaScript/ajout-util.js')}}"></script>
+{% endblock %}
+
 {% block content %}
     <h1 id="ajout-u">Ajouter un utilisateur</h1>
     <form role="form" method="POST" action="{{ url_for('save_util') }}" id="formulaire">
@@ -21,13 +26,4 @@
             <input type="submit" id="ajouter_util" value="Ajouter" onclick="sendEmail()">
         </div>
     </form>
-    <script type="text/javascript">
-        function sendEmail(){
-            emailjs.init("FLCWfGzjhSIMLmML1");
-            var emailUti = document.getElementById("emailUti");
-            var mdpUti = document.getElementById("mdp");
-            emailjs.send("service_kvw3ho3", "template_5okli8n", {email: emailUti.value, mdp: mdpUti.value})
-            .then(alert("Email envoyé avec succès"));
-        }
-    </script>
 {% endblock %}

@@ -13,12 +13,11 @@ function change() {
             dataCategories = data.categories;
             const CatList = document.getElementById('Categorie');
             CatList.innerHTML = "";
-
             CatList.appendChild(optionC);
             dataCategories.forEach(categorie => {
                 const option = document.createElement('option');
                 option.value = categorie.codeC;
-                option.textContent = categorie.nom;
+                option.textContent = categorie.nomC;
                 if (option.value == selectedCategorie) {
                     option.selected = true;
                 }
@@ -33,7 +32,6 @@ function ListeMateriauxMAJ() {
     const searchQuery = document.getElementById('searchinput').value;
     const selectedDomaine = document.getElementById('Domaine').value;
     const selectedCategorie = document.getElementById('Categorie').value;
-    // Envoyer une requête Ajax pour mettre à jour la liste de matériaux
     fetch(`/consult/recherche?search=${searchQuery}&domaine=${selectedDomaine}&categorie=${selectedCategorie}`)
         .then(response => response.json())
         .then(data => {
@@ -80,6 +78,7 @@ function editMateriauxGenerique(id) {
             var reference = data.reference;
             labelNom.value = data.nom;
             labelDomaine.value = data.domaine;
+            construitListeCategorie(data.domaine, data.categorie);
             labelCategorie.value = data.categorie;
             lavelQuantiteMax.value = data.quantite_max;
             labelQuanT.value = data.quantite_global;
@@ -93,14 +92,34 @@ function editMateriauxGenerique(id) {
         .catch(error => console.error('Erreur : ' + error));
 }
 
+function construitListeCategorie(domaineselect, categorieselect) {
+    var selectCategorie = document.getElementById("categorie");
+    selectCategorie.innerHTML = "";
+    var option = document.createElement("option");
+    option.value = "";
+    option.textContent = "Catégorie";
+    selectCategorie.appendChild(option);
+    fetch(`/get_categories?domaine=${domaineselect}`)
+        .then(response => response.json())
+        .then(data => {
+            data.categories.forEach(categorie => {
+                var option = document.createElement("option");
+                option.value = categorie.codeC;
+                option.textContent = categorie.nomC;
+                if (categorie.codeC == categorieselect) {
+                    option.selected = true;
+                }
+                selectCategorie.appendChild(option);
+            });
+        })
+        .catch(error => console.error('Erreur : ' + error));
+}
+
 function editMateriauxInstance(id, ref) {
     var labelQuantiteRes = document.getElementById("qteRestante");
     var labelDatePeremption = document.getElementById("datePeremption");
     var hiddenref = document.getElementById("hiddenref2");
     var hiddenMat = document.getElementById("hiddenrefMat");
-    console.log("editMateriauxInstance");
-    console.log(id);
-    console.log(ref);
     fetch('/get_info_Instance/' + id + '/' + ref)
         .then(response => response.json())
         .then(data => {
@@ -209,7 +228,6 @@ function majCategorieInstance(){
     const optionC = document.createElement('option');
     optionC.value = "";
     optionC.textContent = "Catégorie";
-    console.log(selectedDomaine);
 
     fetch(`/get_categories?domaine=${selectedDomaine}`)
         .then(response => response.json())
@@ -222,7 +240,7 @@ function majCategorieInstance(){
             dataCategories.forEach(categorie => {
                 const option = document.createElement('option');
                 option.value = categorie.codeC;
-                option.textContent = categorie.nom;
+                option.textContent = categorie.nomC;
                 if (option.value == selectedCategorie) {
                     option.selected = true;
                 }

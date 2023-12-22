@@ -65,6 +65,7 @@ def get_user_info(user_id):
     if user:
         user_info = {
             'id': user.idUti,
+            'email': user.emailUti,
             'nom': user.nomUti,
             'prenom': user.prenomUti,
             'id_role': user.idRole,
@@ -79,14 +80,11 @@ def get_user_info(user_id):
 @app.route("/get_last_user_info/", methods=['GET'])
 def get_last_user_info():
     user = Utilisateur.query.get(db.session.query(db.func.max(Utilisateur.idUti)).scalar())
-    print(db.session.query(db.func.max(Utilisateur.idUti)).scalar())
     if user:
         user_info = {
             'email': user.emailUti,
             'password': user.mdp
         }
-        print(user_info)
-        print(jsonify(user_info))
         return jsonify(user_info)
     else:
         return jsonify({'error': 'Utilisateur non trouvé'}), 404
@@ -392,7 +390,6 @@ def save_materiel():
     f = MaterielForm()
     ficheFDS_value = None
     if 'ficheFDS' in request.files:
-        print("ficheFDS")
         file = request.files['ficheFDS']
         if file:
             filename = secure_filename(file.filename)

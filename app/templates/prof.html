@@ -1,18 +1,24 @@
 {% extends "consul_base.html" %}
 {% block styles %}
 {{ super() }}
-<link rel="stylesheet" href="{{ url_for('static', filename='css/prof_style.css') }}">
-<link rel="stylesheet" href="{{ url_for('static', filename='css/prof_pos.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/home_style.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/home_pos.css') }}">
 {% endblock %}
 {% block content %}
-  {% if current_user.is_authenticated %}
-    <h1 id="bjr-prof">Bonjour <span class="nom-util">{{ current_user.nomUti }}</span> !</h1>
-  {% else %}
-    <h1 id="bjr-prof">Bonjour !</h1>
-  {% endif %}
-  <ul>
-    <li><a href="{{ url_for('delivery') }}"><button id="btn-navi"><img src="{{ url_for('static', filename='images/voir_commandes_icon.png') }}" alt="Icone voir commandes">Voir les</br>commandes</button></a></li>
-    <li><a href="{{ url_for('new_commande') }}"><button id="btn-navi"><img src="{{ url_for('static', filename='images/commander_icon.png') }}" alt="Icone commander">Commander</br>matériel</button></a></li>
-    <li><a href="{{ url_for('consult') }}"><button id="btn-navi"><img src="{{ url_for('static', filename='images/voir_materiel_icon.png') }}" alt="Icone voir matériel">Consulter le</br>matériel</button></a></li>
-  </ul>
+{% if current_user.is_authenticated %}
+<h1 id="bjr-prof">Bonjour <span class="nom-util">{{ current_user.nomUti }}</span> !</h1>
+{% else %}
+<h1 id="bjr-prof">Bonjour !</h1>
+{% endif %}
+<ul>
+	<li><a href="{{ url_for('delivery') }}"><button id="btn-navi"><img
+					src="{{ url_for('static', filename='images/voir_commandes_icon.png') }}"
+					alt="Icone voir commandes">Voir les</br>commandes</button></a></li>
+	<li><a href="{{ url_for('new_commande') }}"><button id="btn-navi"><img
+					src="{{ url_for('static', filename='images/commander_icon.png') }}"
+					alt="Icone commander">Commander</br>matériel</button></a></li>
+	<li><a href="{{ url_for('consult') }}"><button id="btn-navi"><img
+					src="{{ url_for('static', filename='images/voir_materiel_icon.png') }}"
+					alt="Icone voir matériel">Consulter le</br>matériel</button></a></li>
+</ul>
 {% endblock %}

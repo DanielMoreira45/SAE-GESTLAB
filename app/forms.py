@@ -81,6 +81,7 @@ class LoginForm(FlaskForm):
 # Permet la modification de l'utilisateur
 class UserForm(FlaskForm):
     id = HiddenField('id')
+    email = HiddenField('email')
     nom = StringField('nom', validators=[DataRequired()])
     prenom = StringField('prenom', validators=[DataRequired()])
     password = PasswordField('password', validators=[DataRequired()])
