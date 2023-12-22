@@ -205,6 +205,10 @@ def get_categories():
     categories = [categorie.serialize() for categorie in categories]
     return jsonify({'categories': categories})
 
+@app.route("/imprimer_pdf/")
+def imprimer_pdf():
+    return send_from_directory('static/pdf', request.args.get('chemin'))
+
 @app.route('/commandes/creer_pdf/')
 def creer_pdf_commandes():
     liste_commandes = Commande.query.order_by(Commande.dateCommande).all()
@@ -232,15 +236,14 @@ def creer_pdf_commandes():
         monPdf.cell(0, 10, txt="    Domaine : "+commande.materiel.domaine.nomD, ln=1, align="L")
         monPdf.cell(0, 10, txt="    Categorie : "+commande.materiel.categorie.nomC, ln=1, align="L")
         monPdf.cell(0, 10, txt="    Quantité commandée : "+str(commande.qteCommandee), ln=1, align="L")
-        monPdf.cell(0, 10, txt="    Commande effectuée par : "+commande.utilisateur.nomUti, ln=1, align="L")
+        monPdf.cell(0, 10, txt="    Commande effectuée par : "+commande.utilisateur.nomUti, ln=1, align="L")     
 
-    monPdf.output("commandes.pdf")
-    return jsonify({'nom_fichier' : 'commandes.pdf'})
+    monPdf.output("static/pdf/commandes.pdf")
+    
+    return jsonify({'nom_fichier' : "commandes.pdf"})
 
 @app.route('/consult/creer_pdf/')
 def creer_pdf_materiel():
-    #liste_materiel = Commande.query.order_by(Commande.dateCommande).all()
-    #liste_materiel = filtrer(liste_commandes, request.args.get('search'), request.args.get('domaine'), request.args.get('categorie'))
     materielG = MaterielGenerique.query.get(request.args.get('ref'))
     monPdf = FPDF()
     monPdf.add_page()
@@ -266,18 +269,8 @@ def creer_pdf_materiel():
         monPdf.cell(0, 10, txt="        Date péremption : "+str(instances[i].datePeremption), ln=1, align="L")
         monPdf.cell(0, 10, txt="        Quantité restante : "+str(instances[i].qteRestante), ln=1, align="L")
 
-    '''monPdf.set_font("Arial", size=15)
-    monPdf.cell(0, 10, txt=commande.materiel.nomMateriel, ln=1, align="L")
-    monPdf.set_font("Arial", size=10)
-    monPdf.cell(0, 10, txt="Numéro de commande : "+str(commande.numeroCommande), ln=1, align="L")
-    monPdf.cell(0, 10, txt="Statut : "+commande.statut.nomStatut, ln=1, align="L")
-    monPdf.cell(0, 10, txt="Domaine : "+commande.materiel.domaine.nomD, ln=1, align="L")
-    monPdf.cell(0, 10, txt="Categorie : "+commande.materiel.categorie.nomC, ln=1, align="L")
-    monPdf.cell(0, 10, txt="Quantité commandée : "+str(commande.qteCommandee), ln=1, align="L")
-    monPdf.cell(0, 10, txt="Commande effectuée par : "+commande.utilisateur.nomUti, ln=1, align="L")'''
-
-    monPdf.output("materiel.pdf")
-    return jsonify({'nom_fichier' : 'commandes.pdf'})
+    monPdf.output("static/pdf/materiel.pdf")
+    return jsonify({'nom_fichier' : 'materiel.pdf'})
 
 
 def filtrer(liste, recherche, domaine, categorie, statut=None):
