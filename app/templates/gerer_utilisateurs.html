@@ -23,6 +23,7 @@
     <form action="{{ url_for('update_user') }}" role="form" method="POST" class="user_infos">
         <section class="wrapper">
             <input type="hidden" value="{{ current_user_selected.idUti }}" name="id" id="id">
+            <input type="hidden" value="{{ current_user_selected.email }}" name="email" id="email">
             <label class="nom" for="nom">Nom :</label>
             <input class="nom_input" name="nom" id="nom" type="text" value="{{ current_user_selected.nomUti }}">
             <label class="prenom" for="prenom">Prénom :</label>
@@ -65,11 +66,13 @@
         var inputPassword = document.getElementById("password");
         var roleSelect = document.getElementById("id_role");
         var droitModif = document.getElementsByName("modifications");
+        var email = document.getElementById("email");
 
         fetch('/get_user_info/' + id)
             .then(response => response.json())
             .then(data => {
                 inputId.value = data.id;
+                email.value = data.email;
                 inputNom.value = data.nom;
                 inputPrenom.value = data.prenom;
                 inputPassword.value = data.password;
@@ -99,7 +102,8 @@
         var nomUti = document.getElementById("nom");
         var prenomUti = document.getElementById("prenom");
         var mdpUti = document.getElementById("password");
-        emailjs.send("service_kvw3ho3", "template_w6zqi2j", {name: prenomUti.value, surname: nomUti.value, mdp: mdpUti.value})
+        var emailUti = document.getElementById("email");
+        emailjs.send("service_kvw3ho3", "template_w6zqi2j", {name: prenomUti.value, surname: nomUti.value, mdp: mdpUti.value, email: emailUti.value})
         .then(alert("Email envoyé avec succès"));
     }
 </script>

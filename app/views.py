@@ -65,6 +65,7 @@ def get_user_info(user_id):
     if user:
         user_info = {
             'id': user.idUti,
+            'email': user.emailUti,
             'nom': user.nomUti,
             'prenom': user.prenomUti,
             'id_role': user.idRole,
