@@ -215,7 +215,7 @@
                         }, 100);
                         };
                     }
-                    this.printedIframe.src = "/commandes/imprimer_pdf";                   
+                    this.printedIframe.src = `/imprimer_pdf/?chemin=${data.nom_fichier}`;                   
                     
                 })
                 .catch(error => console.error('Erreur : ' + error));

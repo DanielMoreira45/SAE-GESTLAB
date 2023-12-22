@@ -198,10 +198,9 @@ def get_categories():
     categories = [categorie.serialize() for categorie in categories]
     return jsonify({'categories': categories})
 
-@app.route("/commandes/imprimer_pdf/")
-def imprimer_pdf_commandes():
-    print("test")
-    return send_from_directory('templates', 'commandes.pdf')
+@app.route("/imprimer_pdf/")
+def imprimer_pdf():
+    return send_from_directory('static/pdf', request.args.get('chemin'))
 
 @app.route('/commandes/creer_pdf/')
 def creer_pdf_commandes():
@@ -232,7 +231,7 @@ def creer_pdf_commandes():
         monPdf.cell(0, 10, txt="    Quantité commandée : "+str(commande.qteCommandee), ln=1, align="L")
         monPdf.cell(0, 10, txt="    Commande effectuée par : "+commande.utilisateur.nomUti, ln=1, align="L")     
 
-    monPdf.output("commandes.pdf")
+    monPdf.output("static/pdf/commandes.pdf")
     
     return jsonify({'nom_fichier' : "commandes.pdf"})
 
@@ -263,8 +262,8 @@ def creer_pdf_materiel():
         monPdf.cell(0, 10, txt="        Date péremption : "+str(instances[i].datePeremption), ln=1, align="L")
         monPdf.cell(0, 10, txt="        Quantité restante : "+str(instances[i].qteRestante), ln=1, align="L")
 
-    monPdf.output("materiel.pdf")
-    return jsonify({'nom_fichier' : 'commandes.pdf'})
+    monPdf.output("static/pdf/materiel.pdf")
+    return jsonify({'nom_fichier' : 'materiel.pdf'})
 
 
 def filtrer(liste, recherche, domaine, categorie, statut=None):

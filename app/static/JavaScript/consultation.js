@@ -237,7 +237,18 @@ function imprimer(){
     fetch(`/consult/creer_pdf?ref=${ref}`)
         .then(response => response.json())
         .then(data => {
-            //Afficher popup pour imprimer
+            if (!this.printedIframe) {
+                this.printedIframe = document.createElement('iframe');
+                document.body.appendChild(this.printedIframe);
+                this.printedIframe.style.display = 'none';
+                this.printedIframe.onload = function() {
+                setTimeout(function() {
+                    this.printedIframe.focus();
+                    this.printedIframe.contentWindow.print();
+                }, 100);
+                };
+            }
+            this.printedIframe.src = `/imprimer_pdf/?chemin=${data.nom_fichier}`;     
         })
         .catch(error => console.error('Erreur : ' + error));
 }
