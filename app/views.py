@@ -198,11 +198,14 @@ def open_FDS(id):
 
 @app.route('/get_categories/')
 def get_categories():
+    print("aled")
     selected_domaine = request.args.get('domaine')
     categories = Categorie.query.order_by(Categorie.nomC).all()
     if (selected_domaine):
         categories = [categorie for categorie in categories if categorie.codeD == int(selected_domaine)]
     categories = [categorie.serialize() for categorie in categories]
+    print("aled")
+    print(categories)
     return jsonify({'categories': categories})
 
 @app.route('/commandes/creer_pdf/')
