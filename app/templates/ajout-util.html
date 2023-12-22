@@ -1,0 +1,29 @@
+{% extends "consul_base.html" %}
+{% block styles %}
+{{ super() }}
+<link rel="stylesheet" href="{{ url_for('static', filename ='css/ajout-util.css') }}">
+<script type="text/javascript"
+    src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js">
+</script>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{url_for('static', filename='JavaScript/ajout-util.js')}}"></script>
+{% endblock %}
+
+{% block content %}
+    <h1 id="ajout-u">Ajouter un utilisateur</h1>
+    <form role="form" method="POST" action="{{ url_for('save_util') }}" id="formulaire">
+        <div class="champ">
+            <span>{{ form.nomUti.label }} <br> {{ form.nomUti(size=40, class="form-control") }}</span>
+            <span>{{ form.prenomUti.label }} <br> {{ form.prenomUti(size=40, class="form-control") }}</span>
+            <span id="email">{{ form.emailUti.label }} <br> {{ form.emailUti(size=40, class="form-control") }}</span>
+            <span id="mdpUti">{{ form.mdp.label }} <br> {{ form.mdp(size=40, class="form-control") }}</span>
+            <span>{{ form.role.label }} <br> {{ form.role(class="form-control") }}</span>
+            <span>{{ form.modif.label }} <br> {{ form.modif(size=40, class="form-control") }}</span>
+        </div>
+        <div id="ajt">
+            <input type="submit" id="ajouter_util" value="Ajouter" onclick="sendEmail()">
+        </div>
+    </form>
+{% endblock %}

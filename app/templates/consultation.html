@@ -1,0 +1,112 @@
+{% extends "consul_base.html" %}
+{% block styles %}
+{{ super() }}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/consultation.css') }}">
+{% endblock %}
+{% block scripts %}
+<script src="{{url_for('static', filename='JavaScript/consultation.js')}}"></script>
+{% endblock %}
+{% block content %}
+{% if current_user.is_authenticated %}
+{% if current_user.is_prof %}
+<h1>Consulter le matériel</h1>
+<form id="search" role="search" method="post">
+    <input type="search" name="search" id="searchinput" placeholder="Rechercher un matériel ..." oninput="change()">
+    <select name="Domaine" id="Domaine" onchange="change()">
+        <option value="">Domaine</option>
+        {% for domaine in domaines %}
+        <option value="{{ domaine.codeD }}">{{ domaine.nomD }}</option>
+        {% endfor %}
+    </select>
+    <select name="Catégorie" id="Categorie" onchange="change()">
+        <option value="">Categorie</option>
+        {% for categorie in categories %}
+        <option value="{{ categorie.codeC }}">{{ categorie.nomC }}</option>
+        {% endfor %}
+    </select>
+    <button type="reset" id="searchButton">reset</button>
+</form>
+<div class="info">
+    <div class="liste_mat">
+        <ul id="materielsList">
+            {% for materiel in materiels %}
+            <li>
+                <div class="item_mat">
+                    <img src="data:image/png;base64,{{ materiel.get_image() }}" alt="{{ materiel.nomMateriel }}">
+                    <h2 id="{{ materiel.refMateriel }}" onclick="editMateriauxGenerique(this.id)">{{
+                        materiel.nomMateriel }}</h2>
+                </div>
+            </li>
+            {% endfor %}
+        </ul>
+    </div>
+    <div class="liste_instance">
+        <ul id="instanceList">
+            {% for instance in instances %}
+            <li>
+                <div class="item_instance">
+                    <h2 id="{{ instance.idMateriel }}" onclick="editMateriauxInstance(this.id)">{{ instance.mat_generique.nomMateriel }}</h2>
+                    <div>
+                        <p>Quantité : {{ instance.qteRestante }}</p>
+                        <p>Unité : {{ instance.mat_generique.unite }}</p>
+                    </div>
+                </div>
+            </li>
+            {% endfor %}
+        </ul>
+    </div>
+    <div class="description">
+        <form action="{{ url_for('save_material')}}" method="post" role="form" class="formdescription">
+            <input type="text" name="nom" id="nom" value="{{ form.nom.data }}" disabled>
+            <input type="hidden" name="hiddenref" id="hiddenref" value="{{ form.hiddenref.data }}">
+            <div class="Materiel">
+                <div class="chiffre">
+                    <label for="domaine">Domaine : {{ form.domaine }}</label>
+                    <label for="categorie">Categorie : {{ form.categorie }}</label>
+                    <label for="reference">Référence : <input type="text" name="reference" id="reference"
+                            value="{{ form.reference.data }}" disabled></label>
+                    <label for="quantiteTot">Quantité Totale :<input type="text" name="quantiteTot" id="quantiteT"
+                            value="{{ form.quantiteTot.data }}" disabled></label>
+                    <label for="quantiteMax">Quantité Maximal : <input type="text" name="quantiteMax" id="quantiteMax"
+                            value="{{ form.quantiteMax.data }}" disabled></label>
+                </div>
+                <div class="textu">
+                    <img id="imagePresentation" src="data:image/png;base64,{{ current_mat.get_image() }}"
+                        alt="{{ current_mat.nom }}">
+                    <textarea id="complements" cols="40" rows="5" name="description"
+                        disabled>{{ form.description.data }}</textarea>
+                </div>
+                <div class="submit">
+                    <input type="submit" value="Valider" id="buttonvalider" disabled>
+                </div>
+            </div>
+        </form>
+        <div class="ligne-noir"></div>
+        <form action="{{ url_for('save_instance')}}" method="post" role="form" class="formdescriptionI">
+            <div class="forminstance">
+                <label for=""></label>
+                <input type="hidden" name="hiddenref2" id="hiddenref2" value="{{ formInstance.reference.data }}">
+                
+                <input type="hidden" name="hiddenrefMat" id="hiddenrefMat" value="{{ formInstance.hiddenrefMat.data }}">
+                <label for="quantiteRestante">Quantité Restante : <input type="text" name="quantiteRestante"
+                        id="qteRestante" value="{{ formInstance.quantiteRes.data }}" disabled></label>
+                <label for="datePeremption">Date : {{ formInstance.datePeremption }}</label>
+                <div class="submit">
+                    <input type="submit" value="Valider" id="buttonvalider2" disabled>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+<div class="button">
+    {% if current_user.modifications == True %}
+    <a href="{{ url_for('materiel_add') }}"><button id="buttonAdd" type="button">Ajouter du Materiel</button></a>
+    <button id="buttonModifier" onclick="inputsdisabled()">Modifier</button>
+    <button id="buttonSupp" onclick="suppression()">Supprimer</button>
+    {% endif %}
+    <button id="buttonImprimer" onclick="imprimer()">Imprimer</button>
+    <button id="buttonFDS" onclick="ouvreFDS()">Voir FDS</button>
+</div>
+{% endif %}
+{% endif %}
+{% endblock %}

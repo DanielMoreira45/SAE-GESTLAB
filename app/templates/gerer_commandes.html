@@ -1,0 +1,86 @@
+{% extends "consul_base.html" %}
+{% block styles %}
+{{ super() }}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/gerer_commandes.css') }}">
+{% endblock %}
+{% block scripts %}
+<script src="{{url_for('static', filename='JavaScript/commandes.js')}}"></script>
+{% endblock %}
+
+{% block content %}
+{% if current_user.is_authenticated %}
+{% if current_user.is_etablissement() or current_user.is_prof() %}
+    {% if current_user.is_etablissement() %}
+        <h1>Gérer les commandes</h1>
+    {% else %}
+        <h1>Voir les commandes</h1>
+    {% endif %}
+    <section class="search_buttons">
+        <input type="search" name="recherche" id="recherche" placeholder="Rechercher" oninput="update_categorie()">
+        <select name="domaine" id="domaine-select" onchange="update_categorie()">
+            <option id="domaine" value="">-- Domaine --</option>
+            {% for domaine in liste_domaines %}
+                <option id="domaineOption" value="{{ domaine.codeD }}">{{ domaine.nomD }}</option>
+            {% endfor %}
+        </select>
+        <select name="categorie" id="categorie-select" onchange="update_categorie()">
+            <option id="categorie" value="">-- Categorie --</option>
+        </select>
+        <select name="statut" id="statut-select" onchange="update_categorie()">
+            <option id="statut" value="">-- Statut --</option>
+            {% for statut in liste_statuts %}
+                <option id="statut" value="{{ statut.idStatut }}">{{ statut.nomStatut }}</option>
+            {% endfor %}
+        </select>
+        <button name="btn-reset" value="reset" class="yellow-button" onclick="reset()">Reset</button>
+    </section>
+    <section class="commands">
+        <ul id="liste">
+            {% for command in liste_commandes %}
+                <li>
+                    <button id="{{ command.numeroCommande }}" class="command_button" onclick="edit(this.id)">
+                        <img src="data:image/png;base64,{{ command.materiel.get_image() }}" alt="image commande" class="img">
+                        <p>{{ command.materiel.nomMateriel }}</p>
+                    </button>
+                </li>
+            {% endfor %}
+        </ul>
+    </section>
+    <section class="right">
+        <div class="materiel">
+            <h2><label id="nom"></label></h2>
+            <img src="{{ url_for('static', filename='images/black_square.png') }}" alt="image commande">
+            <div class="les_labels">
+                <label for="numero" id="label-numero"></label>
+                <label for="statut" id="label-statut"></label>
+                <label for="domaine" id="label-domaine"></label>
+                <label for="categorie" id="label-categorie"></label>
+                <label for="quantite" id="quantite"></label>
+                <label for="user" id="user"></label>
+            </div>
+        </div>
+        <div class="action_buttons">
+            <input type="button" class="yellow-button" value="Imprimer" onclick='imprimer()'>
+            {% if current_user.is_etablissement() %}
+                <input type="button" class="annuler" id="annuler" value="Annuler la commande" onclick="validate('False')">
+                <input type="button" class="valider" id="valider" value="Valider la commande" onclick="validate('True')">
+            {% endif %}
+        </div>
+    </section>
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            var firstCommandButton = document.querySelector(".command_button");
+            if (firstCommandButton) {
+                var commandRef = firstCommandButton.getAttribute("id");
+                edit(commandRef);
+            }
+            update_categorie();
+            
+        });
+        
+
+
+    </script>
+{% endif %}
+{% endif %}
+{% endblock %}

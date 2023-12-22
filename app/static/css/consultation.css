@@ -1,0 +1,325 @@
+
+@font-face {
+    font-family: "AgrandirWide";
+    src: url("./font/Agrandir-Regular.otf");
+}
+
+
+body {
+    margin-top: 9%;
+    font-family: "AgrandirWide";
+    background-image: linear-gradient(
+        to bottom,
+        rgba(32, 32, 32, 0.5),
+        rgba(32, 32, 32, 0.5)), url("../images/background_consulation_Mat.png");
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-attachment: fixed;
+}
+
+div.ligne-noir{
+    border: 2px black solid;
+    border-radius: 9px;
+    width: 80%;
+}
+
+div.content {
+    display: flex;
+    flex-direction: column;
+    flex-wrap: nowrap;
+    align-items: center;
+}
+h1{
+    color: white;
+    margin-top: 0;
+    margin: 0 0 0 0.5vh;
+}
+
+div.search{
+    display: flex;
+    flex-wrap: nowrap;
+}
+
+div.description{
+    height: 50vh;
+    width: 40vw;
+    padding: 1px;
+    margin-bottom: 2vh;
+    margin-left: 1rem;
+    background-color: white;
+    border: none;
+    border-radius: 9px;
+}
+
+div.chiffre>label{
+    display: inline;
+    height: 3vh;
+    margin-right: 1vw;
+}
+
+div.chiffre input{
+    margin: 0.0em 1em;
+    border: hidden;
+    width: 5vw;
+}
+
+form.formdescription, form.formdescriptionI{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+}
+
+form.formdescriptionI{
+    margin-top: 1vh;
+
+}
+
+form>div>div{
+    display: flex;
+    margin: 1rem;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+}
+
+div.textu>textarea{
+    margin-left: 1rem;
+    max-height: 15vh;
+    min-width: 20vw;
+    border: hidden;
+}
+
+div.liste_mat{
+    height: 50vh;
+    width: 25vw;
+    overflow: auto;
+    background-color: white;
+    border: 2px white solid;
+    scroll-snap-type: y proximity;
+    scrollbar-color: #EDF0F2;
+    border-top-left-radius: 40px;
+    border-bottom-left-radius: 40px;
+    border-top-right-radius: 25px;
+    border-bottom-right-radius: 25px;
+}
+div.liste_mat h2{
+    margin-left: 1rem;
+    font-size: large;
+}
+
+div.liste_mat ul{
+    padding: 0;
+    margin: 0;
+}
+
+div.liste_mat ul li{
+    list-style: none;
+}
+
+div.liste_instance{
+    height: 50vh;
+    width: 25vw;
+    overflow: auto;
+    background-color: white;
+    margin-bottom: 2vh;
+    margin-left: 1rem;
+    border: 2px white solid;
+    scroll-snap-type: y proximity;
+    scrollbar-color: #EDF0F2;
+    border-top-left-radius: 40px;
+    border-bottom-left-radius: 40px;
+    border-top-right-radius: 25px;
+    border-bottom-right-radius: 25px;
+}
+div.liste_instance h2{
+    margin-left: 1rem;
+    font-size: large;
+}
+
+div.liste_instance ul{
+    padding: 0;
+    margin: 0;
+}
+
+div.liste_instance ul li{
+    list-style: none;
+}
+
+div.info {
+    display: flex;
+    flex-wrap: nowrap;
+    margin: 1rem;
+    max-height: 70vh;
+    max-width: 8 0vw;
+}
+
+#imagePresentation{
+    width: 5em;
+    height: 5em;
+}
+
+div.info img{
+    width: 6em;
+    height: 6em;
+}
+
+div.liste_mat::-webkit-scrollbar {
+    scrollbar-gutter: both;
+    width: 0.7em;
+}
+
+div.liste_mat::-webkit-scrollbar-thumb:hover{
+    background-color: #ABABAB;
+}
+
+div.liste_mat::-webkit-scrollbar-thumb:active{
+    background-color: grey;
+}
+
+div.liste_mat::-webkit-scrollbar-thumb {
+    background: rgb(217, 217, 217);;
+    border-radius: 8px;
+}
+
+div.liste_instance::-webkit-scrollbar {
+    scrollbar-gutter: both;
+    width: 0.7em;
+}
+
+div.liste_instance::-webkit-scrollbar-thumb:hover{
+    background-color: #ABABAB;
+}
+
+div.liste_instance::-webkit-scrollbar-thumb:active{
+    background-color: grey;
+}
+
+div.liste_instance::-webkit-scrollbar-thumb {
+    background: rgb(217, 217, 217);;
+    border-radius: 8px;
+}
+
+#buttonModifier, #buttonSupp, #buttonImprimer, #buttonFDS, #buttonvalider, #buttonvalider2{
+    background-color: rgb(255, 216, 131);
+    font-family: "AgrandirWide";
+    font-size: 1em;
+    margin-bottom: 0.2em;
+    border-radius: 9px;
+    padding: 10px 20px 10px 20px;
+    border: none;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+#buttonModifier, #buttonSupp, #buttonImprimer, #buttonFDS{
+    width: 10vw;
+}
+
+#buttonAdd{
+    margin: 2vh 0;
+    padding: 10px 10px;
+    height: 5vh;
+    width: 30vw;
+    border-radius: 4px;
+    border: none;
+    cursor: pointer;
+    font-weight: bold;
+    text-align: center;
+}
+
+div.button{
+    margin-left: 1em;
+    display: flex;
+    justify-content: space-around;
+    width: 85vw;
+}
+
+div.item_mat {
+    display: flex;
+    flex-wrap: nowrap;
+    margin: 1vh 1vw;
+    align-items: center;
+}
+
+div.item_mat h2{
+    cursor: pointer;
+}
+
+#Categorie, #Domaine{
+    border-radius: 4px;
+    border: none;
+    font-size: 2vh;
+    height: 5vh;
+    width: 13vw;
+    margin: 0 0.5vh;
+}
+div.recherche {
+    display: flex;
+    flex-wrap: nowrap;
+    align-items: center;
+    max-height: 80vh;
+    max-width: 80vw;
+}
+
+div.recherche>*{
+    margin: 1vh;
+}
+
+#searchinput{
+    width: 40vw;
+    height: 5vh;
+    border-radius: 4px;
+    border: none;
+}
+
+#searchButton{
+    background-color: rgb(255, 216, 131);
+    font-family: "AgrandirWide";
+    font-size: 2.5vh;
+    margin-bottom: 0.2em;
+    border-radius: 9px;
+    padding: 10px;
+    border: none;
+    cursor: pointer;
+    font-weight: bold;
+}
+#Categorie>option, #Domaine>option{
+    border-radius: 5px;
+    border: none;
+}
+
+#search{
+    display: flex;
+    align-items: center;
+    justify-content: space-evenly;
+    width: 72vw;
+}
+
+#search::placeholder{
+    font-size: 1.2rem;
+}
+
+#nom{
+    font-size: 1.2rem;
+    font-weight: bold;
+    width: 20vw;
+}
+
+div.item_instance{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+div.item_instance div{
+    display: flex;
+    flex-direction: row;
+}
+div.item_instance div>*{
+    margin: 0 1vw;
+}
+
+div.item_instance h2{
+    cursor: pointer;
+}

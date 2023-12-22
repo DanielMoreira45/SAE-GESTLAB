@@ -1,0 +1,22 @@
+{% extends "consul_base.html" %}
+{% block styles %}
+{{ super() }}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/home_style.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/home_pos.css') }}">
+{% endblock %}
+
+{% block content %}
+{% if current_user.is_authenticated %}
+<h1 id="bjr-prof">BONJOUR <span class="nom-util">{{ current_user.nomUti }}</span> !</h1>
+{% else %}
+<h1 id="bjr-prof">BONJOUR !</h1>
+{% endif %}
+<ul>
+    <li><a href="{{ url_for('consult') }}"><button id="btn-navi"><img
+                    src="{{ url_for('static', filename='images/materiel.png') }}" alt="Icone voir le materiel">Consulter
+                le matériel</button></a></li>
+    <li><a href="{{ url_for('delivery') }}"><button id="btn-navi"><img
+                    src="{{ url_for('static', filename='images/commande.png') }}" alt="Icone gerer les commandes">Gérer
+                les commandes</button></a></li>
+</ul>
+{% endblock %}
