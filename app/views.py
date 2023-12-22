@@ -205,7 +205,7 @@ def get_categories():
 
 @app.route("/imprimer_pdf/")
 def imprimer_pdf():
-    return send_from_directory('static/pdf', request.args.get('chemin'))
+    return send_from_directory('static/FDS', request.args.get('chemin'))
 
 @app.route('/commandes/creer_pdf/')
 def creer_pdf_commandes():
@@ -236,7 +236,7 @@ def creer_pdf_commandes():
         monPdf.cell(0, 10, txt="    Quantité commandée : "+str(commande.qteCommandee), ln=1, align="L")
         monPdf.cell(0, 10, txt="    Commande effectuée par : "+commande.utilisateur.nomUti, ln=1, align="L")     
 
-    monPdf.output("static/pdf/commandes.pdf")
+    monPdf.output("static/FDS/commandes.pdf")
     
     return jsonify({'nom_fichier' : "commandes.pdf"})
 
@@ -267,7 +267,7 @@ def creer_pdf_materiel():
         monPdf.cell(0, 10, txt="        Date péremption : "+str(instances[i].datePeremption), ln=1, align="L")
         monPdf.cell(0, 10, txt="        Quantité restante : "+str(instances[i].qteRestante), ln=1, align="L")
 
-    monPdf.output("static/pdf/materiel.pdf")
+    monPdf.output("static/FDS/materiel.pdf")
     return jsonify({'nom_fichier' : 'materiel.pdf'})
 
 
