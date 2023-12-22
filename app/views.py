@@ -1,13 +1,13 @@
 """Toute les routes et les Formulaires"""
-from io import BytesIO
 import os
 from .app import app, db
-from .models import AlerteQuantite, Statut, MaterielGenerique, MaterielInstance, Utilisateur, Domaine, Categorie, Role, Commande, getToutesLesAlertes
+from .models import AlerteQuantite, AlerteSeuil, Statut, MaterielGenerique, MaterielInstance, Utilisateur, Domaine, Categorie, Role, Commande, getToutesLesAlertes
 from .forms import LoginForm, UtilisateurForm, UserForm, CommandeForm, MaterielForm, MaterielModificationForm, MaterielInstanceForm
 
-from flask import jsonify, render_template, send_file, send_from_directory, url_for, redirect, request, flash
+from flask import jsonify, render_template, send_from_directory, url_for, redirect, request, flash
 from flask_login import login_required, login_user, logout_user, current_user
-from datetime import datetime
+from werkzeug.utils import secure_filename
+from datetime import datetime, timedelta
 from fpdf import FPDF
 
 @app.route("/")
@@ -188,6 +188,13 @@ def delete_material(id):
     else:
         response = {'status': 'error'}
     return jsonify(response)
+
+@app.route('/consult/ouvreFDS/<int:id>')
+def open_FDS(id):
+    materiel = MaterielGenerique.query.get(id)
+    if materiel and materiel.ficheFDS is not None:
+        chemin = os.path.join('static','FDS')
+        return send_from_directory(chemin, materiel.ficheFDS)
 
 @app.route('/get_categories/')
 def get_categories():
@@ -383,14 +390,27 @@ def materiel_add():
 @app.route("/save/materiel/", methods=("POST",))
 def save_materiel():
     f = MaterielForm()
-    photo_value = None if f.ficheFDS.data == '' else f.ficheFDS.data
-    ficheFDS_value = None if f.ficheFDS.data == '' else f.ficheFDS.data
+    ficheFDS_value = None
+    if 'ficheFDS' in request.files:
+        print("ficheFDS")
+        file = request.files['ficheFDS']
+        if file:
+            filename = secure_filename(file.filename)
+            filepath = os.path.join('static','FDS',filename)
+            os.makedirs(os.path.dirname(filepath), exist_ok=True)
+            file.save(filepath)
+            ficheFDS_value = filename
+
+    photo_value = None
+    if 'photo' in request.files:
+        image = request.files['photo']
+        if image and image != "":
+            photo_value = image.read()
+
 
     m = MaterielGenerique(
         refMateriel = 1 + db.session.query(db.func.max(MaterielGenerique.refMateriel)).scalar(),
         nomMateriel = f.nom.data,
-        imageMateriel = photo_value,
-        ficheFDS = ficheFDS_value,
         rangement = f.rangement.data,
         commentaire = f.commentaire.data,
         qteMateriel = 0,
@@ -401,7 +421,11 @@ def save_materiel():
         seuilPeremption = f.seuil_peremption.data,
         codeD = f.domaine.data,
         codeC = f.categorie.data
-    )    
+    )
+    if ficheFDS_value is not None:
+        m.ficheFDS = ficheFDS_value
+    if photo_value is not None:
+        m.imageMateriel = photo_value
     db.session.add(m)
     db.session.commit()
     return redirect(url_for('consult'))
@@ -470,3 +494,42 @@ def save_util():
     db.session.add(u)
     db.session.commit()
     return redirect(url_for('admin_add'))
+
+@app.route("/notif/maj/")
+def notif_maj():
+    AlerteQuantite.query.delete()
+    AlerteSeuil.query.delete()
+    qte = 0
+    listeMateriaux = MaterielGenerique.query.all()
+    for materiel in listeMateriaux:
+        materiel.seuilQte = 0 if materiel.seuilQte is None else materiel.seuilQte
+        if materiel.qteMateriel <= materiel.seuilQte:
+            alerteG = AlerteQuantite(
+                idAlerteQ = 1 + db.session.query(db.func.coalesce(db.func.max(AlerteQuantite.idAlerteQ), 0)).scalar(),
+                refMateriel = materiel.refMateriel,
+                commentaire = "Quantité en dessous du seuil"
+            )
+            qte+=1
+            db.session.add(alerteG)
+    
+    listeMateriauxInstance = MaterielInstance.query.all()
+    for materielInstance in listeMateriauxInstance:
+        delai_en_jours = timedelta(days=materielInstance.mat_generique.seuilPeremption)
+        date_peremption_limite = datetime.combine(materielInstance.datePeremption, datetime.min.time()) - delai_en_jours
+        if date_peremption_limite <= datetime.utcnow():
+            idMateriel_value = materielInstance.idMateriel
+            refMateriel_value = materielInstance.refMateriel
+            existing_instance = MaterielInstance.query.get((idMateriel_value, refMateriel_value))
+            if existing_instance:
+                newid = 1 + db.session.query(db.func.coalesce(db.func.max(AlerteSeuil.idAlerteS), 0)).scalar()
+                alerteS = AlerteSeuil(
+                    idAlerteS=newid,
+                    idMateriel=idMateriel_value,
+                    commentaire="Date de péremption proche"
+                )
+                qte += 1
+                db.session.add(alerteS)
+    db.session.commit()
+    return jsonify({'qte': qte})
+
+    
