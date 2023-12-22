@@ -39,7 +39,7 @@
             {% for command in liste_commandes %}
                 <li>
                     <button id="{{ command.numeroCommande }}" class="command_button" onclick="edit(this.id)">
-                        <img src="{{ url_for('static', filename='images/black_square.png') }}" alt="image commande" class="img">
+                        <img src="data:image/png;base64,{{ command.materiel.get_image() }}" alt="image commande" class="img">
                         <p>{{ command.materiel.nomMateriel }}</p>
                     </button>
                 </li>

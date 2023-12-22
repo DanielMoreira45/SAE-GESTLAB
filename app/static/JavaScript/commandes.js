@@ -72,7 +72,7 @@ function search(){
                     var p = document.createElement("p");
                     p.textContent = commande.nom;
                     var image = document.createElement("img");
-                    image.src = "{{ url_for('static', filename='images/black_square.png') }}";
+                    image.src = "data:image/png;base64," + commande.image;
                     image.alt = "image commande";
                     image.className = "img";
                     button.appendChild(image);

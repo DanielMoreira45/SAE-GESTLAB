@@ -316,7 +316,6 @@ def search():
     
     if (domaine):
         liste_categories = [categorie for categorie in liste_categories if categorie.codeD == int(domaine)]
-
     
     liste_commandes = filtrer(liste_commandes, recherche, domaine, categorie, statut)    
     liste_commandes = [commande.serialize() for commande in liste_commandes]

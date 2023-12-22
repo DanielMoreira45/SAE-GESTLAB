@@ -191,11 +191,8 @@ class Commande(db.Model):
     statut = db.relationship("Statut", backref=db.backref("statuts", lazy="dynamic"))
     idUti = db.Column(db.Integer, db.ForeignKey("UTILISATEUR.idUti"))
     refMateriel = db.Column(db.Integer, db.ForeignKey("MATERIELGENERIQUE.refMateriel"))
-    utilisateur = db.relationship("Utilisateur",
-                                  backref=db.backref("commandes",
-                                                     lazy="dynamic"))
-    materiel = db.relationship("MaterielGenerique",
-                               backref=db.backref("commandes", lazy="dynamic"))
+    utilisateur = db.relationship("Utilisateur", backref=db.backref("commandes", lazy="dynamic"))
+    materiel = db.relationship("MaterielGenerique", backref=db.backref("commandes", lazy="dynamic"))
     
     def serialize(self):
         return {
@@ -206,7 +203,8 @@ class Commande(db.Model):
             'statut': self.statut.nomStatut,
             'quantite': self.qteCommandee,
             'unite': self.materiel.unite,
-            'user': self.utilisateur.nomUti
+            'user': self.utilisateur.nomUti,
+            'image': self.materiel.get_image()
         }
 
 
