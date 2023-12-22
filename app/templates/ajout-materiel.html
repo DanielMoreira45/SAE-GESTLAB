@@ -5,7 +5,7 @@
 {% endblock %}
 {% block content %}
     <h1 id="ajout-u">Ajouter un matériel</h1>
-    <form role="form" method="POST" action="{{ url_for('save_materiel') }}" id="formulaire">
+    <form role="form" method="POST" action="{{ url_for('save_materiel') }}" id="formulaire" enctype="multipart/form-data">
         <div class="champ">
             <span>{{ form.nom.label }} <br> {{ form.nom(size=40, class="form-control") }}</span>
             <span>{{ form.domaine.label }} <br> {{ form.domaine(class="form-control") }}</span>
@@ -18,7 +18,7 @@
             <span>{{ form.commentaire.label }} <br> {{ form.commentaire(size=40, class="form-control") }}</span>
             <span>{{ form.complements.label }} <br> {{ form.complements(size=40, class="form-control") }}</span>
             <span>{{ form.photo.label }} <br> {{ form.photo(size=40, class="form-control") }}</span>
-            <span>{{ form.ficheFDS.label }} <br> {{ form.ficheFDS(size=40, class="form-control") }}</span>
+            <span>{{ form.ficheFDS.label }} <br> {{ form.ficheFDS(class="form-control") }}</span>
         </div>
         <div id="ajt">
             <a href=""><button>Ajouter</button></a>
