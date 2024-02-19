@@ -48,7 +48,7 @@ main h1 {
     font-size: 1.8em;
 }
 
-#mail-field {
+#mail_field {
     background-color: white;
     height: 38px;
     border: 0.1em solid black;
@@ -59,7 +59,7 @@ main h1 {
 }
 
 .mail-label,
-#mail-field {
+#mail_field {
     flex-basis: 100%;
     flex-grow: 1;
 }

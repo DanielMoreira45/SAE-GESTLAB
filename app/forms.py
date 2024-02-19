@@ -1,6 +1,6 @@
 from flask_wtf import FlaskForm
 from wtforms import DateField, FileField, StringField, HiddenField, PasswordField, SelectField, RadioField, IntegerField, TextAreaField
-from wtforms.validators import DataRequired, NumberRange
+from wtforms.validators import DataRequired, NumberRange, Email
 from .models import Utilisateur
 
 "Formulaires de l'application"
@@ -153,3 +153,6 @@ class MaterielForm(FlaskForm):
     seuil_peremption = IntegerField('Seuil de Péremption (nb jours)', validators=[NumberRange(min=0)])
     categorie = SelectField('Catégorie', choices=lesC, validators=[DataRequired()])
     domaine = SelectField('Domaine', choices=lesD, validators=[DataRequired()])
+
+class MdpOublieForm(FlaskForm):
+    mail_field = StringField('Adresse mail', validators=[DataRequired("Merci de rentrer une adresse mail."), Email("Merci de rentrer une adresse mail valide.")])

@@ -5,10 +5,10 @@
 {% endblock %}
 {% block content %}
 <h1>Mot de passe oublié</h1>
-<form class="mail-form" role="form" method="POST" action="{{ url_for('save_new_commande') }}">
+<form class="mail-form" role="form" method="POST" action="">
     <div class="blockfield">
-        <label for="mail-field" class="mail-label">Adresse mail</label>
-        <input id="mail-field" />
+        <label for="mail-field" class="mail-label">{{ form.mail_field.label }}</label>
+        {{ form.mail_field(class="form-control") }}
     </div>
     <input type="submit" id="valider-bouton" value="Valider" />
 </form>
