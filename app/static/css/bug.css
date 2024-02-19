@@ -8,8 +8,13 @@
     src: url("../font/Agrandir-Regular.otf");
 }
 
-form {
+body {
     text-align: center;
+    color: white;
+}
+
+form {
+    color: black;
 }
 
 body {
@@ -30,6 +35,12 @@ main h1 {
     text-decoration: none;
     color: white;
     text-align: center;
+    margin-bottom: 0.1em;
+}
+
+main p {
+    margin-bottom: 2em;
+    margin-top: 0em;
 }
 
 .mail-form {
