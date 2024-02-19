@@ -1,8 +1,15 @@
-{% extends "base.html" %}
+{% extends "consul_base.html" %}
 {% block styles %}
 {{ super() }}
-<link rel="stylesheet" href="">
+<link rel="stylesheet" href="{{ url_for('static', filename='../static/css/bug.css') }}">
 {% endblock %}
 {% block content %}
-<h1>Veuillez contacter votre administrateur</h1>
+<h1>Mot de passe oublié</h1>
+<form class="mail-form" role="form" method="POST" action="{{ url_for('save_new_commande') }}">
+    <div class="blockfield">
+        <label for="mail-field" class="mail-label">Adresse mail</label>
+        <input id="mail-field" />
+    </div>
+    <input type="submit" id="valider-bouton" value="Valider" />
+</form>
 {% endblock %}
