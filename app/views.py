@@ -272,16 +272,77 @@ def creer_pdf_materiel():
 
 @app.route('/alertes/creer_pdf/')
 def creer_pdf_alertes():
-    txtAlertes = getToutesLesAlertes()
+    #txtAlertes = getToutesLesAlertes()
+    alertes = AlerteQuantite.query.all()
+    alertes += AlerteSeuil.query.all()
     liste_materiel_instance = MaterielInstance.query.all()
-    monPdf = FPDF()
+    monPdf = PDF()
     monPdf.add_page()
     monPdf.set_font("Arial", size=30)
     monPdf.cell(0, 10, txt="Alertes", ln=1, align="C")
     monPdf.cell(0, 20, ln=1)
 
-    listeIdMateriel = getIdMaterielToutesLesAlertes()
-    for i in range(len(txtAlertes)):
+    #listeIdMateriel = getIdMaterielToutesLesAlertes()
+    monPdf.set_font("Arial", size=20)
+    monPdf.line(10, monPdf.get_y()-5, 200, monPdf.get_y()-5)
+    monPdf.cell(0, 10, txt="Liste de toutes les alertes", ln=1)
+    monPdf.set_font("Arial", size=10)
+    for i in range(len(alertes)):
+        ln = 0
+        if i%3 == 0 and i!= 0:
+            ln = 1
+        if type(alertes[i]) == AlerteQuantite:
+            monPdf.cell(70, 10, txt="   - "+MaterielGenerique.query.get(alertes[i].refMateriel).nomMateriel, ln=ln, align="L")
+        else:
+            ref = MaterielInstance.query.filter(MaterielInstance.idMateriel == alertes[i].idMateriel)[0].refMateriel
+            monPdf.cell(70, 10, txt="   - "+MaterielGenerique.query.get(ref).nomMateriel, ln=ln, align="L")
+
+    
+
+    monPdf.cell(0, 20, ln=1)
+    monPdf.line(10, monPdf.get_y()-5, 200, monPdf.get_y()-5)
+    monPdf.set_font("Arial", size=20)
+    monPdf.cell(0, 10, txt="Détail des alertes", ln=1)
+    monPdf.cell(0, 5, ln=1)
+    monPdf.set_font("Arial", size=15)
+
+    x,y = 120, monPdf.get_y()-20
+    for i in range(len(alertes)):
+        '''if type(alertes[i]) == AlerteQuantite:
+            materiel = MaterielGenerique.query.get(alertes[i].refMateriel)
+        else:
+            materiel = MaterielGenerique.query.get(MaterielInstance.query.filter(MaterielInstance.idMateriel == alertes[i].idMateriel)[0].refMateriel)
+        monPdf.set_font_size(15)
+        monPdf.cell(100, 10, txt = materiel.nomMateriel, ln)
+        monPdf.set_font_size(10)
+        if type(alertes[i]) == AlerteQuantite:
+            monPdf.cell(0, 10, txt="    Date Peremption : "+str(liste_materiel_instance[i].datePeremption))
+        else:
+            monPdf.cell(0, 10, txt="    Quantité restante : "+str(liste_materiel_instance[i].qteRestante))'''
+        if i%2==0:
+            x-=100
+            y+=30
+        else:
+            x+=100
+        if (y+10 > monPdf.h-monPdf.b_margin):
+            monPdf.add_page()
+            y = 20
+
+        if type(alertes[i]) == AlerteQuantite:
+            materiel = MaterielGenerique.query.get(alertes[i].refMateriel)
+        else:
+            materiel = MaterielGenerique.query.get(MaterielInstance.query.filter(MaterielInstance.idMateriel == alertes[i].idMateriel)[0].refMateriel)
+        monPdf.set_font_size(15)
+        monPdf.text(x, y, materiel.nomMateriel)
+        monPdf.set_font_size(10)
+        if type(alertes[i]) == AlerteSeuil:
+            monPdf.text(x, y+10, txt="    Date Peremption : "+str(liste_materiel_instance[i].datePeremption))
+        else:
+            monPdf.text(x, y+10, txt="    Quantité restante : "+str(liste_materiel_instance[i].qteRestante))
+    
+
+
+        '''
         monPdf.set_font("Arial", size=20)
         monPdf.cell(0, 10, txt=txtAlertes[i], ln=1, align="L")
         monPdf.set_font("Arial", size=15)
@@ -290,7 +351,7 @@ def creer_pdf_alertes():
         else:
             monPdf.cell(0, 10, txt="    Quantité restante : "+str(liste_materiel_instance[i].qteRestante))
 
-        monPdf.cell(0, 10, ln=1)
+        monPdf.cell(0, 10, ln=1)'''
 
         
 
