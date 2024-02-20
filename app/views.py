@@ -42,6 +42,20 @@ def lostpassword():
     f = LostPasswordForm()
     return render_template("lostpassword.html", form=f)
 
+@app.route('/login/lostpassword/sendnewpass/', methods=['POST'])
+def lostpassword_update():
+    # les_roles = {'Administrateur': 1, 'Professeur': 2, 'Etablissement': 3}
+    f = LostPasswordForm()
+    user_modified = Utilisateur.query.filter(Utilisateur.emailUti == f.mail_field.data)
+    # user_modified.nom = f.nom.data
+    # user_modified.prenom = f.prenom.data
+    user_modified.password = f.pass_field.data
+    # if f.id_role.data in les_roles:
+    #     user_modified.id_role = les_roles[f.id_role.data]
+    # user_modified.modifications = eval(f.modifications.data)
+    db.session.commit()
+    return redirect(url_for('lostpassword'))
+
 @app.route('/logout/')
 def logout():
     logout_user()

@@ -1,6 +1,6 @@
 from flask_wtf import FlaskForm
 from wtforms import DateField, FileField, StringField, HiddenField, PasswordField, SelectField, RadioField, IntegerField, TextAreaField, EmailField
-from wtforms.validators import DataRequired, NumberRange, Email
+from wtforms.validators import DataRequired, NumberRange, Email, ValidationError
 from .models import Utilisateur
 
 "Formulaires de l'application"
@@ -154,6 +154,13 @@ class MaterielForm(FlaskForm):
     categorie = SelectField('Catégorie', choices=lesC, validators=[DataRequired()])
     domaine = SelectField('Domaine', choices=lesD, validators=[DataRequired()])
 
+
+def validate_mail(form, field):
+    users_mail = Utilisateur.query.get().emailUti
+    if field.data not in users_mail:
+        raise ValidationError('Name must be less than 50 characters')
+
 class LostPasswordForm(FlaskForm):
     """ Formulaire de récupération du mot de passe. """    
-    mail_field = EmailField('Adresse mail', validators=[DataRequired(), Email()])
+    mail_field = EmailField('Adresse mail', validators=[DataRequired(), Email(), validate_mail])
+    pass_field = HiddenField('hiddenpass')
