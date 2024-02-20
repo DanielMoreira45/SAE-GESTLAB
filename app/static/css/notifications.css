@@ -1,0 +1,7 @@
+.commands{
+    max-width: 30em;
+}
+
+.commands button{
+    margin-left: unset;
+}

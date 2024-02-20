@@ -1,0 +1,48 @@
+{% extends "consul_base.html" %}
+{% block styles %}
+{{ super() }}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/home_style.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/home_pos.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/notifications.css') }}">
+<link rel="stylesheet" href="/static/css/gerer_commandes.css">
+{% endblock %}
+{% block scripts %}
+<script src="{{url_for('static', filename='JavaScript/commandes.js')}}"></script>
+{% endblock %}
+{% block content %}
+    <section class="commands">
+    <ul id="liste">
+    {% for i in range(nb) %}
+    {% set a = alertes[i] %}
+        <li>
+        {% if instances[i].idAlerteQ %}
+            <button id="{{ instances[i].idAlerteQ }}" class="command_button" onclick="edit_notif({{ instances[i].idAlerteQ }},{{ instances[i].refMateriel }}, quantite)">
+        {% elif instances[i].idAlerteS %}
+            <button id="{{ instances[i].idAlerteS }}" class="command_button" onclick="edit_notif({{ instances[i].idAlerteS }},{{ instances[i].idMateriel }}, seuil)">
+        {% endif %}
+        <p>{{ a }}</p>
+        </button>
+        </li>
+    {% endfor %}
+    </ul>
+    </section>
+    <section class="right">
+        <div class="materiel">
+            <div class="les_labels">
+                <img src="{{ url_for('static', filename='images/warning_icon.png') }}" alt="Icone d'alerte">
+                <label for="id" id="label-id"></label>
+                <label for="commentaire" id="label-commentaire"></label>
+                <label for="idm" id="label-idm"></label>
+                <label for="refm" id="label-refm"></label>
+                <label for="qteMax" id="label-qtemax"></label>
+                <label for="seuilQte" id="label-seuilqte"></label>
+                <label for="qteMateriel" id="label-qtemateriel"></label>
+            </div>
+        </div>
+        <div class="action_buttons">
+            <input type="button" class="commander" id="commander" value="Commander le materiel" onclick="validate('True')">
+        </div>
+    </section>
+
+    <div>
+{% endblock %}

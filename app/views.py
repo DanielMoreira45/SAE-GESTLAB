@@ -1,7 +1,7 @@
 """Toute les routes et les Formulaires"""
 import os
 from .app import app, db
-from .models import AlerteQuantite, AlerteSeuil, Statut, MaterielGenerique, MaterielInstance, Utilisateur, Domaine, Categorie, Role, Commande, getToutesLesAlertes
+from .models import AlerteQuantite, AlerteSeuil, Statut, MaterielGenerique, MaterielInstance, Utilisateur, Domaine, Categorie, Role, Commande, getToutesLesAlertes, getInstancesAlerte
 from .forms import LoginForm, UtilisateurForm, UserForm, CommandeForm, MaterielForm, MaterielModificationForm, MaterielInstanceForm
 
 from flask import jsonify, render_template, send_from_directory, url_for, redirect, request, flash
@@ -528,4 +528,17 @@ def notif_maj():
     db.session.commit()
     return jsonify({'qte': qte})
 
-    
+@app.route("/notifications/")
+def notifications():
+    return render_template("notifications.html", alertes=getToutesLesAlertes(), instances=getInstancesAlerte(), nb=len(getInstancesAlerte()))
+
+@app.route("/commandes/get_alerte_info/", methods=["GET"])
+def get_alerte_info():
+    ida = request.args.get("ida")
+    numm = request.args.get("numm")
+    alerte = AlerteQuantite.query.get((ida,numm))
+    if alerte:
+        alerte_info = alerte.serialize()
+        return jsonify(alerte_info)
+    else:
+        return jsonify({'error': 'Commande non trouvé'}), 404

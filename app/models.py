@@ -222,6 +222,16 @@ class AlerteSeuil(db.Model):
     materiel = db.relationship("MaterielInstance",
                                backref=db.backref("alertes", lazy="dynamic"))
 
+    def serialize(self):
+        return {
+            'id': self.idAlerteS,
+            'commentaire': self.commentaire,
+            'idMateriel': self.idMateriel,
+            'nomMateriel' : self.materiel.mat_generique.nomMateriel,
+            'qteRestante' : self.materiel.qteRestante,
+            'datePeremption' : self.materiel.datePeremption
+        }
+
     def __repr__(self):
         return "<Alerte (%d) %s %r>" % (self.idAlerteS, self.commentaire, self.idMateriel)
 
@@ -235,6 +245,19 @@ class AlerteQuantite(db.Model):
                              primary_key=True)
     materiel = db.relationship("MaterielGenerique",
                                backref=db.backref("alertes", lazy="dynamic"))
+
+    def serialize(self):
+        return {
+            'id': self.idAlerteQ,
+            'commentaire': self.commentaire,
+            'refMateriel': self.refMateriel,
+            'nomMateriel' : self.materiel.nomMateriel,
+            'qteMax' : self.materiel.qteMax,
+            'qteMateriel' : self.materiel.qteMateriel,
+            'unite' : self.materiel.unite,
+            'seuil' : self.materiel.seuilQte
+            
+        }
 
     def __repr__(self):
         return "<Alerte (%d) %s %r>" % (self.idAlerteQ, self.commentaire, self.refMateriel)
@@ -271,3 +294,6 @@ def getAlertesSeuil():
 
 def getToutesLesAlertes():
     return getAlertesQuantite() + getAlertesSeuil()
+
+def getInstancesAlerte():
+    return AlerteQuantite.query.all() + AlerteSeuil.query.all()

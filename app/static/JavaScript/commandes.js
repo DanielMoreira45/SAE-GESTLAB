@@ -163,3 +163,58 @@ function reset(){
     document.getElementById("statut").selected = true;
     update_categorie();
 }
+
+{/* <label for="id" id="label-id"></label>
+<label for="commentaire" id="label-commentaire"></label>
+<label for="idm" id="label-idm"></label>
+<label for="refm" id="label-refm"></label>
+<label for="qteMax" id="label-qtemax"></label>
+<label for="seuilQte" id="label-seuilqte"></label>
+<label for="qteMateriel" id="label-qtemateriel"></label> */}
+
+function edit_notif(idA, numM, type) {
+    var labelId = document.getElementById("label-id");
+    var labelCommentaire = document.getElementById("label-commentaire");
+    var labelNumM = document.getElementById("label-numm");
+
+    if(type == "quantite"){
+        var labelQteMax = document.getElementById("label-qtemax");
+        var labelSeuilQte = document.getElementById("label-seuilqte");
+        var labelQteMateriel = document.getElementById("label-qtemateriel");
+        fetch(`/commandes/get_alerte_info/?ida=${idA}&numm=${numM}`)
+            .then(response => response.json())
+            .then(data => {
+                labelId.textContent = "Numéro d'alerte : "+data.id;
+                labelCommentaire.textContent = "Commentaire : "+data.commentaire;
+                labelNumM.textContent = "Réference de matériel : "+data.idMateriel;  
+                // labelRefM.textContent = "Nom de matériel : "+data.nomMateriel;
+                labelQteMax.textContent = "Quantité max : "+data.qteMax;
+                labelSeuilQte.textContent = "Seuil de Quantité : "+data.seuil;
+                labelQteMateriel.textContent = "Quantité materiel : "+data.qteMateriel;
+                if(data.unite){
+                    labelQteMax.textContent += ' '+data.unite;
+                    labelSeuilQte.textContent += ' '+data.unite;
+                    labelQteMateriel.textContent += ' '+data.unite;
+                }
+            })
+            .catch(error => console.error('Erreur : ' + error));
+    }else if(type == "seuil"){
+        fetch(`/commandes/get_alerte_info/?ida=${idA}&numm=${numM}`)
+            .then(response => response.json())
+            .then(data => {
+                labelId.textContent = "Numéro d'alerte : "+data.id;
+                labelCommentaire.textContent = "Commentaire : "+data.commentaire;
+                labelNumM.textContent = "Id de matériel : "+data.idMateriel;  
+                // labelRefM.textContent = "Nom de matériel : "+data.nomMateriel;
+                labelQteMax.textContent = "Quantité max : "+data.qteMax;
+                labelSeuilQte.textContent = "Seuil de Quantité : "+data.seuil;
+                labelQteMateriel.textContent = "Quantité materiel : "+data.qteMateriel;
+                if(data.unite){
+                    labelQteMax.textContent += ' '+data.unite;
+                    labelSeuilQte.textContent += ' '+data.unite;
+                    labelQteMateriel.textContent += ' '+data.unite;
+                }
+            })
+            .catch(error => console.error('Erreur : ' + error));
+    }
+}
