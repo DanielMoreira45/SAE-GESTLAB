@@ -2,7 +2,7 @@
 import os
 from .app import app, db
 from .models import AlerteQuantite, AlerteSeuil, Statut, MaterielGenerique, MaterielInstance, Utilisateur, Domaine, Categorie, Role, Commande, getToutesLesAlertes, PDF
-from .forms import LoginForm, UtilisateurForm, UserForm, CommandeForm, MaterielForm, MaterielModificationForm, MaterielInstanceForm, MdpOublieForm
+from .forms import LoginForm, UtilisateurForm, UserForm, CommandeForm, MaterielForm, MaterielModificationForm, MaterielInstanceForm, LostPasswordForm
 
 from flask import jsonify, render_template, send_from_directory, url_for, redirect, request, flash
 from flask_login import login_required, login_user, logout_user, current_user
@@ -39,8 +39,8 @@ def login():
 
 @app.route('/login/lostpassword/')
 def lostpassword():
-    f = MdpOublieForm()
-    return render_template("bug.html", form=f)
+    f = LostPasswordForm()
+    return render_template("lostpassword.html", form=f)
 
 @app.route('/logout/')
 def logout():

@@ -154,5 +154,5 @@ class MaterielForm(FlaskForm):
     categorie = SelectField('Catégorie', choices=lesC, validators=[DataRequired()])
     domaine = SelectField('Domaine', choices=lesD, validators=[DataRequired()])
 
-class MdpOublieForm(FlaskForm):
+class LostPasswordForm(FlaskForm):
     mail_field = EmailField('Adresse mail', validators=[DataRequired(), Email()])
