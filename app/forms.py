@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import DateField, FileField, StringField, HiddenField, PasswordField, SelectField, RadioField, IntegerField, TextAreaField
+from wtforms import DateField, FileField, StringField, HiddenField, PasswordField, SelectField, RadioField, IntegerField, TextAreaField, EmailField
 from wtforms.validators import DataRequired, NumberRange, Email
 from .models import Utilisateur
 
@@ -155,4 +155,4 @@ class MaterielForm(FlaskForm):
     domaine = SelectField('Domaine', choices=lesD, validators=[DataRequired()])
 
 class MdpOublieForm(FlaskForm):
-    mail_field = StringField('Adresse mail', validators=[DataRequired("Merci de rentrer une adresse mail."), Email("Merci de rentrer une adresse mail valide.")])
+    mail_field = EmailField('Adresse mail', validators=[DataRequired(), Email()])

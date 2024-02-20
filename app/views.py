@@ -37,7 +37,7 @@ def login():
             return redirect(next)
     return render_template("connexion.html", form=f, alertes=getToutesLesAlertes())
 
-@app.route('/lostpassword/')
+@app.route('/login/lostpassword/')
 def lostpassword():
     f = MdpOublieForm()
     return render_template("bug.html", form=f)

@@ -75,22 +75,44 @@ main p {
     flex-grow: 1;
 }
 
-#valider-bouton {
+#valider-bouton,
+#retour-bouton {
     font-family: "DM-Sans";
-    background-color: #ffd883;
     border: none;
-    height: 2.8em;
-    width: 10.5em;
+    height: 2.5em;
+    width: 8em;
     font-weight: bold;
     border-radius: 0.5em;
     font-size: 1.3em;
     padding: 0em;
+}
+
+#liensBoutons,
+#valider-bouton {
     margin-top: 1em;
+    margin-left: 0.5em;
+    margin-right: 0.5em;
+}
+
+#valider-bouton {
+    background-color: #a2dfd9;
+}
+
+#retour-bouton {
+    background-color: #eb998f;
+}
+
+#valider-bouton:hover,
+#retour-bouton:hover {
+    cursor: pointer;
 }
 
 #valider-bouton:hover {
-    background-color: #edb742;
-    cursor: pointer;
+    background-color: #5ce1e6;
+}
+
+#retour-bouton:hover {
+    background-color: #c67474;
 }
 
 main {
