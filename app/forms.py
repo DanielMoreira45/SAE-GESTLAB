@@ -155,4 +155,5 @@ class MaterielForm(FlaskForm):
     domaine = SelectField('Domaine', choices=lesD, validators=[DataRequired()])
 
 class LostPasswordForm(FlaskForm):
+    """ Formulaire de récupération du mot de passe. """    
     mail_field = EmailField('Adresse mail', validators=[DataRequired(), Email()])
