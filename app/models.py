@@ -225,9 +225,9 @@ class AlerteSeuil(db.Model):
     def serialize(self):
         return {
             'id': self.idAlerteS,
+            'nom' : self.materiel.mat_generique.nomMateriel,
             'commentaire': self.commentaire,
             'idMateriel': self.idMateriel,
-            'nomMateriel' : self.materiel.mat_generique.nomMateriel,
             'qteRestante' : self.materiel.qteRestante,
             'datePeremption' : self.materiel.datePeremption
         }
@@ -249,9 +249,9 @@ class AlerteQuantite(db.Model):
     def serialize(self):
         return {
             'id': self.idAlerteQ,
+            'nom' : self.materiel.nomMateriel,
             'commentaire': self.commentaire,
             'refMateriel': self.refMateriel,
-            'nomMateriel' : self.materiel.nomMateriel,
             'qteMax' : self.materiel.qteMax,
             'qteMateriel' : self.materiel.qteMateriel,
             'unite' : self.materiel.unite,

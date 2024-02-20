@@ -5,3 +5,17 @@
 .commands button{
     margin-left: unset;
 }
+
+h2{
+    margin: 1em;
+}
+
+.les_labels{
+    margin-left: unset;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.materiel{
+    padding: unset;
+}

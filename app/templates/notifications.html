@@ -3,8 +3,9 @@
 {{ super() }}
 <link rel="stylesheet" href="{{ url_for('static', filename='css/home_style.css') }}">
 <link rel="stylesheet" href="{{ url_for('static', filename='css/home_pos.css') }}">
-<link rel="stylesheet" href="{{ url_for('static', filename='css/notifications.css') }}">
 <link rel="stylesheet" href="/static/css/gerer_commandes.css">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/notifications.css') }}">
+
 {% endblock %}
 {% block scripts %}
 <script src="{{url_for('static', filename='JavaScript/commandes.js')}}"></script>
@@ -16,9 +17,9 @@
     {% set a = alertes[i] %}
         <li>
         {% if instances[i].idAlerteQ %}
-            <button id="{{ instances[i].idAlerteQ }}" class="command_button" onclick="edit_notif({{ instances[i].idAlerteQ }},{{ instances[i].refMateriel }}, quantite)">
+            <button id="{{ instances[i].idAlerteQ }}" class="command_button" onclick="edit_notif({{ instances[i].idAlerteQ }},{{ instances[i].refMateriel }}, 'quantite')">
         {% elif instances[i].idAlerteS %}
-            <button id="{{ instances[i].idAlerteS }}" class="command_button" onclick="edit_notif({{ instances[i].idAlerteS }},{{ instances[i].idMateriel }}, seuil)">
+            <button id="{{ instances[i].idAlerteS }}" class="command_button" onclick="edit_notif({{ instances[i].idAlerteS }},{{ instances[i].idMateriel }}, 'seuil')">
         {% endif %}
         <p>{{ a }}</p>
         </button>
@@ -29,14 +30,15 @@
     <section class="right">
         <div class="materiel">
             <div class="les_labels">
-                <img src="{{ url_for('static', filename='images/warning_icon.png') }}" alt="Icone d'alerte">
-                <label for="id" id="label-id"></label>
+                <h2><label for="titre" id="label-titre"></label></h2>
+                <label for="nom" id="label-nom"></label>
                 <label for="commentaire" id="label-commentaire"></label>
-                <label for="idm" id="label-idm"></label>
-                <label for="refm" id="label-refm"></label>
+                <label for="numm" id="label-numm"></label>
                 <label for="qteMax" id="label-qtemax"></label>
                 <label for="seuilQte" id="label-seuilqte"></label>
                 <label for="qteMateriel" id="label-qtemateriel"></label>
+                <label for="qteRes" id="label-qteres"></label>
+                <label for="dateP" id="label-datep"></label>
             </div>
         </div>
         <div class="action_buttons">

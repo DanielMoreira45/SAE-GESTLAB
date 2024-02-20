@@ -173,21 +173,34 @@ function reset(){
 <label for="qteMateriel" id="label-qtemateriel"></label> */}
 
 function edit_notif(idA, numM, type) {
-    var labelId = document.getElementById("label-id");
+    var labelTitre = document.getElementById("label-titre");
+
     var labelCommentaire = document.getElementById("label-commentaire");
-    var labelNumM = document.getElementById("label-numm");
+    var labelNom = document.getElementById("label-nom");
+
+    var labelQteMax = document.getElementById("label-qtemax");
+    var labelSeuilQte = document.getElementById("label-seuilqte");
+    var labelQteMateriel = document.getElementById("label-qtemateriel");
+
+    var labelQteRes = document.getElementById("label-qteres");
+    var labelDateP = document.getElementById("label-datep");
+
+    labelTitre.textContent = "";
+    labelCommentaire.textContent = "";
+    labelNom.textContent = "";
+    labelQteMax.textContent = "";
+    labelSeuilQte.textContent = "";
+    labelQteMateriel.textContent = "";
+    labelQteRes.textContent = "";
+    labelDateP.textContent = "";
 
     if(type == "quantite"){
-        var labelQteMax = document.getElementById("label-qtemax");
-        var labelSeuilQte = document.getElementById("label-seuilqte");
-        var labelQteMateriel = document.getElementById("label-qtemateriel");
-        fetch(`/commandes/get_alerte_info/?ida=${idA}&numm=${numM}`)
+        labelTitre.textContent = "Alerte de Quantité";
+        fetch(`/commandes/get_alerte_info/qte/?ida=${idA}&numm=${numM}`)
             .then(response => response.json())
             .then(data => {
-                labelId.textContent = "Numéro d'alerte : "+data.id;
                 labelCommentaire.textContent = "Commentaire : "+data.commentaire;
-                labelNumM.textContent = "Réference de matériel : "+data.idMateriel;  
-                // labelRefM.textContent = "Nom de matériel : "+data.nomMateriel;
+                labelNom.textContent = "Nom de matériel : "+data.nom;
                 labelQteMax.textContent = "Quantité max : "+data.qteMax;
                 labelSeuilQte.textContent = "Seuil de Quantité : "+data.seuil;
                 labelQteMateriel.textContent = "Quantité materiel : "+data.qteMateriel;
@@ -198,22 +211,15 @@ function edit_notif(idA, numM, type) {
                 }
             })
             .catch(error => console.error('Erreur : ' + error));
-    }else if(type == "seuil"){
-        fetch(`/commandes/get_alerte_info/?ida=${idA}&numm=${numM}`)
+    }else {
+        labelTitre.textContent = "Alerte de Péremption";
+        fetch(`/commandes/get_alerte_info/seuil/?ida=${idA}&numm=${numM}`)
             .then(response => response.json())
             .then(data => {
-                labelId.textContent = "Numéro d'alerte : "+data.id;
+                labelNom.textContent = "Nom de matériel : "+data.nom;
                 labelCommentaire.textContent = "Commentaire : "+data.commentaire;
-                labelNumM.textContent = "Id de matériel : "+data.idMateriel;  
-                // labelRefM.textContent = "Nom de matériel : "+data.nomMateriel;
-                labelQteMax.textContent = "Quantité max : "+data.qteMax;
-                labelSeuilQte.textContent = "Seuil de Quantité : "+data.seuil;
-                labelQteMateriel.textContent = "Quantité materiel : "+data.qteMateriel;
-                if(data.unite){
-                    labelQteMax.textContent += ' '+data.unite;
-                    labelSeuilQte.textContent += ' '+data.unite;
-                    labelQteMateriel.textContent += ' '+data.unite;
-                }
+                labelQteRes.textContent = "Quantité restante : "+data.qteRestante;              
+                labelDateP.textContent = "Date de péremption : "+data.datePeremption;              
             })
             .catch(error => console.error('Erreur : ' + error));
     }
