@@ -271,3 +271,11 @@ def getAlertesSeuil():
 
 def getToutesLesAlertes():
     return getAlertesQuantite() + getAlertesSeuil()
+
+def getIdMaterielToutesLesAlertes():
+    res = []
+    for alerte_qte in AlerteQuantite.query.all():
+        res.append(alerte_qte.refMateriel)
+    for alerte_seuil in AlerteSeuil.query.all():
+        res.append(MaterielInstance.query.filter(MaterielInstance.idMateriel == alerte_seuil.idMateriel)[0].refMateriel)
+    return res

@@ -1,7 +1,7 @@
 """Toute les routes et les Formulaires"""
 import os
 from .app import app, db
-from .models import AlerteQuantite, AlerteSeuil, Statut, MaterielGenerique, MaterielInstance, Utilisateur, Domaine, Categorie, Role, Commande, getToutesLesAlertes
+from .models import AlerteQuantite, AlerteSeuil, Statut, MaterielGenerique, MaterielInstance, Utilisateur, Domaine, Categorie, Role, Commande, getToutesLesAlertes, getIdMaterielToutesLesAlertes
 from .forms import LoginForm, UtilisateurForm, UserForm, CommandeForm, MaterielForm, MaterielModificationForm, MaterielInstanceForm
 
 from flask import jsonify, render_template, send_from_directory, url_for, redirect, request, flash
@@ -205,7 +205,7 @@ def get_categories():
 
 @app.route("/imprimer_pdf/")
 def imprimer_pdf():
-    return send_from_directory('static/FDS', request.args.get('chemin'))
+    return send_from_directory('static/pdf/', request.args.get('chemin'))
 
 @app.route('/commandes/creer_pdf/')
 def creer_pdf_commandes():
@@ -267,8 +267,36 @@ def creer_pdf_materiel():
         monPdf.cell(0, 10, txt="        Date péremption : "+str(instances[i].datePeremption), ln=1, align="L")
         monPdf.cell(0, 10, txt="        Quantité restante : "+str(instances[i].qteRestante), ln=1, align="L")
 
-    monPdf.output("static/FDS/materiel.pdf")
+    monPdf.output("static/pdf/materiel.pdf")
     return jsonify({'nom_fichier' : 'materiel.pdf'})
+
+@app.route('/alertes/creer_pdf/')
+def creer_pdf_alertes():
+    txtAlertes = getToutesLesAlertes()
+    liste_materiel_instance = MaterielInstance.query.all()
+    monPdf = FPDF()
+    monPdf.add_page()
+    monPdf.set_font("Arial", size=30)
+    monPdf.cell(0, 10, txt="Alertes", ln=1, align="C")
+    monPdf.cell(0, 20, ln=1)
+
+    listeIdMateriel = getIdMaterielToutesLesAlertes()
+    for i in range(len(txtAlertes)):
+        monPdf.set_font("Arial", size=20)
+        monPdf.cell(0, 10, txt=txtAlertes[i], ln=1, align="L")
+        monPdf.set_font("Arial", size=15)
+        if "Date" in txtAlertes[i]:
+            monPdf.cell(0, 10, txt="    Date Peremption : "+str(liste_materiel_instance[i].datePeremption))
+        else:
+            monPdf.cell(0, 10, txt="    Quantité restante : "+str(liste_materiel_instance[i].qteRestante))
+
+        monPdf.cell(0, 10, ln=1)
+
+        
+
+    monPdf.output("static/pdf/alertes.pdf")
+    return jsonify({'nom_fichier' : 'alertes.pdf'})
+
 
 
 def filtrer(liste, recherche, domaine, categorie, statut=None):
