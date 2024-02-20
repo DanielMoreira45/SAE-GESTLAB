@@ -283,3 +283,10 @@ class PDF(FPDF):
         # Print centered page number
         self.cell(0, 10, 'Gestlab 2023-2024', 0, 0, 'L')
         self.cell(0, 10, 'Page %s' % self.page_no(), 0, 0, 'R')
+
+def getAdressesMail():
+    users = Utilisateur.query.all()
+    emails = []
+    for user in users:
+        emails.append(user.emailUti)
+    return emails

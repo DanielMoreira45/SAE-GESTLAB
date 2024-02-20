@@ -1,7 +1,7 @@
 """Toute les routes et les Formulaires"""
 import os
 from .app import app, db
-from .models import AlerteQuantite, AlerteSeuil, Statut, MaterielGenerique, MaterielInstance, Utilisateur, Domaine, Categorie, Role, Commande, getToutesLesAlertes, PDF
+from .models import AlerteQuantite, AlerteSeuil, Statut, MaterielGenerique, MaterielInstance, Utilisateur, Domaine, Categorie, Role, Commande, getToutesLesAlertes, PDF, getAdressesMail
 from .forms import LoginForm, UtilisateurForm, UserForm, CommandeForm, MaterielForm, MaterielModificationForm, MaterielInstanceForm, LostPasswordForm
 
 from flask import jsonify, render_template, send_from_directory, url_for, redirect, request, flash
@@ -44,16 +44,11 @@ def lostpassword():
 
 @app.route('/login/lostpassword/sendnewpass/', methods=['POST'])
 def lostpassword_update():
-    # les_roles = {'Administrateur': 1, 'Professeur': 2, 'Etablissement': 3}
     f = LostPasswordForm()
-    user_modified = Utilisateur.query.filter(Utilisateur.emailUti == f.mail_field.data)
-    # user_modified.nom = f.nom.data
-    # user_modified.prenom = f.prenom.data
-    user_modified.password = f.pass_field.data
-    # if f.id_role.data in les_roles:
-    #     user_modified.id_role = les_roles[f.id_role.data]
-    # user_modified.modifications = eval(f.modifications.data)
-    db.session.commit()
+    if (f.mail_field.data in getAdressesMail()):
+        user_modified = Utilisateur.query.filter(Utilisateur.emailUti == f.mail_field.data)
+        user_modified.password = f.pass_field.data
+        db.session.commit()
     return redirect(url_for('lostpassword'))
 
 @app.route('/logout/')
@@ -94,7 +89,7 @@ def get_user_info(user_id):
         return jsonify(user_info)
     else:
         return jsonify({'error': 'Utilisateur non trouvé'}), 404
-    
+
 @app.route("/get_last_user_info/", methods=['GET'])
 def get_last_user_info():
     user = Utilisateur.query.get(db.session.query(db.func.max(Utilisateur.idUti)).scalar())
