@@ -21,10 +21,18 @@
         <div class="navigation">
             <nav class="navbar">
                 <ul>
-                    <li>
-                        <p class="Logo">GEST<span class="yellow-part">LAB</span></p>
-                    </li>
                     {% if current_user.is_authenticated %}
+                    <li>
+                      {% if current_user.is_admin() %}
+                        <a href="{{ url_for('admin_home') }}">
+                      {% elif current_user.is_prof() %}
+                        <a href="{{ url_for('prof_home') }}">
+                      {% elif current_user.is_etablissement() %}
+                        <a href="{{ url_for('ecole_home') }}">
+                      {% endif %}
+                        <p class="Logo">GEST<span class="yellow-part">LAB</span></p>
+                      </a>
+                    </li>
                     {% if current_user.is_admin() %}
                     <li><a href="{{ url_for('admin_manage') }}">Gérer les utilisateurs</a></li>
                     <li><a href="{{ url_for('admin_add') }}">Ajouter un utilisateur</a></li>
