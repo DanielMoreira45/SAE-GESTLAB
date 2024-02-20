@@ -1,3 +1,23 @@
+document.addEventListener('DOMContentLoaded', function () {
+    document.getElementById('searchinput').addEventListener('input', change);
+    document.getElementById('Domaine').addEventListener('change', change);
+    document.getElementById('Categorie').addEventListener('change', change);
+    document.querySelectorAll('.item_mat').forEach(element => {
+        element.children.item(1).addEventListener('click', function () {
+            editMateriauxGenerique(element.children.item(1).id)
+        });
+    });
+    document.querySelectorAll('.item_instance').forEach(element => {
+        element.children.item(0).addEventListener('click', function () {
+            editMateriauxInstance(element.children.item(0).id, document.getElementById("reference").value)
+        });
+    });
+    document.getElementById('buttonModifier').addEventListener('click', inputsdisabled);
+    document.getElementById('buttonSupp').addEventListener('click', suppression);
+    document.getElementById('buttonFDS').addEventListener('click', ouvreFDS);
+});
+
+
 function change() {
     const searchQuery = document.getElementById('searchinput').value;
     const selectedDomaine = document.getElementById('Domaine').value;

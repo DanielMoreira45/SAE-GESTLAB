@@ -95,7 +95,7 @@ class UtilisateurForm(FlaskForm):
     nomUti = StringField('Nom', validators=[DataRequired()])
     prenomUti = StringField('Prénom', validators=[DataRequired()])
     emailUti = StringField('Email', validators=[DataRequired()])
-    mdp = PasswordField('Mot de Passe', validators=[DataRequired()])
+    mdp = HiddenField('Mot de Passe')
     role = SelectField('Rôle', choices=[(1, 'Administrateur'), (2, 'Professeur'), (3, 'Etablissement')])
     modif = RadioField('Droit de Modification', choices=[(True, 'Oui'), (False, 'Non')], validators=[DataRequired()])
 
