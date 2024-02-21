@@ -45,10 +45,13 @@ def lostpassword():
 @app.route('/login/lostpassword/sendnewpass/', methods=['POST'])
 def lostpassword_update():
     f = LostPasswordForm()
-    if (f.mail_field.data in getAdressesMail()):
+    if f.mail_field.data in getAdressesMail():
         user_modified = Utilisateur.query.filter(Utilisateur.emailUti == f.mail_field.data)
         user_modified.password = f.pass_field.data
         db.session.commit()
+        flash("Email envoyé avec succès !")
+    else:
+        flash("Utilisateur inconnu !")
     return redirect(url_for('lostpassword'))
 
 @app.route('/logout/')
