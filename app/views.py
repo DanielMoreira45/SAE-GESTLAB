@@ -47,9 +47,7 @@ def lostpassword_update():
     f = LostPasswordForm()
     if f.mail_field.data in getAdressesMail():
         user_modified = Utilisateur.query.filter(Utilisateur.emailUti == f.mail_field.data).scalar()
-        print(user_modified.mdp)
         user_modified.mdp = f.pass_field.data
-        print(user_modified.mdp)
         db.session.commit()
         flash("Email envoyé avec succès !")
     else:
@@ -146,7 +144,7 @@ def update_materials():
     selected_categorie = request.args.get('categorie')
     search = request.args.get('search')
     liste_materiel = MaterielGenerique.query.order_by(MaterielGenerique.nomMateriel).all()
-    if (selected_categorie):        
+    if (selected_categorie):
         liste_materiel = [materiel for materiel in liste_materiel if materiel.codeC == int(selected_categorie)]
 
     if (selected_domaine):

@@ -8,11 +8,14 @@ function createPassword(nbCaractere, chaine = "abcdefghijklmnopqrstuvwxyz1234567
     }
     return passwd;
 }
+function sendEmail() {
+    emailjs.init("FLCWfGzjhSIMLmML1");
+    var mailField = document.getElementById("mail_field");
+    var passField = document.getElementById("pass_field");
+    var tempPass = createPassword(8);
+    passField.value = tempPass;
+    emailjs.send("service_kvw3ho3", "template_w6zqi2j", { email: mailField.value, mdp: passField.value })
+        .then(alert("Email envoyé avec succès"));
+}
 
-emailjs.init("FLCWfGzjhSIMLmML1");
-var mailField = document.getElementById("mail_field");
-var passField = document.getElementById("pass_field");
-var tempPass = createPassword(8);
-passField.value = tempPass;
-emailjs.send("service_kvw3ho3", "template_w6zqi2j", { email: mailField.value, mdp: passField.value })
-    .then(alert("Email envoyé avec succès"));
+sendEmail();
