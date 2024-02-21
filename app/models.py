@@ -229,7 +229,8 @@ class AlerteSeuil(db.Model):
             'commentaire': self.commentaire,
             'idMateriel': self.idMateriel,
             'qteRestante' : self.materiel.qteRestante,
-            'datePeremption' : self.materiel.datePeremption
+            'datePeremption' : self.materiel.datePeremption,
+            'refMateriel': self.materiel.refMateriel
         }
 
     def __repr__(self):
@@ -256,7 +257,6 @@ class AlerteQuantite(db.Model):
             'qteMateriel' : self.materiel.qteMateriel,
             'unite' : self.materiel.unite,
             'seuil' : self.materiel.seuilQte
-            
         }
 
     def __repr__(self):

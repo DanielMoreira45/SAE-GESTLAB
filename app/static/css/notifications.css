@@ -8,14 +8,21 @@
 
 h2{
     margin: 1em;
+    display: block;
 }
 
 .les_labels{
     margin-left: unset;
-    margin-left: auto;
-    margin-right: auto;
 }
 
 .materiel{
     padding: unset;
+    display: flex;
+    flex-wrap: nowrap;
+    justify-content: space-evenly;
+    min-height: 30em;
+}
+
+#myDiv{
+    max-width: 20em;
 }

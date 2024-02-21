@@ -1,14 +1,16 @@
 {% extends "consul_base.html" %}
 {% block styles %}
 {{ super() }}
-<link rel="stylesheet" href="{{ url_for('static', filename='css/home_style.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/new_commande_style.css') }}">
 <link rel="stylesheet" href="{{ url_for('static', filename='css/home_pos.css') }}">
 <link rel="stylesheet" href="/static/css/gerer_commandes.css">
 <link rel="stylesheet" href="{{ url_for('static', filename='css/notifications.css') }}">
 
 {% endblock %}
 {% block scripts %}
+{{ super() }}
 <script src="{{url_for('static', filename='JavaScript/commandes.js')}}"></script>
+<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
 {% endblock %}
 {% block content %}
     <section class="commands">
@@ -33,16 +35,16 @@
                 <h2><label for="titre" id="label-titre"></label></h2>
                 <label for="nom" id="label-nom"></label>
                 <label for="commentaire" id="label-commentaire"></label>
-                <label for="numm" id="label-numm"></label>
                 <label for="qteMax" id="label-qtemax"></label>
                 <label for="seuilQte" id="label-seuilqte"></label>
                 <label for="qteMateriel" id="label-qtemateriel"></label>
                 <label for="qteRes" id="label-qteres"></label>
                 <label for="dateP" id="label-datep"></label>
             </div>
+            <div id='myDiv'></div>
         </div>
         <div class="action_buttons">
-            <input type="button" class="commander" id="commander" value="Commander le materiel" onclick="validate('True')">
+            <a href="{{ url_for('new_commande', refMateriel=1) }}"><button class="commander" id="commander">Commander le materiel</button></a>
         </div>
     </section>
 

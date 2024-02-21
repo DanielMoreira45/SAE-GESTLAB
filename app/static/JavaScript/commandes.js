@@ -164,14 +164,6 @@ function reset(){
     update_categorie();
 }
 
-{/* <label for="id" id="label-id"></label>
-<label for="commentaire" id="label-commentaire"></label>
-<label for="idm" id="label-idm"></label>
-<label for="refm" id="label-refm"></label>
-<label for="qteMax" id="label-qtemax"></label>
-<label for="seuilQte" id="label-seuilqte"></label>
-<label for="qteMateriel" id="label-qtemateriel"></label> */}
-
 function edit_notif(idA, numM, type) {
     var labelTitre = document.getElementById("label-titre");
 
@@ -185,6 +177,10 @@ function edit_notif(idA, numM, type) {
     var labelQteRes = document.getElementById("label-qteres");
     var labelDateP = document.getElementById("label-datep");
 
+    var div = document.getElementById('myDiv');
+
+    div.innerHTML = '';
+
     labelTitre.textContent = "";
     labelCommentaire.textContent = "";
     labelNom.textContent = "";
@@ -195,8 +191,12 @@ function edit_notif(idA, numM, type) {
     labelDateP.textContent = "";
 
     if(type == "quantite"){
+        labelQteMax.style.display = 'block';
+        labelSeuilQte.style.display = 'block';
+        labelQteMateriel.style.display = 'block';
+                   
         labelTitre.textContent = "Alerte de Quantité";
-        fetch(`/commandes/get_alerte_info/qte/?ida=${idA}&numm=${numM}`)
+        fetch(`/alertes/qte/get_info/?ida=${idA}&numm=${numM}`)
             .then(response => response.json())
             .then(data => {
                 labelCommentaire.textContent = "Commentaire : "+data.commentaire;
@@ -209,11 +209,50 @@ function edit_notif(idA, numM, type) {
                     labelSeuilQte.textContent += ' '+data.unite;
                     labelQteMateriel.textContent += ' '+data.unite;
                 }
+                var qteMateriel = {
+                    x: [data.nom],
+                    y: [data.qteMateriel],
+                    name: 'quantité restante',
+                    type: 'bar',
+                    marker: {
+                      color: 'rgba(255,0,0,0.4)'
+                    },
+                    hoverinfo: 'none'
+                };
+                        
+                var seuil = {
+                    x: [data.nom],
+                    y: [data.seuil - data.qteMateriel],
+                    name: 'minimum',
+                    type: 'bar',
+                    marker: {
+                        color: 'rgba(0,255,0,0.4)'
+                    },
+                    hoverinfo: 'none'
+                };
+                
+                var max = {
+                    x: [data.nom],
+                    y: [data.qteMax - data.seuil],
+                    name: 'maximum',
+                    type: 'bar',
+                    marker: {
+                        color: 'rgba(0,0,0,0.1)'
+                    },
+                    hoverinfo: 'none'
+                };
+                var data = [qteMateriel, seuil, max];
+                var layout = {barmode: 'relative', hover: 'None'}
+                Plotly.newPlot('myDiv', data, layout);
             })
             .catch(error => console.error('Erreur : ' + error));
     }else {
+        labelQteMax.style.display = 'none';
+        labelSeuilQte.style.display = 'none';
+        labelQteMateriel.style.display = 'none';
+
         labelTitre.textContent = "Alerte de Péremption";
-        fetch(`/commandes/get_alerte_info/seuil/?ida=${idA}&numm=${numM}`)
+        fetch(`/alertes/seuil/get_info/?ida=${idA}&numm=${numM}`)
             .then(response => response.json())
             .then(data => {
                 labelNom.textContent = "Nom de matériel : "+data.nom;

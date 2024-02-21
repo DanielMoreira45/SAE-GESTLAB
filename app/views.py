@@ -532,7 +532,7 @@ def notif_maj():
 def notifications():
     return render_template("notifications.html", alertes=getToutesLesAlertes(), instances=getInstancesAlerte(), nb=len(getInstancesAlerte()))
 
-@app.route("/commandes/get_alerte_info/qte/", methods=["GET"])
+@app.route("/alertes/qte/get_info/", methods=["GET"])
 def get_alerte_qte_info():
     ida = request.args.get("ida")
     numm = request.args.get("numm")
@@ -543,7 +543,7 @@ def get_alerte_qte_info():
     else:
         return jsonify({'error': 'Commande non trouvé'}), 404
     
-@app.route("/commandes/get_alerte_info/seuil/", methods=["GET"])
+@app.route("/alertes/seuil/get_info/", methods=["GET"])
 def get_alerte_seuil_info():
     ida = request.args.get("ida")
     numm = request.args.get("numm")
