@@ -46,8 +46,10 @@ def lostpassword():
 def lostpassword_update():
     f = LostPasswordForm()
     if f.mail_field.data in getAdressesMail():
-        user_modified = Utilisateur.query.filter(Utilisateur.emailUti == f.mail_field.data)
-        user_modified.password = f.pass_field.data
+        user_modified = Utilisateur.query.filter(Utilisateur.emailUti == f.mail_field.data).scalar()
+        print(user_modified.mdp)
+        user_modified.mdp = f.pass_field.data
+        print(user_modified.mdp)
         db.session.commit()
         flash("Email envoyé avec succès !")
     else:
