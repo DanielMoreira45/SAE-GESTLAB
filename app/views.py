@@ -356,9 +356,12 @@ def new_commande():
     liste_materiel = MaterielGenerique.query.all()
     choix_materiel = [(m.refMateriel, m.nomMateriel) for m in liste_materiel]
     choix_materiel.insert(0, ("", "-- Choisir le matériel --"))
-    f = CommandeForm()
+    choice_id = request.args.get('refMateriel')
+    if(choice_id):
+        f = CommandeForm(choice_id)
+    else:
+        f = CommandeForm()
     f.materiel_field.choices = choix_materiel
-    f.materiel_field.default = ""
     return render_template("new_commande.html", form=f, alertes=getToutesLesAlertes())
 
 @app.route("/delivery/new/save", methods=("POST",))
