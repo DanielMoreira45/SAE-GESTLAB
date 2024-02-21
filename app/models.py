@@ -3,6 +3,7 @@
 from base64 import b64encode
 from .app import db, login_manager
 from flask_login import UserMixin
+from fpdf import FPDF
 
 class Role(db.Model):
     __tablename__ = "ROLE"
@@ -298,3 +299,14 @@ def getToutesLesAlertes():
 
 def getInstancesAlerte():
     return AlerteQuantite.query.all() + AlerteSeuil.query.all()
+
+class PDF(FPDF):
+
+    def footer(self):
+        # Go to 1.5 cm from bottom
+        self.set_y(-15)
+        # Select Arial italic 8
+        self.set_font('Arial', 'I', 8)
+        # Print centered page number
+        self.cell(0, 10, 'Gestlab 2023-2024', 0, 0, 'L')
+        self.cell(0, 10, 'Page %s' % self.page_no(), 0, 0, 'R')

@@ -1,14 +1,13 @@
 """Toute les routes et les Formulaires"""
 import os
 from .app import app, db
-from .models import AlerteQuantite, AlerteSeuil, Statut, MaterielGenerique, MaterielInstance, Utilisateur, Domaine, Categorie, Role, Commande, getToutesLesAlertes, getInstancesAlerte
+from .models import AlerteQuantite, AlerteSeuil, Statut, MaterielGenerique, MaterielInstance, Utilisateur, Domaine, Categorie, Role, Commande, getToutesLesAlertes, getInstancesAlerte, PDF
 from .forms import LoginForm, UtilisateurForm, UserForm, CommandeForm, MaterielForm, MaterielModificationForm, MaterielInstanceForm
 
 from flask import jsonify, render_template, send_from_directory, url_for, redirect, request, flash
 from flask_login import login_required, login_user, logout_user, current_user
 from werkzeug.utils import secure_filename
 from datetime import datetime, timedelta
-from fpdf import FPDF
 
 @app.route("/")
 def home():
@@ -205,49 +204,72 @@ def get_categories():
 
 @app.route("/imprimer_pdf/")
 def imprimer_pdf():
-    return send_from_directory('static/FDS', request.args.get('chemin'))
+    return send_from_directory('static/pdf/', request.args.get('chemin'))
 
 @app.route('/commandes/creer_pdf/')
 def creer_pdf_commandes():
+            
     liste_commandes = Commande.query.order_by(Commande.dateCommande).all()
     liste_commandes = filtrer(liste_commandes, request.args.get('search'), request.args.get('domaine'), request.args.get('categorie'), request.args.get('statut'))
-    monPdf = FPDF()
+    monPdf = PDF()
+    monPdf.set_title("commandes")
     monPdf.add_page()
     monPdf.set_font("Arial", size=30)
     monPdf.cell(0, 10, txt="Commandes", ln=1, align="C")
     monPdf.cell(0, 20, ln=1)
-    monPdf.set_font("Arial", size=15)
+    monPdf.line(10, monPdf.get_y()-5, 200, monPdf.get_y()-5)
+    monPdf.set_font("Arial", size=20)
     monPdf.cell(0, 10, txt="Liste de toutes les commandes : ", ln=1, align="L")
     monPdf.set_font("Arial", size=10)
-    for i in range(len(liste_commandes)):
-        monPdf.cell(100, 10, txt=" - "+liste_commandes[i].materiel.nomMateriel, ln=i%2, align="L")
     
+    for i in range(len(liste_commandes)):
+        ln = 0
+        if i%3 == 0 and i!= 0:
+            ln = 1
+        monPdf.cell(70, 10, txt=" - "+liste_commandes[i].materiel.nomMateriel, ln=ln, align="L")
+
+    monPdf.cell(0, 10, txt="", ln=1)
     monPdf.cell(0, 10, ln=1)
+    monPdf.set_font_size(20)
+    monPdf.line(10, monPdf.get_y()-5, 200, monPdf.get_y()-5)
+    monPdf.cell(0, 10, txt="Détail des commandes")
+    
+    x,y = 120, monPdf.get_y()-60
 
-    for commande in liste_commandes:
-        monPdf.cell(0, 10, ln=1)
+    for i in range(len(liste_commandes)):
+        if i%2==0:
+            x-=100
+            y+=80
+        else:
+            x+=100
+
+        if (y+70 > monPdf.h-monPdf.b_margin):
+            monPdf.add_page()
+            y = 20
+
         monPdf.set_font("Arial", size=15)
-        monPdf.cell(0, 10, txt=commande.materiel.nomMateriel, ln=1, align="L")
+        monPdf.text(x,y,liste_commandes[i].materiel.nomMateriel)
         monPdf.set_font("Arial", size=10)
-        monPdf.cell(0, 10, txt="    Numéro de commande : "+str(commande.numeroCommande), ln=1, align="L")
-        monPdf.cell(0, 10, txt="    Statut : "+commande.statut.nomStatut, ln=1, align="L")
-        monPdf.cell(0, 10, txt="    Domaine : "+commande.materiel.domaine.nomD, ln=1, align="L")
-        monPdf.cell(0, 10, txt="    Categorie : "+commande.materiel.categorie.nomC, ln=1, align="L")
-        monPdf.cell(0, 10, txt="    Quantité commandée : "+str(commande.qteCommandee), ln=1, align="L")
-        monPdf.cell(0, 10, txt="    Commande effectuée par : "+commande.utilisateur.nomUti, ln=1, align="L")     
+        monPdf.text(x,y+10,"    Numéro de commande : "+str(liste_commandes[i].numeroCommande))
+        monPdf.text(x,y+20,"    Statut : "+liste_commandes[i].statut.nomStatut)
+        monPdf.text(x,y+30,"    Domaine : "+liste_commandes[i].materiel.domaine.nomD)
+        monPdf.text(x,y+40,"    Categorie : "+liste_commandes[i].materiel.categorie.nomC)
+        monPdf.text(x,y+50,"    Quantité commandée : "+str(liste_commandes[i].qteCommandee))
+        monPdf.text(x,y+60,"    Commande effectuée par : "+liste_commandes[i].utilisateur.nomUti)
 
-    monPdf.output("static/FDS/commandes.pdf")
+    monPdf.output("static/pdf/commandes.pdf")
     
     return jsonify({'nom_fichier' : "commandes.pdf"})
 
 @app.route('/consult/creer_pdf/')
 def creer_pdf_materiel():
-    materielG = MaterielGenerique.query.get(request.args.get('ref'))
-    monPdf = FPDF()
+    materielG = MaterielGenerique.query.get(request.args.get('ref'))    
+    monPdf = PDF()
     monPdf.add_page()
     monPdf.set_font("Arial", size=30)
     monPdf.cell(0, 10, txt="Materiel", ln=1, align="C")
     monPdf.cell(0, 20, ln=1)
+    monPdf.line(10, monPdf.get_y()-5, 200, monPdf.get_y()-5)
     monPdf.set_font("Arial", size=20)
     monPdf.cell(0, 10, txt=materielG.nomMateriel+" : ", ln=1, align="L")
     monPdf.set_font("Arial", size=10)
@@ -267,8 +289,67 @@ def creer_pdf_materiel():
         monPdf.cell(0, 10, txt="        Date péremption : "+str(instances[i].datePeremption), ln=1, align="L")
         monPdf.cell(0, 10, txt="        Quantité restante : "+str(instances[i].qteRestante), ln=1, align="L")
 
-    monPdf.output("static/FDS/materiel.pdf")
+    monPdf.output("static/pdf/materiel.pdf")
     return jsonify({'nom_fichier' : 'materiel.pdf'})
+
+@app.route('/alertes/creer_pdf/')
+def creer_pdf_alertes():
+    alertes = AlerteQuantite.query.all()
+    alertes += AlerteSeuil.query.all()
+    liste_materiel_instance = MaterielInstance.query.all()
+    monPdf = PDF()
+    monPdf.add_page()
+    monPdf.set_font("Arial", size=30)
+    monPdf.cell(0, 10, txt="Alertes", ln=1, align="C")
+    monPdf.cell(0, 20, ln=1)
+
+    monPdf.set_font("Arial", size=20)
+    monPdf.line(10, monPdf.get_y()-5, 200, monPdf.get_y()-5)
+    monPdf.cell(0, 10, txt="Liste de toutes les alertes", ln=1)
+    monPdf.set_font("Arial", size=10)
+    for i in range(len(alertes)):
+        ln = 0
+        if i%3 == 0 and i!= 0:
+            ln = 1
+        if type(alertes[i]) == AlerteQuantite:
+            monPdf.cell(70, 10, txt="   - "+MaterielGenerique.query.get(alertes[i].refMateriel).nomMateriel, ln=ln, align="L")
+        else:
+            ref = MaterielInstance.query.filter(MaterielInstance.idMateriel == alertes[i].idMateriel)[0].refMateriel
+            monPdf.cell(70, 10, txt="   - "+MaterielGenerique.query.get(ref).nomMateriel, ln=ln, align="L")
+
+    monPdf.cell(0, 20, ln=1)
+    monPdf.line(10, monPdf.get_y()-5, 200, monPdf.get_y()-5)
+    monPdf.set_font("Arial", size=20)
+    monPdf.cell(0, 10, txt="Détail des alertes", ln=1)
+    monPdf.cell(0, 5, ln=1)
+    monPdf.set_font("Arial", size=15)
+
+    x,y = 120, monPdf.get_y()-20
+    for i in range(len(alertes)):
+        if i%2==0:
+            x-=100
+            y+=30
+        else:
+            x+=100
+        if (y+10 > monPdf.h-monPdf.b_margin):
+            monPdf.add_page()
+            y = 20
+
+        if type(alertes[i]) == AlerteQuantite:
+            materiel = MaterielGenerique.query.get(alertes[i].refMateriel)
+        else:
+            materiel = MaterielGenerique.query.get(MaterielInstance.query.filter(MaterielInstance.idMateriel == alertes[i].idMateriel)[0].refMateriel)
+        monPdf.set_font_size(15)
+        monPdf.text(x, y, materiel.nomMateriel)
+        monPdf.set_font_size(10)
+        if type(alertes[i]) == AlerteSeuil:
+            monPdf.text(x, y+10, txt="    Date Peremption : "+str(liste_materiel_instance[i].datePeremption))
+        else:
+            monPdf.text(x, y+10, txt="    Quantité restante : "+str(liste_materiel_instance[i].qteRestante)) 
+
+    monPdf.output("static/pdf/alertes.pdf")
+    return jsonify({'nom_fichier' : 'alertes.pdf'})
+
 
 
 def filtrer(liste, recherche, domaine, categorie, statut=None):
