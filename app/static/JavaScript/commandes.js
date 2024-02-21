@@ -176,6 +176,7 @@ function edit_notif(idA, numM, type_alerte) {
 
     var labelQteRes = document.getElementById("label-qteres");
     var labelDateP = document.getElementById("label-datep");
+    var labelSeuilP = document.getElementById("label-seuilp");
 
     var div = document.getElementById('myDiv');
 
@@ -194,6 +195,7 @@ function edit_notif(idA, numM, type_alerte) {
     labelQteMateriel.textContent = "";
     labelQteRes.textContent = "";
     labelDateP.textContent = "";
+    labelSeuilP.textContent = "";
 
     switch(type_alerte){
 
@@ -272,6 +274,7 @@ function edit_notif(idA, numM, type_alerte) {
                 labelCommentaire.textContent = "Commentaire : "+data.commentaire;
                 labelQteRes.textContent = "Quantité restante : "+data.qteRestante;              
                 labelDateP.textContent = "Date de péremption : "+data.datePeremption;
+                labelSeuilP.textContent = "Seuil de péremption : "+data.seuilPeremption + ' jours';
             })
             .catch(error => console.error('Erreur : ' + error));
         break;

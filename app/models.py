@@ -230,7 +230,8 @@ class AlerteSeuil(db.Model):
             'idMateriel': self.idMateriel,
             'qteRestante' : self.materiel.qteRestante,
             'datePeremption' : self.materiel.datePeremption,
-            'refMateriel': self.materiel.refMateriel
+            'refMateriel': self.materiel.refMateriel,
+            'seuilPeremption': self.materiel.mat_generique.seuilPeremption
         }
 
     def __repr__(self):
