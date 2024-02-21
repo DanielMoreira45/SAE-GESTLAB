@@ -1,7 +1,7 @@
 """Toute les routes et les Formulaires"""
 import os
 from .app import app, db
-from .models import AlerteQuantite, AlerteSeuil, Statut, MaterielGenerique, MaterielInstance, Utilisateur, Domaine, Categorie, Role, Commande, getToutesLesAlertes, PDF
+from .models import AlerteQuantite, AlerteSeuil, Statut, MaterielGenerique, MaterielInstance, Utilisateur, Domaine, Categorie, Role, Commande, getToutesLesAlertes, getInstancesAlerte, PDF
 from .forms import LoginForm, UtilisateurForm, UserForm, CommandeForm, MaterielForm, MaterielModificationForm, MaterielInstanceForm
 
 from flask import jsonify, render_template, send_from_directory, url_for, redirect, request, flash
@@ -437,9 +437,12 @@ def new_commande():
     liste_materiel = MaterielGenerique.query.all()
     choix_materiel = [(m.refMateriel, m.nomMateriel) for m in liste_materiel]
     choix_materiel.insert(0, ("", "-- Choisir le matériel --"))
-    f = CommandeForm()
+    choice_id = request.args.get('refMateriel')
+    if(choice_id):
+        f = CommandeForm(choice_id)
+    else:
+        f = CommandeForm()
     f.materiel_field.choices = choix_materiel
-    f.materiel_field.default = ""
     return render_template("new_commande.html", form=f, alertes=getToutesLesAlertes())
 
 @app.route("/delivery/new/save", methods=("POST",))
@@ -609,4 +612,28 @@ def notif_maj():
     db.session.commit()
     return jsonify({'qte': qte})
 
+@app.route("/notifications/")
+def notifications():
+    return render_template("notifications.html", alertes=getToutesLesAlertes(), instances=getInstancesAlerte(), nb=len(getInstancesAlerte()))
+
+@app.route("/alertes/qte/get_info/", methods=["GET"])
+def get_alerte_qte_info():
+    ida = request.args.get("ida")
+    numm = request.args.get("numm")
+    alerte = AlerteQuantite.query.get((ida,numm))
+    if alerte:
+        alerte_info = alerte.serialize()
+        return jsonify(alerte_info)
+    else:
+        return jsonify({'error': 'Commande non trouvé'}), 404
     
+@app.route("/alertes/seuil/get_info/", methods=["GET"])
+def get_alerte_seuil_info():
+    ida = request.args.get("ida")
+    numm = request.args.get("numm")
+    alerte = AlerteSeuil.query.get((ida,numm))
+    if alerte:
+        alerte_info = alerte.serialize()
+        return jsonify(alerte_info)
+    else:
+        return jsonify({'error': 'Commande non trouvé'}), 404

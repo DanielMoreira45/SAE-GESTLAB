@@ -57,6 +57,8 @@
                               <img src="{{ url_for('static', filename='images/notifications_pastille.png') }}" alt="Icone notifications" id="img-notifs">
                             </button>
                             <div class="popuptext" id="myPopup">
+                              <a href="{{ url_for('notifications') }}" id="lienNotif">Voire toutes les notifications</a>
+                              <hr>
                               {% for a in alertes %}
                                 <img src="{{ url_for('static', filename='images/warning_icon.png') }}" alt="Icone d'alerte">
                                 <p>{{ a }}</p>

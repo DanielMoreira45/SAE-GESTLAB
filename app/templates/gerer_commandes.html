@@ -4,6 +4,7 @@
 <link rel="stylesheet" href="{{ url_for('static', filename='css/gerer_commandes.css') }}">
 {% endblock %}
 {% block scripts %}
+{{ super() }}
 <script src="{{url_for('static', filename='JavaScript/commandes.js')}}"></script>
 {% endblock %}
 
