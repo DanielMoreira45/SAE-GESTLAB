@@ -115,10 +115,10 @@ def consult():
     instances = MaterielInstance.query.order_by(MaterielInstance.idMateriel).filter_by(refMateriel=current.refMateriel).all()
     if (len(instances) <= 0):
         f2 = MaterielInstanceForm()
-        return render_template("consultation.html",form = f, formInstance = f2, domaines=domaines, categories=categories, materiels=materiels, current_mat=current, instances=instances)
+        return render_template("consultation.html",form = f, formInstance = f2, domaines=domaines, categories=categories, materiels=materiels, current_mat=current, instances=instances, alertes=getToutesLesAlertes())
     instance = instances[0]
     f2 = MaterielInstanceForm(materielI=instance)
-    return render_template("consultation.html",form = f, formInstance = f2, domaines=domaines, categories=categories, materiels=materiels, current_mat=current, instances=instances)
+    return render_template("consultation.html",form = f, formInstance = f2, domaines=domaines, categories=categories, materiels=materiels, current_mat=current, instances=instances, alertes=getToutesLesAlertes())
 
 @app.route('/consult/recherche')
 def update_materials():
@@ -178,6 +178,9 @@ def delete_material(id):
         for alerte in alertes:
             db.session.delete(alerte)
         for materiel_instance in materiel_instances:
+            alerteseuil = AlerteSeuil.query.filter_by(idMateriel=materiel_instance.idMateriel).all()
+            for alerte in alerteseuil:
+                db.session.delete(alerte)
             db.session.delete(materiel_instance)
         db.session.delete(materiel)
         db.session.commit()
@@ -374,7 +377,7 @@ def delivery():
     liste_domaines = Domaine.query.order_by(Domaine.nomD).all()
     liste_categories = Categorie.query.distinct(Categorie.nomC).order_by(Categorie.nomC).all()
     liste_statuts = Statut.query.distinct(Statut.nomStatut).all()
-    return render_template("gerer_commandes.html",liste_statuts=liste_statuts, liste_commandes=liste_commandes, liste_domaines=liste_domaines, liste_categories=liste_categories)
+    return render_template("gerer_commandes.html",liste_statuts=liste_statuts, liste_commandes=liste_commandes, liste_domaines=liste_domaines, liste_categories=liste_categories, alertes=getToutesLesAlertes())
 
 @app.route("/commandes/get_command_info/", methods=["GET"])
 def get_command_info():
