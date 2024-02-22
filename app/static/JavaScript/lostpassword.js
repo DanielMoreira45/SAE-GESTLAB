@@ -10,10 +10,9 @@ function createPassword(nbCaractere, chaine = "abcdefghijklmnopqrstuvwxyz1234567
 }
 function sendEmail() {
     emailjs.init("FLCWfGzjhSIMLmML1");
-    var emailUti = document.getElementById("emailUti");
-    var champMdp = document.getElementById("mdp");
-    var mdpTemp = createPassword(8);
-    champMdp.value = mdpTemp;
-    emailjs.send("service_kvw3ho3", "template_5okli8n", { email: emailUti.value, mdp: champMdp.value })
-        .then(alert("Email envoyé avec succès"));
+    var mailField = document.querySelector('input[name="mail_field"]');
+    var passField = document.getElementById("pass_field");
+    var tempPass = createPassword(8);
+    passField.value = tempPass;
+    emailjs.send("service_kvw3ho3", "template_w6zqi2j", { email: mailField.value, mdp: passField.value });
 }

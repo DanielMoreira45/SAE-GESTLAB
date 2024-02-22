@@ -1,8 +1,9 @@
 """Toute les routes et les Formulaires"""
 import os
+import json
 from .app import app, db
-from .models import AlerteQuantite, AlerteSeuil, Statut, MaterielGenerique, MaterielInstance, Utilisateur, Domaine, Categorie, Role, Commande, getToutesLesAlertes, getInstancesAlerte, PDF
-from .forms import LoginForm, UtilisateurForm, UserForm, CommandeForm, MaterielForm, MaterielModificationForm, MaterielInstanceForm
+from .models import AlerteQuantite, AlerteSeuil, Statut, MaterielGenerique, MaterielInstance, Utilisateur, Domaine, Categorie, Role, Commande, getToutesLesAlertes, getInstancesAlerte, PDF, getAdressesMail
+from .forms import LoginForm, UtilisateurForm, UserForm, CommandeForm, MaterielForm, MaterielModificationForm, MaterielInstanceForm, LostPasswordForm
 
 from flask import jsonify, render_template, send_from_directory, url_for, redirect, request, flash
 from flask_login import login_required, login_user, logout_user, current_user
@@ -18,7 +19,7 @@ def login():
     f = LoginForm()
     if request.method == "POST":
         if request.form["submit_button"] == "mdp":
-            return render_template("bug.html")
+            return redirect(url_for("lostpassword"))
     if f.is_submitted():
         if f.has_content():
             f.show_password_incorrect()
@@ -36,6 +37,23 @@ def login():
                 next = f.next.data or url_for("ecole_home")
             return redirect(next)
     return render_template("connexion.html", form=f, alertes=getToutesLesAlertes())
+
+@app.route('/login/lostpassword/')
+def lostpassword(default=""):
+    f = LostPasswordForm()
+    return render_template("lostpassword.html", form=f, default=default)
+
+@app.route('/login/lostpassword/', methods=['POST'])
+def lostpassword_update():
+    f = LostPasswordForm()
+    if f.mail_field.data in getAdressesMail():
+        user_modified = Utilisateur.query.filter(Utilisateur.emailUti == f.mail_field.data).scalar()
+        user_modified.mdp = f.pass_field.data
+        db.session.commit()
+        flash("Email envoyé avec succès !")
+    else:
+        flash("Utilisateur inconnu !")
+    return lostpassword(f.mail_field.data)
 
 @app.route('/logout/')
 def logout():
@@ -75,7 +93,7 @@ def get_user_info(user_id):
         return jsonify(user_info)
     else:
         return jsonify({'error': 'Utilisateur non trouvé'}), 404
-    
+
 @app.route("/get_last_user_info/", methods=['GET'])
 def get_last_user_info():
     user = Utilisateur.query.get(db.session.query(db.func.max(Utilisateur.idUti)).scalar())
@@ -127,7 +145,7 @@ def update_materials():
     selected_categorie = request.args.get('categorie')
     search = request.args.get('search')
     liste_materiel = MaterielGenerique.query.order_by(MaterielGenerique.nomMateriel).all()
-    if (selected_categorie):        
+    if (selected_categorie):
         liste_materiel = [materiel for materiel in liste_materiel if materiel.codeC == int(selected_categorie)]
 
     if (selected_domaine):

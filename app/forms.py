@@ -1,7 +1,7 @@
 from flask_wtf import FlaskForm
-from wtforms import DateField, FileField, StringField, HiddenField, PasswordField, SelectField, RadioField, IntegerField, TextAreaField
-from wtforms.validators import DataRequired, NumberRange
-from .models import Utilisateur
+from wtforms import DateField, FileField, StringField, HiddenField, PasswordField, SelectField, RadioField, IntegerField, TextAreaField, EmailField
+from wtforms.validators import DataRequired, NumberRange, Email, ValidationError
+from .models import Utilisateur, getAdressesMail
 
 "Formulaires de l'application"
 
@@ -159,3 +159,8 @@ class MaterielForm(FlaskForm):
     seuil_peremption = IntegerField('Seuil de Péremption (nb jours)', validators=[NumberRange(min=0)])
     categorie = SelectField('Catégorie', choices=lesC, validators=[DataRequired()])
     domaine = SelectField('Domaine', choices=lesD, validators=[DataRequired()])
+
+class LostPasswordForm(FlaskForm):
+    """ Formulaire de récupération du mot de passe. """    
+    mail_field = EmailField('Adresse mail', validators=[DataRequired(), Email()])
+    pass_field = HiddenField('hiddenpass')
