@@ -1,7 +1,8 @@
 """Toute les routes et les Formulaires"""
 import os
+import json
 from .app import app, db
-from .models import AlerteQuantite, AlerteSeuil, Statut, MaterielGenerique, MaterielInstance, Utilisateur, Domaine, Categorie, Role, Commande, getToutesLesAlertes, getInstancesAlerte, PDF
+from .models import AlerteQuantite, AlerteSeuil, Statut, MaterielGenerique, MaterielInstance, Utilisateur, Domaine, Categorie, Role, Commande, getToutesLesAlertes, getInstancesAlerte, PDF, getAdressesMail
 from .forms import LoginForm, UtilisateurForm, UserForm, CommandeForm, MaterielForm, MaterielModificationForm, MaterielInstanceForm, LostPasswordForm
 
 from flask import jsonify, render_template, send_from_directory, url_for, redirect, request, flash
@@ -38,11 +39,11 @@ def login():
     return render_template("connexion.html", form=f, alertes=getToutesLesAlertes())
 
 @app.route('/login/lostpassword/')
-def lostpassword():
+def lostpassword(default=""):
     f = LostPasswordForm()
-    return render_template("lostpassword.html", form=f)
+    return render_template("lostpassword.html", form=f, default=default)
 
-@app.route('/login/lostpassword/sendnewpass/', methods=['POST'])
+@app.route('/login/lostpassword/', methods=['POST'])
 def lostpassword_update():
     f = LostPasswordForm()
     if f.mail_field.data in getAdressesMail():
@@ -52,7 +53,7 @@ def lostpassword_update():
         flash("Email envoyé avec succès !")
     else:
         flash("Utilisateur inconnu !")
-    return redirect(url_for('lostpassword'))
+    return lostpassword(f.mail_field.data)
 
 @app.route('/logout/')
 def logout():

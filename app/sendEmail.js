@@ -10,8 +10,7 @@ const transporter = nodemailer.createTransport({
 
 const mailOptions = {
   from: 'gestlab.team@gmail.com',
-  // to: 'cassandra.maupou.etu@gmail.com',
-  to: 'amelie.brizardpro@laposte.net',
+  to: 'cassandra.maupou.etu@gmail.com',
   subject: 'Subject of the email',
   text: 'This is the body of the email.',
 };

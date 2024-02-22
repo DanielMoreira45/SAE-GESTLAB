@@ -8,10 +8,10 @@ app.config["SECRET_KEY"] = "3111990a-e74c-4366-8f1e-77c770304a87"  # TODO
 login_manager = LoginManager(app)
 login_manager.login_view = "login"
 
-username = 'amel'
-password = 'amel'
+username = 'root'
+password = 'root'
 host = 'localhost'
-database = 'gestlab'
+database = 'GestLab'
 
 app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://'+username+':'+password+'@'+host+'/'+database
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
