@@ -1,7 +1,7 @@
 """Toute les routes et les Formulaires"""
 import os
 from .app import app, db
-from .models import AlerteQuantite, AlerteSeuil, Statut, MaterielGenerique, MaterielInstance, Utilisateur, Domaine, Categorie, Role, Commande, getToutesLesAlertes, PDF, getAdressesMail
+from .models import AlerteQuantite, AlerteSeuil, Statut, MaterielGenerique, MaterielInstance, Utilisateur, Domaine, Categorie, Role, Commande, getToutesLesAlertes, getInstancesAlerte, PDF
 from .forms import LoginForm, UtilisateurForm, UserForm, CommandeForm, MaterielForm, MaterielModificationForm, MaterielInstanceForm, LostPasswordForm
 
 from flask import jsonify, render_template, send_from_directory, url_for, redirect, request, flash
@@ -132,10 +132,10 @@ def consult():
     instances = MaterielInstance.query.order_by(MaterielInstance.idMateriel).filter_by(refMateriel=current.refMateriel).all()
     if (len(instances) <= 0):
         f2 = MaterielInstanceForm()
-        return render_template("consultation.html",form = f, formInstance = f2, domaines=domaines, categories=categories, materiels=materiels, current_mat=current, instances=instances)
+        return render_template("consultation.html",form = f, formInstance = f2, domaines=domaines, categories=categories, materiels=materiels, current_mat=current, instances=instances, alertes=getToutesLesAlertes())
     instance = instances[0]
     f2 = MaterielInstanceForm(materielI=instance)
-    return render_template("consultation.html",form = f, formInstance = f2, domaines=domaines, categories=categories, materiels=materiels, current_mat=current, instances=instances)
+    return render_template("consultation.html",form = f, formInstance = f2, domaines=domaines, categories=categories, materiels=materiels, current_mat=current, instances=instances, alertes=getToutesLesAlertes())
 
 @app.route('/consult/recherche')
 def update_materials():
@@ -195,6 +195,9 @@ def delete_material(id):
         for alerte in alertes:
             db.session.delete(alerte)
         for materiel_instance in materiel_instances:
+            alerteseuil = AlerteSeuil.query.filter_by(idMateriel=materiel_instance.idMateriel).all()
+            for alerte in alerteseuil:
+                db.session.delete(alerte)
             db.session.delete(materiel_instance)
         db.session.delete(materiel)
         db.session.commit()
@@ -391,7 +394,7 @@ def delivery():
     liste_domaines = Domaine.query.order_by(Domaine.nomD).all()
     liste_categories = Categorie.query.distinct(Categorie.nomC).order_by(Categorie.nomC).all()
     liste_statuts = Statut.query.distinct(Statut.nomStatut).all()
-    return render_template("gerer_commandes.html",liste_statuts=liste_statuts, liste_commandes=liste_commandes, liste_domaines=liste_domaines, liste_categories=liste_categories)
+    return render_template("gerer_commandes.html",liste_statuts=liste_statuts, liste_commandes=liste_commandes, liste_domaines=liste_domaines, liste_categories=liste_categories, alertes=getToutesLesAlertes())
 
 @app.route("/commandes/get_command_info/", methods=["GET"])
 def get_command_info():
@@ -454,9 +457,12 @@ def new_commande():
     liste_materiel = MaterielGenerique.query.all()
     choix_materiel = [(m.refMateriel, m.nomMateriel) for m in liste_materiel]
     choix_materiel.insert(0, ("", "-- Choisir le matériel --"))
-    f = CommandeForm()
+    choice_id = request.args.get('refMateriel')
+    if(choice_id):
+        f = CommandeForm(choice_id)
+    else:
+        f = CommandeForm()
     f.materiel_field.choices = choix_materiel
-    f.materiel_field.default = ""
     return render_template("new_commande.html", form=f, alertes=getToutesLesAlertes())
 
 @app.route("/delivery/new/save", methods=("POST",))
@@ -608,6 +614,8 @@ def notif_maj():
     
     listeMateriauxInstance = MaterielInstance.query.all()
     for materielInstance in listeMateriauxInstance:
+        if materielInstance.mat_generique.seuilPeremption==None:
+            continue
         delai_en_jours = timedelta(days=materielInstance.mat_generique.seuilPeremption)
         date_peremption_limite = datetime.combine(materielInstance.datePeremption, datetime.min.time()) - delai_en_jours
         if date_peremption_limite <= datetime.utcnow():
@@ -626,4 +634,28 @@ def notif_maj():
     db.session.commit()
     return jsonify({'qte': qte})
 
+@app.route("/notifications/")
+def notifications():
+    return render_template("notifications.html", alertes=getToutesLesAlertes(), instances=getInstancesAlerte(), nb=len(getInstancesAlerte()))
+
+@app.route("/alertes/qte/get_info/", methods=["GET"])
+def get_alerte_qte_info():
+    ida = request.args.get("ida")
+    numm = request.args.get("numm")
+    alerte = AlerteQuantite.query.get((ida,numm))
+    if alerte:
+        alerte_info = alerte.serialize()
+        return jsonify(alerte_info)
+    else:
+        return jsonify({'error': 'Commande non trouvé'}), 404
     
+@app.route("/alertes/seuil/get_info/", methods=["GET"])
+def get_alerte_seuil_info():
+    ida = request.args.get("ida")
+    numm = request.args.get("numm")
+    alerte = AlerteSeuil.query.get((ida,numm))
+    if alerte:
+        alerte_info = alerte.serialize()
+        return jsonify(alerte_info)
+    else:
+        return jsonify({'error': 'Commande non trouvé'}), 404

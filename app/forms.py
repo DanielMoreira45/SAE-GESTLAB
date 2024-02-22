@@ -100,6 +100,12 @@ class UtilisateurForm(FlaskForm):
     modif = RadioField('Droit de Modification', choices=[(True, 'Oui'), (False, 'Non')], validators=[DataRequired()])
 
 class CommandeForm(FlaskForm):
+    def __init__(self, selected_option=None, *args, **kwargs):
+        super(CommandeForm, self).__init__(*args, **kwargs)
+        self.selected_option = selected_option
+        self.materiel_field.default = selected_option
+        self.process()
+
     materiel_field = SelectField('Matériel', validators=[DataRequired("Merci de sélectionner une option.")])
     quantity_field = IntegerField("Quantité", validators=[DataRequired(), NumberRange(1, 1000)], default=1)
 

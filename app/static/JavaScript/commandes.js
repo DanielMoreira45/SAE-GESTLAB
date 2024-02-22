@@ -192,3 +192,4 @@ function reset(){
     document.getElementById("statut").selected = true;
     update_categorie();
 }
+
