@@ -597,6 +597,8 @@ def notif_maj():
     
     listeMateriauxInstance = MaterielInstance.query.all()
     for materielInstance in listeMateriauxInstance:
+        if materielInstance.mat_generique.seuilPeremption==None:
+            continue
         delai_en_jours = timedelta(days=materielInstance.mat_generique.seuilPeremption)
         date_peremption_limite = datetime.combine(materielInstance.datePeremption, datetime.min.time()) - delai_en_jours
         if date_peremption_limite <= datetime.utcnow():
