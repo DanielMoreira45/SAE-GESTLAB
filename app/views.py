@@ -178,6 +178,9 @@ def delete_material(id):
         for alerte in alertes:
             db.session.delete(alerte)
         for materiel_instance in materiel_instances:
+            alerteseuil = AlerteSeuil.query.filter_by(idMateriel=materiel_instance.idMateriel).all()
+            for alerte in alerteseuil:
+                db.session.delete(alerte)
             db.session.delete(materiel_instance)
         db.session.delete(materiel)
         db.session.commit()
