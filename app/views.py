@@ -1,6 +1,8 @@
 """Toute les routes et les Formulaires"""
 import os
 import json
+import random
+import string
 from .app import app, db
 from .models import AlerteQuantite, AlerteSeuil, Statut, MaterielGenerique, MaterielInstance, Utilisateur, Domaine, Categorie, Role, Commande, getToutesLesAlertes, getInstancesAlerte, PDF, getAdressesMail
 from .forms import LoginForm, UtilisateurForm, UserForm, CommandeForm, MaterielForm, MaterielModificationForm, MaterielInstanceForm, LostPasswordForm, ReinitialisationMdpForm
@@ -41,9 +43,14 @@ def login():
 @app.route('/login/lostpassword/', defaults={"mail":""})
 @app.route('/login/lostpassword/<mail>')
 def lostpassword(mail):
-    f = LostPasswordForm()
-    f.random_mdp
-    return render_template("lostpassword.html", form=f, default=mail)
+    def id_generator(size=8, chars=string.ascii_uppercase+string.ascii_lowercase):
+        return ''.join(random.choice(chars) for _ in range(size))
+    
+    pwd = id_generator()
+    print("pwd",pwd)
+    f = LostPasswordForm(passwd=pwd, mail=mail)
+    print('mail', mail)
+    return render_template("lostpassword.html", form=f)
 
 @app.route('/login/lostpassword/', methods=['POST'])
 def lostpassword_update():
@@ -66,7 +73,7 @@ def reinitialisation_mdp():
 def reinitialisation_mdp_update():
     f = ReinitialisationMdpForm()
     if f.email_field.data in getAdressesMail():
-        if f.password_field.data == f.confirm_password.data:
+        if f.pass_field.data == f.confirm_password.data:
                 user_modified = Utilisateur.query.filter(Utilisateur.emailUti == f.email_field.data).scalar()
                 user_modified.mdp = f.confirm_password.data
                 db.session.commit()

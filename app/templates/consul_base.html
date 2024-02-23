@@ -20,9 +20,6 @@
     <div class="navigation">
       <nav class="navbar">
         <ul>
-          <li>
-            <p class="Logo">GEST<span class="yellow-part">LAB</span></p>
-          </li>
           {% if current_user.is_authenticated %}
           <li>
             {% if current_user.is_admin() %}

@@ -164,20 +164,19 @@ class MaterielForm(FlaskForm):
     domaine = SelectField('Domaine', choices=lesD, validators=[DataRequired()])
 
 class LostPasswordForm(FlaskForm):
-    """ Formulaire de récupération du mot de passe. """    
-    def id_generator(size=8, chars=string.ascii_uppercase+string.ascii_lowercase):
-        return ''.join(random.choice(chars) for _ in range(size))
-    
+    """ Formulaire de récupération du mot de passe. """
     mail_field = EmailField('Adresse mail', validators=[DataRequired(), Email()])
-    pass_field = HiddenField('hiddenpass', default=id_generator())
-
-    def random_mdp(self):
-        self.pass_field.value = self.id_generator()
-
+    pass_field = HiddenField('hiddenpass')
     
+    def __init__(self, passwd=None, mail=None):
+        super(LostPasswordForm, self).__init__()
+        if passwd:
+            self.pass_field.data = passwd
+        if mail:
+            self.mail_field.data = mail
 
 class ReinitialisationMdpForm(FlaskForm):
     """ Formulaire de réinitialisation du mot de passe. """
     email_field = EmailField('Adresse mail', validators=[DataRequired(), Email()])
-    password_field = PasswordField('Mot de passe', validators=[DataRequired()])
+    pass_field = PasswordField('Mot de passe', validators=[DataRequired()])
     confirm_password = PasswordField('Confirmation du mot de passe', validators=[DataRequired()])
