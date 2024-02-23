@@ -4,17 +4,22 @@
 <link rel="stylesheet" href="{{ url_for('static', filename='../static/css/lostpassword.css') }}">
 <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js">
 </script>
-<script src="{{url_for('static', filename='JavaScript/lostpassword.js')}}"></script>
+<script src="{{url_for('static', filename='JavaScript/reinitialisation_mdp.js')}}"></script>
 {% endblock %}
 
 {% block content %}
-<h1>Mot de passe oublié ?</h1>
-<p>Entrez votre adresse mail pour pouvoir réinitialiser votre mot de passe.</p>
-<form class="mail-form" role="form" method="POST" action="{{ url_for('lostpassword_update') }}">
+<h1>Réinitialiser votre mot de passe</h1>
+<p>Entrez votre mot de passe :</p>
+<form class="mail-form" role="form" method="POST" action="{{ url_for('reinitialisation_mdp_update') }}">
     <div class="blockfield">
-        <label for="mail-field" class="mail-label"></label>
-        {{ form.mail_field(class="form-control") }}
+        <label for="email-field" class="mail-label">{{ form.email_field.label }}</label>
+        {{ form.email_field(class="form-control") }}
+
+        <label for="password-field" class="mail-label">{{ form.pass_field.label }}</label>
         {{ form.pass_field(class="form-control") }}
+
+        <label for="confirm-pass-field" class="mail-label">{{ form.confirm_password.label }}</label>
+        {{ form.confirm_password(class="form-control") }}
     </div>
     <div class="blockbuttons">
         <a href="{{ url_for('login') }}" id="liensBoutons"><input type="button" id="retour-bouton" value="Retour" /></a>
@@ -27,6 +32,13 @@
     <p>{{ mesg }}</p>
     <form method="dialog" id="form-dialog">
         <button id="redDialButton">OK</button>
+    </form>
+</dialog>
+{% else %}
+<dialog id="greenDial" open>
+    <p>{{ mesg }}</p>
+    <form method="dialog" id="form-dialog">
+        <button id="greenDialButton">OK</button>
     </form>
 </dialog>
 {% endif %}

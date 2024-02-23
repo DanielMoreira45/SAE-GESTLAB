@@ -8,6 +8,7 @@ function createPassword(nbCaractere, chaine = "abcdefghijklmnopqrstuvwxyz1234567
     }
     return passwd;
 }
+
 function sendEmail() {
     emailjs.init("FLCWfGzjhSIMLmML1");
     var emailUti = document.getElementById("emailUti");
