@@ -2,12 +2,12 @@ from flask_wtf import FlaskForm
 from wtforms import DateField, FileField, StringField, HiddenField, PasswordField, SelectField, RadioField, IntegerField, TextAreaField, EmailField
 from wtforms.validators import DataRequired, NumberRange, Email, ValidationError
 from .models import Utilisateur, getAdressesMail
+import string, random
 
 "Formulaires de l'application GestLab"
 
 class MaterielModificationForm(FlaskForm):
     """Formulaire de modification du matériel."""
-
     nom = StringField('Nom', validators=[DataRequired()])
     hiddenref = HiddenField('hiddenref')
     reference = StringField('Référence', validators=[DataRequired()])
@@ -165,8 +165,16 @@ class MaterielForm(FlaskForm):
 
 class LostPasswordForm(FlaskForm):
     """ Formulaire de récupération du mot de passe. """    
+    def id_generator(size=8, chars=string.ascii_uppercase+string.ascii_lowercase):
+        return ''.join(random.choice(chars) for _ in range(size))
+    
     mail_field = EmailField('Adresse mail', validators=[DataRequired(), Email()])
-    pass_field = HiddenField('hiddenpass')
+    pass_field = HiddenField('hiddenpass', default=id_generator())
+
+    def random_mdp(self):
+        self.pass_field.value = self.id_generator()
+
+    
 
 class ReinitialisationMdpForm(FlaskForm):
     """ Formulaire de réinitialisation du mot de passe. """

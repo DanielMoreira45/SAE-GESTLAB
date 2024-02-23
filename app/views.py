@@ -38,15 +38,16 @@ def login():
             return redirect(next)
     return render_template("connexion.html", form=f, alertes=getToutesLesAlertes())
 
-@app.route('/login/lostpassword/')
-def lostpassword(default=""):
+@app.route('/login/lostpassword/', defaults={"mail":""})
+@app.route('/login/lostpassword/<mail>')
+def lostpassword(mail):
     f = LostPasswordForm()
-    return render_template("lostpassword.html", form=f, default=default)
+    f.random_mdp
+    return render_template("lostpassword.html", form=f, default=mail)
 
 @app.route('/login/lostpassword/', methods=['POST'])
 def lostpassword_update():
     f = LostPasswordForm()
-    print(f.pass_field.data)
     if f.mail_field.data in getAdressesMail():
         user_modified = Utilisateur.query.filter(Utilisateur.emailUti == f.mail_field.data).scalar()
         user_modified.mdp = f.pass_field.data
@@ -54,7 +55,7 @@ def lostpassword_update():
         flash("Email envoyé avec succès !")
     else:
         flash("Utilisateur inconnu !")
-    return lostpassword(f.mail_field.data)
+    return redirect(url_for('login'))
 
 @app.route('/reinitialisation_mot_de_passe/')
 def reinitialisation_mdp():
