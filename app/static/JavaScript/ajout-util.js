@@ -15,6 +15,6 @@ function sendEmail() {
     var champMdp = document.getElementById("mdp");
     var mdpTemp = createPassword(8);
     champMdp.value = mdpTemp;
-    emailjs.send("service_kvw3ho3", "template_5okli8n", { email: "gestlab.team@gmail.com", mdp: champMdp.value })
+    emailjs.send("service_kvw3ho3", "template_5okli8n", { email: emailUti.value, mdp: champMdp.value })
         .then(alert("Email envoyé avec succès"));
 }
