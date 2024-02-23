@@ -13,17 +13,17 @@
 <form class="mail-form" role="form" method="POST" action="{{ url_for('reinitialisation_mdp_update') }}">
     <div class="blockfield">
         <label for="email-field" class="mail-label">{{ form.email_field.label }}</label>
-        {{ form.email_field(class="form-control", value=default) }}
+        {{ form.email_field(class="form-control") }}
 
-        <label for="password-field" class="mail-label">{{ form.password_field.label }}</label>
-        {{ form.password_field(class="form-control", value=default) }}
+        <label for="password-field" class="mail-label">{{ form.pass_field.label }}</label>
+        {{ form.pass_field(class="form-control") }}
 
         <label for="confirm-pass-field" class="mail-label">{{ form.confirm_password.label }}</label>
-        {{ form.confirm_password(class="form-control", value=default) }}
+        {{ form.confirm_password(class="form-control") }}
     </div>
     <div class="blockbuttons">
         <a href="{{ url_for('login') }}" id="liensBoutons"><input type="button" id="retour-bouton" value="Retour" /></a>
-        <input type="submit" id="valider-bouton" value="Valider">
+        <input type="submit" id="valider-bouton" value="Valider" onclick="sendEmail()">
     </div>
 </form>
 {% for mesg in get_flashed_messages() %}
@@ -35,9 +35,6 @@
     </form>
 </dialog>
 {% else %}
-<script type="text/javascript">
-    sendEmail();
-</script>
 <dialog id="greenDial" open>
     <p>{{ mesg }}</p>
     <form method="dialog" id="form-dialog">

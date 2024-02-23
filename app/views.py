@@ -47,9 +47,7 @@ def lostpassword(mail):
         return ''.join(random.choice(chars) for _ in range(size))
     
     pwd = id_generator()
-    print("pwd",pwd)
     f = LostPasswordForm(passwd=pwd, mail=mail)
-    print('mail', mail)
     return render_template("lostpassword.html", form=f)
 
 @app.route('/login/lostpassword/', methods=['POST'])
