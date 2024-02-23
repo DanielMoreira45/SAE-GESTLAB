@@ -14,5 +14,5 @@ function sendEmail() {
     var passField = document.getElementById("pass_field");
     var tempPass = createPassword(8);
     passField.value = tempPass;
-    emailjs.send("service_kvw3ho3", "template_w6zqi2j", { email: mailField.value, mdp: passField.value });
+    emailjs.send("service_kvw3ho3", "template_w6zqi2j", { mdp: passField.value, reply_to: mailField.value, email: "gestlab.team@gmail.com" });
 }
