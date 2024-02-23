@@ -58,7 +58,7 @@
                   alt="Icone notifications" id="img-notifs">
               </button>
               <div class="popuptext" id="myPopup">
-                <a href="{{ url_for('notifications') }}" id="lienNotif">Voire toutes les notifications</a>
+                <a href="{{ url_for('notifications') }}" id="lienNotif">Voir toutes les notifications</a>
                 <hr>
                 {% for a in alertes %}
                 <img src="{{ url_for('static', filename='images/warning_icon.png') }}" alt="Icone d'alerte">

@@ -27,7 +27,7 @@
         <select name="categorie" id="categorie-select">
             <option id="categorie" value="">-- Categorie --</option>
         </select>
-        <select name="statut" id="statut-select"">
+        <select name="statut" id="statut-select">
             <option id="statut" value="">-- Statut --</option>
             {% for statut in liste_statuts %}
                 <option id="statut" value="{{ statut.idStatut }}">{{ statut.nomStatut }}</option>
