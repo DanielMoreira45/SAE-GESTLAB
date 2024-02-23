@@ -7,7 +7,7 @@ function majNotifs() {
         .then(response => response.json())
         .then(data => {
             if (data.qte > 0){
-                alert("Ajouts de " +data.qte+ " notifications");
+                console.log("Ajouts de " +data.qte+ " notifications");
             }
         })
         .catch(error => console.error('Erreur : ' + error));
