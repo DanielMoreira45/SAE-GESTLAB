@@ -3,6 +3,7 @@
 from base64 import b64encode
 from .app import db, login_manager
 from flask_login import UserMixin
+from fpdf import FPDF
 
 class Role(db.Model):
     __tablename__ = "ROLE"
@@ -222,6 +223,18 @@ class AlerteSeuil(db.Model):
     materiel = db.relationship("MaterielInstance",
                                backref=db.backref("alertes", lazy="dynamic"))
 
+    def serialize(self):
+        return {
+            'id': self.idAlerteS,
+            'nom' : self.materiel.mat_generique.nomMateriel,
+            'commentaire': self.commentaire,
+            'idMateriel': self.idMateriel,
+            'qteRestante' : self.materiel.qteRestante,
+            'datePeremption' : self.materiel.datePeremption,
+            'refMateriel': self.materiel.refMateriel,
+            'seuilPeremption': self.materiel.mat_generique.seuilPeremption
+        }
+
     def __repr__(self):
         return "<Alerte (%d) %s %r>" % (self.idAlerteS, self.commentaire, self.idMateriel)
 
@@ -235,6 +248,18 @@ class AlerteQuantite(db.Model):
                              primary_key=True)
     materiel = db.relationship("MaterielGenerique",
                                backref=db.backref("alertes", lazy="dynamic"))
+
+    def serialize(self):
+        return {
+            'id': self.idAlerteQ,
+            'nom' : self.materiel.nomMateriel,
+            'commentaire': self.commentaire,
+            'refMateriel': self.refMateriel,
+            'qteMax' : self.materiel.qteMax,
+            'qteMateriel' : self.materiel.qteMateriel,
+            'unite' : self.materiel.unite,
+            'seuil' : self.materiel.seuilQte
+        }
 
     def __repr__(self):
         return "<Alerte (%d) %s %r>" % (self.idAlerteQ, self.commentaire, self.refMateriel)
@@ -271,3 +296,24 @@ def getAlertesSeuil():
 
 def getToutesLesAlertes():
     return getAlertesQuantite() + getAlertesSeuil()
+
+def getInstancesAlerte():
+    return AlerteQuantite.query.all() + AlerteSeuil.query.all()
+
+class PDF(FPDF):
+
+    def footer(self):
+        # Go to 1.5 cm from bottom
+        self.set_y(-15)
+        # Select Arial italic 8
+        self.set_font('Arial', 'I', 8)
+        # Print centered page number
+        self.cell(0, 10, 'Gestlab 2023-2024', 0, 0, 'L')
+        self.cell(0, 10, 'Page %s' % self.page_no(), 0, 0, 'R')
+
+def getAdressesMail():
+    users = Utilisateur.query.all()
+    emails = []
+    for user in users:
+        emails.append(user.emailUti)
+    return emails

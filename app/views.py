@@ -1,14 +1,16 @@
 """Toute les routes et les Formulaires"""
 import os
+import json
+import random
+import string
 from .app import app, db
-from .models import AlerteQuantite, AlerteSeuil, Statut, MaterielGenerique, MaterielInstance, Utilisateur, Domaine, Categorie, Role, Commande, getToutesLesAlertes
-from .forms import LoginForm, UtilisateurForm, UserForm, CommandeForm, MaterielForm, MaterielModificationForm, MaterielInstanceForm
+from .models import AlerteQuantite, AlerteSeuil, Statut, MaterielGenerique, MaterielInstance, Utilisateur, Domaine, Categorie, Role, Commande, getToutesLesAlertes, getInstancesAlerte, PDF, getAdressesMail
+from .forms import LoginForm, UtilisateurForm, UserForm, CommandeForm, MaterielForm, MaterielModificationForm, MaterielInstanceForm, LostPasswordForm, ReinitialisationMdpForm
 
 from flask import jsonify, render_template, send_from_directory, url_for, redirect, request, flash
 from flask_login import login_required, login_user, logout_user, current_user
 from werkzeug.utils import secure_filename
 from datetime import datetime, timedelta
-from fpdf import FPDF
 
 @app.route("/")
 def home():
@@ -19,7 +21,7 @@ def login():
     f = LoginForm()
     if request.method == "POST":
         if request.form["submit_button"] == "mdp":
-            return render_template("bug.html")
+            return redirect(url_for("lostpassword"))
     if f.is_submitted():
         if f.has_content():
             f.show_password_incorrect()
@@ -37,6 +39,48 @@ def login():
                 next = f.next.data or url_for("ecole_home")
             return redirect(next)
     return render_template("connexion.html", form=f, alertes=getToutesLesAlertes())
+
+@app.route('/login/lostpassword/', defaults={"mail":""})
+@app.route('/login/lostpassword/<mail>')
+def lostpassword(mail):
+    def id_generator(size=8, chars=string.ascii_uppercase+string.ascii_lowercase):
+        return ''.join(random.choice(chars) for _ in range(size))
+    
+    pwd = id_generator()
+    f = LostPasswordForm(passwd=pwd, mail=mail)
+    return render_template("lostpassword.html", form=f)
+
+@app.route('/login/lostpassword/', methods=['POST'])
+def lostpassword_update():
+    f = LostPasswordForm()
+    if f.mail_field.data in getAdressesMail():
+        user_modified = Utilisateur.query.filter(Utilisateur.emailUti == f.mail_field.data).scalar()
+        user_modified.mdp = f.pass_field.data
+        db.session.commit()
+        flash("Email envoyé avec succès !")
+    else:
+        flash("Utilisateur inconnu !")
+    return redirect(url_for('login'))
+
+@app.route('/reinitialisation_mot_de_passe/')
+def reinitialisation_mdp():
+    f = ReinitialisationMdpForm()
+    return render_template("reinitialisation_mdp.html", form=f)
+
+@app.route('/reinitialisation_mot_de_passe/', methods=['POST'])
+def reinitialisation_mdp_update():
+    f = ReinitialisationMdpForm()
+    if f.email_field.data in getAdressesMail():
+        if f.pass_field.data == f.confirm_password.data:
+                user_modified = Utilisateur.query.filter(Utilisateur.emailUti == f.email_field.data).scalar()
+                user_modified.mdp = f.confirm_password.data
+                db.session.commit()
+                flash("Email envoyé avec succès")
+        else:
+            flash("Le mot de passe doit être identique !")
+    else:
+        flash("Utilisateur inconnu !")
+    return reinitialisation_mdp()
 
 @app.route('/logout/')
 def logout():
@@ -76,7 +120,7 @@ def get_user_info(user_id):
         return jsonify(user_info)
     else:
         return jsonify({'error': 'Utilisateur non trouvé'}), 404
-    
+
 @app.route("/get_last_user_info/", methods=['GET'])
 def get_last_user_info():
     user = Utilisateur.query.get(db.session.query(db.func.max(Utilisateur.idUti)).scalar())
@@ -116,10 +160,10 @@ def consult():
     instances = MaterielInstance.query.order_by(MaterielInstance.idMateriel).filter_by(refMateriel=current.refMateriel).all()
     if (len(instances) <= 0):
         f2 = MaterielInstanceForm()
-        return render_template("consultation.html",form = f, formInstance = f2, domaines=domaines, categories=categories, materiels=materiels, current_mat=current, instances=instances)
+        return render_template("consultation.html",form = f, formInstance = f2, domaines=domaines, categories=categories, materiels=materiels, current_mat=current, instances=instances, alertes=getToutesLesAlertes())
     instance = instances[0]
     f2 = MaterielInstanceForm(materielI=instance)
-    return render_template("consultation.html",form = f, formInstance = f2, domaines=domaines, categories=categories, materiels=materiels, current_mat=current, instances=instances)
+    return render_template("consultation.html",form = f, formInstance = f2, domaines=domaines, categories=categories, materiels=materiels, current_mat=current, instances=instances, alertes=getToutesLesAlertes())
 
 @app.route('/consult/recherche')
 def update_materials():
@@ -128,7 +172,7 @@ def update_materials():
     selected_categorie = request.args.get('categorie')
     search = request.args.get('search')
     liste_materiel = MaterielGenerique.query.order_by(MaterielGenerique.nomMateriel).all()
-    if (selected_categorie):        
+    if (selected_categorie):
         liste_materiel = [materiel for materiel in liste_materiel if materiel.codeC == int(selected_categorie)]
 
     if (selected_domaine):
@@ -152,7 +196,6 @@ def save_material():
         materiel.complements = request.form["description"]
         materiel.codeD = request.form["domaine"]
         materiel.codeC = request.form["categorie"]
-
         db.session.commit()
         return redirect(url_for('consult'))
     return redirect(url_for('consult'))
@@ -179,6 +222,9 @@ def delete_material(id):
         for alerte in alertes:
             db.session.delete(alerte)
         for materiel_instance in materiel_instances:
+            alerteseuil = AlerteSeuil.query.filter_by(idMateriel=materiel_instance.idMateriel).all()
+            for alerte in alerteseuil:
+                db.session.delete(alerte)
             db.session.delete(materiel_instance)
         db.session.delete(materiel)
         db.session.commit()
@@ -205,49 +251,72 @@ def get_categories():
 
 @app.route("/imprimer_pdf/")
 def imprimer_pdf():
-    return send_from_directory('static/FDS', request.args.get('chemin'))
+    return send_from_directory('static/pdf/', request.args.get('chemin'))
 
 @app.route('/commandes/creer_pdf/')
 def creer_pdf_commandes():
+            
     liste_commandes = Commande.query.order_by(Commande.dateCommande).all()
     liste_commandes = filtrer(liste_commandes, request.args.get('search'), request.args.get('domaine'), request.args.get('categorie'), request.args.get('statut'))
-    monPdf = FPDF()
+    monPdf = PDF()
+    monPdf.set_title("commandes")
     monPdf.add_page()
     monPdf.set_font("Arial", size=30)
     monPdf.cell(0, 10, txt="Commandes", ln=1, align="C")
     monPdf.cell(0, 20, ln=1)
-    monPdf.set_font("Arial", size=15)
+    monPdf.line(10, monPdf.get_y()-5, 200, monPdf.get_y()-5)
+    monPdf.set_font("Arial", size=20)
     monPdf.cell(0, 10, txt="Liste de toutes les commandes : ", ln=1, align="L")
     monPdf.set_font("Arial", size=10)
-    for i in range(len(liste_commandes)):
-        monPdf.cell(100, 10, txt=" - "+liste_commandes[i].materiel.nomMateriel, ln=i%2, align="L")
     
+    for i in range(len(liste_commandes)):
+        ln = 0
+        if i%3 == 0 and i!= 0:
+            ln = 1
+        monPdf.cell(70, 10, txt=" - "+liste_commandes[i].materiel.nomMateriel, ln=ln, align="L")
+
+    monPdf.cell(0, 10, txt="", ln=1)
     monPdf.cell(0, 10, ln=1)
+    monPdf.set_font_size(20)
+    monPdf.line(10, monPdf.get_y()-5, 200, monPdf.get_y()-5)
+    monPdf.cell(0, 10, txt="Détail des commandes")
+    
+    x,y = 120, monPdf.get_y()-60
 
-    for commande in liste_commandes:
-        monPdf.cell(0, 10, ln=1)
+    for i in range(len(liste_commandes)):
+        if i%2==0:
+            x-=100
+            y+=80
+        else:
+            x+=100
+
+        if (y+70 > monPdf.h-monPdf.b_margin):
+            monPdf.add_page()
+            y = 20
+
         monPdf.set_font("Arial", size=15)
-        monPdf.cell(0, 10, txt=commande.materiel.nomMateriel, ln=1, align="L")
+        monPdf.text(x,y,liste_commandes[i].materiel.nomMateriel)
         monPdf.set_font("Arial", size=10)
-        monPdf.cell(0, 10, txt="    Numéro de commande : "+str(commande.numeroCommande), ln=1, align="L")
-        monPdf.cell(0, 10, txt="    Statut : "+commande.statut.nomStatut, ln=1, align="L")
-        monPdf.cell(0, 10, txt="    Domaine : "+commande.materiel.domaine.nomD, ln=1, align="L")
-        monPdf.cell(0, 10, txt="    Categorie : "+commande.materiel.categorie.nomC, ln=1, align="L")
-        monPdf.cell(0, 10, txt="    Quantité commandée : "+str(commande.qteCommandee), ln=1, align="L")
-        monPdf.cell(0, 10, txt="    Commande effectuée par : "+commande.utilisateur.nomUti, ln=1, align="L")     
+        monPdf.text(x,y+10,"    Numéro de commande : "+str(liste_commandes[i].numeroCommande))
+        monPdf.text(x,y+20,"    Statut : "+liste_commandes[i].statut.nomStatut)
+        monPdf.text(x,y+30,"    Domaine : "+liste_commandes[i].materiel.domaine.nomD)
+        monPdf.text(x,y+40,"    Categorie : "+liste_commandes[i].materiel.categorie.nomC)
+        monPdf.text(x,y+50,"    Quantité commandée : "+str(liste_commandes[i].qteCommandee))
+        monPdf.text(x,y+60,"    Commande effectuée par : "+liste_commandes[i].utilisateur.nomUti)
 
-    monPdf.output("static/FDS/commandes.pdf")
+    monPdf.output("static/pdf/commandes.pdf")
     
     return jsonify({'nom_fichier' : "commandes.pdf"})
 
 @app.route('/consult/creer_pdf/')
 def creer_pdf_materiel():
-    materielG = MaterielGenerique.query.get(request.args.get('ref'))
-    monPdf = FPDF()
+    materielG = MaterielGenerique.query.get(request.args.get('ref'))    
+    monPdf = PDF()
     monPdf.add_page()
     monPdf.set_font("Arial", size=30)
     monPdf.cell(0, 10, txt="Materiel", ln=1, align="C")
     monPdf.cell(0, 20, ln=1)
+    monPdf.line(10, monPdf.get_y()-5, 200, monPdf.get_y()-5)
     monPdf.set_font("Arial", size=20)
     monPdf.cell(0, 10, txt=materielG.nomMateriel+" : ", ln=1, align="L")
     monPdf.set_font("Arial", size=10)
@@ -267,9 +336,64 @@ def creer_pdf_materiel():
         monPdf.cell(0, 10, txt="        Date péremption : "+str(instances[i].datePeremption), ln=1, align="L")
         monPdf.cell(0, 10, txt="        Quantité restante : "+str(instances[i].qteRestante), ln=1, align="L")
 
-    monPdf.output("static/FDS/materiel.pdf")
+    monPdf.output("static/pdf/materiel.pdf")
     return jsonify({'nom_fichier' : 'materiel.pdf'})
 
+@app.route('/alertes/creer_pdf/')
+def creer_pdf_alertes():
+    alertes = AlerteQuantite.query.all()
+    alertes += AlerteSeuil.query.all()
+    monPdf = PDF()
+    monPdf.add_page()
+    monPdf.set_font("Arial", size=30)
+    monPdf.cell(0, 10, txt="Alertes", ln=1, align="C")
+    monPdf.cell(0, 20, ln=1)
+
+    monPdf.set_font("Arial", size=20)
+    monPdf.line(10, monPdf.get_y()-5, 200, monPdf.get_y()-5)
+    monPdf.cell(0, 10, txt="Liste de toutes les alertes", ln=1)
+    monPdf.set_font("Arial", size=10)
+    for i in range(len(alertes)):
+        ln = 0
+        if i%3 == 0 and i!= 0:
+            ln = 1
+        if type(alertes[i]) == AlerteQuantite:
+            monPdf.cell(70, 10, txt="   - "+MaterielGenerique.query.get(alertes[i].refMateriel).nomMateriel, ln=ln, align="L")
+        else:
+            ref = MaterielInstance.query.filter(MaterielInstance.idMateriel == alertes[i].idMateriel)[0].refMateriel
+            monPdf.cell(70, 10, txt="   - "+MaterielGenerique.query.get(ref).nomMateriel, ln=ln, align="L")
+
+    monPdf.cell(0, 20, ln=1)
+    monPdf.line(10, monPdf.get_y()-5, 200, monPdf.get_y()-5)
+    monPdf.set_font("Arial", size=20)
+    monPdf.cell(0, 10, txt="Détail des alertes", ln=1)
+    monPdf.cell(0, 5, ln=1)
+    monPdf.set_font("Arial", size=15)
+
+    x,y = 120, monPdf.get_y()-20
+    for i in range(len(alertes)):
+        if i%2==0:
+            x-=100
+            y+=30
+        else:
+            x+=100
+        if (y+10 > monPdf.h-monPdf.b_margin):
+            monPdf.add_page()
+            y = 20
+        if type(alertes[i]) == AlerteQuantite:
+            materiel = MaterielGenerique.query.get(alertes[i].refMateriel)
+        else:
+            materiel = MaterielGenerique.query.get(MaterielInstance.query.filter(MaterielInstance.idMateriel == alertes[i].idMateriel)[0].refMateriel)
+        monPdf.set_font_size(15)
+        monPdf.text(x, y, materiel.nomMateriel)
+        monPdf.set_font_size(10)
+        if type(alertes[i]) == AlerteSeuil:
+            monPdf.text(x, y+10, txt="    Date Peremption : "+str(alertes[i].materiel.datePeremption))
+        else:
+            monPdf.text(x, y+10, txt="    Quantité restante : "+str(alertes[i].materiel.qteMateriel)) 
+
+    monPdf.output("static/pdf/alertes.pdf")
+    return jsonify({'nom_fichier' : 'alertes.pdf'})
 
 def filtrer(liste, recherche, domaine, categorie, statut=None):
     if (categorie):        
@@ -286,14 +410,13 @@ def filtrer(liste, recherche, domaine, categorie, statut=None):
 
     return liste
 
-
-@app.route("/commandes/", methods=("GET", "POST"))
+@app.route("/commandes/")
 def delivery():
     liste_commandes = Commande.query.all()
     liste_domaines = Domaine.query.order_by(Domaine.nomD).all()
     liste_categories = Categorie.query.distinct(Categorie.nomC).order_by(Categorie.nomC).all()
     liste_statuts = Statut.query.distinct(Statut.nomStatut).all()
-    return render_template("gerer_commandes.html",liste_statuts=liste_statuts, liste_commandes=liste_commandes, liste_domaines=liste_domaines, liste_categories=liste_categories)
+    return render_template("gerer_commandes.html",liste_statuts=liste_statuts, liste_commandes=liste_commandes, liste_domaines=liste_domaines, liste_categories=liste_categories, alertes=getToutesLesAlertes())
 
 @app.route("/commandes/get_command_info/", methods=["GET"])
 def get_command_info():
@@ -356,9 +479,12 @@ def new_commande():
     liste_materiel = MaterielGenerique.query.all()
     choix_materiel = [(m.refMateriel, m.nomMateriel) for m in liste_materiel]
     choix_materiel.insert(0, ("", "-- Choisir le matériel --"))
-    f = CommandeForm()
+    choice_id = request.args.get('refMateriel')
+    if(choice_id):
+        f = CommandeForm(choice_id)
+    else:
+        f = CommandeForm()
     f.materiel_field.choices = choix_materiel
-    f.materiel_field.default = ""
     return render_template("new_commande.html", form=f, alertes=getToutesLesAlertes())
 
 @app.route("/delivery/new/save", methods=("POST",))
@@ -510,6 +636,8 @@ def notif_maj():
     
     listeMateriauxInstance = MaterielInstance.query.all()
     for materielInstance in listeMateriauxInstance:
+        if materielInstance.mat_generique.seuilPeremption==None:
+            continue
         delai_en_jours = timedelta(days=materielInstance.mat_generique.seuilPeremption)
         date_peremption_limite = datetime.combine(materielInstance.datePeremption, datetime.min.time()) - delai_en_jours
         if date_peremption_limite <= datetime.utcnow():
@@ -528,4 +656,28 @@ def notif_maj():
     db.session.commit()
     return jsonify({'qte': qte})
 
+@app.route("/notifications/")
+def notifications():
+    return render_template("notifications.html", alertes=getToutesLesAlertes(), instances=getInstancesAlerte(), nb=len(getInstancesAlerte()))
+
+@app.route("/alertes/qte/get_info/", methods=["GET"])
+def get_alerte_qte_info():
+    ida = request.args.get("ida")
+    numm = request.args.get("numm")
+    alerte = AlerteQuantite.query.get((ida,numm))
+    if alerte:
+        alerte_info = alerte.serialize()
+        return jsonify(alerte_info)
+    else:
+        return jsonify({'error': 'Commande non trouvé'}), 404
     
+@app.route("/alertes/seuil/get_info/", methods=["GET"])
+def get_alerte_seuil_info():
+    ida = request.args.get("ida")
+    numm = request.args.get("numm")
+    alerte = AlerteSeuil.query.get((ida,numm))
+    if alerte:
+        alerte_info = alerte.serialize()
+        return jsonify(alerte_info)
+    else:
+        return jsonify({'error': 'Commande non trouvé'}), 404

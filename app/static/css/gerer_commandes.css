@@ -38,11 +38,13 @@ h1 {
     min-width: 100%;
 }
 
+#nom{
+    margin: 0 0;
+}
+
 h2{
     text-align: center;
     flex-basis: 100%;
-    max-height: 30px;
-    margin-bottom: 2em;
 }
 
 img{
@@ -184,6 +186,10 @@ input:hover, button:hover, select:hover{
 
 .action_buttons{
     text-align: right;
+}
+
+.les_labels>p{
+    margin : 1vh 0px;
 }
 
 .les_labels{

@@ -4,6 +4,7 @@
 <link rel="stylesheet" href="{{ url_for('static', filename='css/consultation.css') }}">
 {% endblock %}
 {% block scripts %}
+{{ super() }}
 <script src="{{url_for('static', filename='JavaScript/consultation.js')}}"></script>
 {% endblock %}
 {% block content %}
@@ -11,20 +12,19 @@
 {% if current_user.is_prof %}
 <h1>Consulter le matériel</h1>
 <form id="search" role="search" method="post">
-    <input type="search" name="search" id="searchinput" placeholder="Rechercher un matériel ..." oninput="change()">
-    <select name="Domaine" id="Domaine" onchange="change()">
+    <input type="search" name="search" id="searchinput" placeholder="Rechercher un matériel ...">
+    <select name="Domaine" id="Domaine">
         <option value="">Domaine</option>
         {% for domaine in domaines %}
         <option value="{{ domaine.codeD }}">{{ domaine.nomD }}</option>
         {% endfor %}
     </select>
-    <select name="Catégorie" id="Categorie" onchange="change()">
+    <select name="Catégorie" id="Categorie">
         <option value="">Categorie</option>
         {% for categorie in categories %}
         <option value="{{ categorie.codeC }}">{{ categorie.nomC }}</option>
         {% endfor %}
     </select>
-    <button type="reset" id="searchButton">reset</button>
 </form>
 <div class="info">
     <div class="liste_mat">
@@ -33,8 +33,7 @@
             <li>
                 <div class="item_mat">
                     <img src="data:image/png;base64,{{ materiel.get_image() }}" alt="{{ materiel.nomMateriel }}">
-                    <h2 id="{{ materiel.refMateriel }}" onclick="editMateriauxGenerique(this.id)">{{
-                        materiel.nomMateriel }}</h2>
+                    <h2 id="{{ materiel.refMateriel }}">{{ materiel.nomMateriel }}</h2>
                 </div>
             </li>
             {% endfor %}
@@ -45,7 +44,7 @@
             {% for instance in instances %}
             <li>
                 <div class="item_instance">
-                    <h2 id="{{ instance.idMateriel }}" onclick="editMateriauxInstance(this.id)">{{ instance.mat_generique.nomMateriel }}</h2>
+                    <h2 id="{{ instance.idMateriel }}">{{ instance.mat_generique.nomMateriel }}</h2>
                     <div>
                         <p>Quantité : {{ instance.qteRestante }}</p>
                         <p>Unité : {{ instance.mat_generique.unite }}</p>
@@ -100,12 +99,12 @@
 </div>
 <div class="button">
     {% if current_user.modifications == True %}
-    <a href="{{ url_for('materiel_add') }}"><button id="buttonAdd" type="button">Ajouter du Materiel</button></a>
-    <button id="buttonModifier" onclick="inputsdisabled()">Modifier</button>
-    <button id="buttonSupp" onclick="suppression()">Supprimer</button>
+    <a href="{{ url_for('materiel_add') }}"><button id="buttonAdd" type="button">Ajouter un matériel</button></a>
+    <button id="buttonModifier">Modifier</button>
+    <button id="buttonSupp">Supprimer</button>
     {% endif %}
     <button id="buttonImprimer" onclick="imprimer()">Imprimer</button>
-    <button id="buttonFDS" onclick="ouvreFDS()">Voir FDS</button>
+    <button id="buttonFDS">Voir FDS</button>
 </div>
 {% endif %}
 {% endif %}

@@ -11,7 +11,7 @@ login_manager.login_view = "login"
 username = 'root'
 password = 'root'
 host = 'localhost'
-database = 'Gestlab'
+database = 'GestLab'
 
 app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://'+username+':'+password+'@'+host+'/'+database
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False

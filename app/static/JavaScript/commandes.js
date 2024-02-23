@@ -1,3 +1,30 @@
+document.addEventListener("DOMContentLoaded", function() {
+    document.getElementById('recherche').addEventListener('input', update_categorie);
+    document.getElementById('domaine-select').addEventListener('change', update_categorie);
+    document.getElementById('categorie-select').addEventListener('change', update_categorie);
+    document.getElementById('statut-select').addEventListener('change', update_categorie);
+    document.querySelectorAll('.command_button').forEach(button => {
+        button.addEventListener('click', function(){
+            edit(button.id);
+        });
+    });
+    if (document.getElementById("valider")){
+        document.getElementById("valider").addEventListener('click', function(){
+            validate(true);
+        });
+    }
+    if (document.getElementById("annuler")){
+        document.getElementById("annuler").addEventListener('click', function(){
+            validate(false);
+        });
+    }
+    if (document.querySelector(".command_button")) {
+        edit(document.querySelector(".command_button").id);
+    }
+    update_categorie();
+    
+});
+
 function edit(id) {
     var labelNom = document.getElementById("nom");
     var labelNumero = document.getElementById("label-numero")
@@ -28,20 +55,21 @@ function edit(id) {
                     labelQuantite.textContent = "Quantité commandée : "+data.quantite
                 } else {labelQuantite.textContent = "Quantité commandée : "+data.quantite+" "+data.unite;}
                 labelUser.textContent = "Commande effectuée par "+data.user;
-                
-                if (data.statut == "A valider"){
-                    document.getElementById("valider").value = "Valider la commande";
-                    document.getElementById("annuler").disabled = false;
-                    document.getElementById("valider").disabled = false;
-                }
-                else if (data.statut == "En cours"){
-                    document.getElementById("valider").value = "Commande livrée";
-                    document.getElementById("valider").disabled = false;
-                    document.getElementById("annuler").disabled = true;
-                }
-                else{
-                    document.getElementById("annuler").disabled = true;
-                    document.getElementById("valider").disabled = true;
+                if (document.getElementById("valider") && document.getElementById("annuler")){
+                    if (data.statut == "A valider"){
+                        document.getElementById("valider").value = "Valider la commande";
+                        document.getElementById("annuler").disabled = false;
+                        document.getElementById("valider").disabled = false;
+                    }
+                    else if (data.statut == "En cours"){
+                        document.getElementById("valider").value = "Commande livrée";
+                        document.getElementById("valider").disabled = false;
+                        document.getElementById("annuler").disabled = true;
+                    }
+                    else{
+                        document.getElementById("annuler").disabled = true;
+                        document.getElementById("valider").disabled = true;
+                    }
                 }
             })
             .catch(error => console.error('Erreur : ' + error));  
@@ -154,12 +182,4 @@ function validate(validee){
         edit(id);
     })
     .catch(error => console.errot('Erreur : ' + error))
-}
-
-function reset(){
-    document.getElementById("recherche").value = "";
-    document.getElementById("domaine").selected = true;
-    document.getElementById("categorie").selected = true;
-    document.getElementById("statut").selected = true;
-    update_categorie();
 }

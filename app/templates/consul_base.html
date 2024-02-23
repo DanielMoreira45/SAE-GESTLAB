@@ -2,87 +2,98 @@
 <html lang="fr">
 
 <head>
-    {% block head %}
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    {% endblock %}
-    {% block styles %}
-    {% endblock %}
-    {% block scripts %}
-    <script src="{{url_for('static', filename='JavaScript/base.js')}}"></script>
-    {% endblock %}
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/nav_base.css') }}">
-    <link rel="icon" href="{{ url_for('static', filename='images/faviconMICRO.ico')}}">
-    <title>Gest-LAB</title>
+  {% block head %}
+  <meta charset="utf-8">
+  {% endblock %}
+  {% block styles %}
+  {% endblock %}
+  {% block scripts %}
+  <script src="{{url_for('static', filename='JavaScript/base.js')}}"></script>
+  {% endblock %}
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/nav_base.css') }}">
+  <link rel="icon" href="{{ url_for('static', filename='images/faviconMICRO.ico')}}">
+  <title>Gest-LAB</title>
 </head>
 
 <body>
-    <header>
-        <div class="navigation">
-            <nav class="navbar">
-                <ul>
-                    <li>
-                        <p class="Logo">GEST<span class="yellow-part">LAB</span></p>
-                    </li>
-                    {% if current_user.is_authenticated %}
-                    {% if current_user.is_admin() %}
-                    <li><a href="{{ url_for('admin_manage') }}">Gérer les utilisateurs</a></li>
-                    <li><a href="{{ url_for('admin_add') }}">Ajouter un utilisateur</a></li>
-                    {% elif current_user.is_prof() %}
-                    <li><a href="{{ url_for('consult') }}">Consulter le matériel</a></li>
-                    <li><a href="{{ url_for('delivery') }}">Voir les commandes</a></li>
-                    <li><a href="{{ url_for('new_commande') }}">Commander matériel</a></li>                    
-                    {% elif current_user.is_etablissement() %}
-                    <li><a href="{{ url_for('consult') }}">Consulter le matériel</a></li>
-                    <li><a href="{{ url_for('delivery') }}">Gérer les commandes</a></li> 
-                    {% endif %}
-                    <li>
-                      {% if not current_user.is_admin() %}
-                        <div class="popup" onclick="gestionNotifs()">
-                          {% if alertes|length == 0 %}
-                            <button id="notifButton">
-                              <img src="{{ url_for('static', filename='images/notifications.png') }}" alt="Icone notifications" id="img-notifs">
-                            </button>
-                            <div class="popuptext" id="myPopup">Aucune nouvelle notification.</div>
-                          {% else %}
-                            <button id="notifButton">
-                              <img src="{{ url_for('static', filename='images/notifications_pastille.png') }}" alt="Icone notifications" id="img-notifs">
-                            </button>
-                            <div class="popuptext" id="myPopup">
-                              {% for a in alertes %}
-                                <img src="{{ url_for('static', filename='images/warning_icon.png') }}" alt="Icone d'alerte">
-                                <p>{{ a }}</p>
-                                {% if not loop.last %}
-                                  <hr>
-                                {% endif %}
-                              {% endfor %}
-                            </div>
-                          {% endif %}
-                        </div>
-                      {% endif %}
-                      <a href="{{ url_for('logout') }}" id="liensBoutons"><button id="logoutButton">Déconnexion</button></a>
-                    </li>
-                    <!-- <li>
+  <header>
+    <div class="navigation">
+      <nav class="navbar">
+        <ul>
+          {% if current_user.is_authenticated %}
+          <li>
+            {% if current_user.is_admin() %}
+            <a href="{{ url_for('admin_home') }}">
+              {% elif current_user.is_prof() %}
+              <a href="{{ url_for('prof_home') }}">
+                {% elif current_user.is_etablissement() %}
+                <a href="{{ url_for('ecole_home') }}">
+                  {% endif %}
+                  <p class="Logo">GEST<span class="yellow-part">LAB</span></p>
+                </a>
+          </li>
+          {% if current_user.is_admin() %}
+          <li><a href="{{ url_for('admin_manage') }}">Gérer les utilisateurs</a></li>
+          <li><a href="{{ url_for('admin_add') }}">Ajouter un utilisateur</a></li>
+          {% elif current_user.is_prof() %}
+          <li><a href="{{ url_for('consult') }}">Consulter le matériel</a></li>
+          <li><a href="{{ url_for('delivery') }}">Voir les commandes</a></li>
+          <li><a href="{{ url_for('new_commande') }}">Commander matériel</a></li>
+          {% elif current_user.is_etablissement() %}
+          <li><a href="{{ url_for('consult') }}">Consulter le matériel</a></li>
+          <li><a href="{{ url_for('delivery') }}">Gérer les commandes</a></li>
+          {% endif %}
+          <li>
+            {% if not current_user.is_admin() %}
+            <div class="popup" onclick="gestionNotifs()">
+              {% if alertes|length == 0 %}
+              <button id="notifButton">
+                <img src="{{ url_for('static', filename='images/notifications.png') }}" alt="Icone notifications"
+                  id="img-notifs">
+              </button>
+              <div class="popuptext" id="myPopup">Aucune nouvelle notification.</div>
+              {% else %}
+              <button id="notifButton">
+                <img src="{{ url_for('static', filename='images/notifications_pastille.png') }}"
+                  alt="Icone notifications" id="img-notifs">
+              </button>
+              <div class="popuptext" id="myPopup">
+                <a href="{{ url_for('notifications') }}" id="lienNotif">Voir toutes les notifications</a>
+                <hr>
+                {% for a in alertes %}
+                <img src="{{ url_for('static', filename='images/warning_icon.png') }}" alt="Icone d'alerte">
+                <p>{{ a }}</p>
+                {% if not loop.last %}
+                <hr>
+                {% endif %}
+                {% endfor %}
+              </div>
+              {% endif %}
+            </div>
+            {% endif %}
+            <a href="{{ url_for('logout') }}" id="liensBoutons"><button id="logoutButton">Déconnexion</button></a>
+          </li>
+          <!-- <li>
                     </li> -->
-                    {% else %}
-                    <li>
-                      <a href="{{ url_for('home') }}" id="liensBoutons"><button id="BackButton">Retour accueil</button></a>
-                    </li>
-                    {% endif %}
-                </ul>
-            </nav>
-            <div class="horizontal-line"></div>
-        </div>
-    </header>
-    <main>
-        <div class="content">
-            {% block content %}
-            {% endblock %}
-        </div>
-    </main>
-    <footer>
-        <p>© 2023-2024 GESTLAB.</p>
-    </footer>
+          {% else %}
+          <li>
+            <a href="{{ url_for('home') }}" id="liensBoutons"><button id="BackButton">Retour accueil</button></a>
+          </li>
+          {% endif %}
+        </ul>
+      </nav>
+      <div class="horizontal-line"></div>
+    </div>
+  </header>
+  <main>
+    <div class="content">
+      {% block content %}
+      {% endblock %}
+    </div>
+  </main>
+  <footer>
+    <p>© 2023-2024 GESTLAB.</p>
+  </footer>
 </body>
 
 </html>
