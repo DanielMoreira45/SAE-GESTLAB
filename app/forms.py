@@ -3,7 +3,7 @@ from wtforms import DateField, FileField, StringField, HiddenField, PasswordFiel
 from wtforms.validators import DataRequired, NumberRange, Email, ValidationError
 from .models import Utilisateur, getAdressesMail
 
-"Formulaires de l'application"
+"Formulaires de l'application GestLab"
 
 class MaterielModificationForm(FlaskForm):
     """Formulaire de modification du matériel."""
@@ -62,6 +62,7 @@ class MaterielInstanceForm(FlaskForm):
             self.hiddenrefMat.default = materielI.mat_generique.refMateriel
 
 class LoginForm(FlaskForm):
+    """ Formulaire de connexion. """
     email = StringField('Email')
     password = PasswordField('Password')
     password_incorrect = ""
@@ -78,8 +79,8 @@ class LoginForm(FlaskForm):
     def show_password_incorrect(self):
         self.password_incorrect = "Email ou mot de passe incorrect"
 
-# Permet la modification de l'utilisateur
 class UserForm(FlaskForm):
+    """ Formulaire de modification d'un utilisateur. """
     id = HiddenField('id')
     email = HiddenField('email')
     nom = StringField('nom', validators=[DataRequired()])
@@ -88,8 +89,8 @@ class UserForm(FlaskForm):
     id_role = SelectField('role', validators=[DataRequired()], choices=[(1, 'Administrateur'), (2, 'Professeur'), (3, 'Etablissement')])
     modifications = RadioField('modifications', validators=[DataRequired()])
 
-# Permet l'insertion de l'utilisateur
 class UtilisateurForm(FlaskForm):
+    """ Formulaire d'insertion d'un utilisateur. """
     idUti = HiddenField('iduti')
     idRole = HiddenField('idrole')
     nomUti = StringField('Nom', validators=[DataRequired()])
@@ -100,6 +101,7 @@ class UtilisateurForm(FlaskForm):
     modif = RadioField('Droit de Modification', choices=[(True, 'Oui'), (False, 'Non')], validators=[DataRequired()])
 
 class CommandeForm(FlaskForm):
+    """ Formulaire d'ajout d'une commande. """
     def __init__(self, selected_option=None, *args, **kwargs):
         super(CommandeForm, self).__init__(*args, **kwargs)
         self.selected_option = selected_option
@@ -110,6 +112,7 @@ class CommandeForm(FlaskForm):
     quantity_field = IntegerField("Quantité", validators=[DataRequired(), NumberRange(1, 1000)], default=1)
 
 class MaterielForm(FlaskForm):
+    """ Formulaire d'ajout d'un matériel. """
     nom = StringField('Nom', validators=[DataRequired()])
     photo = FileField('Photo')
     lesD = [(1, 'Appareillage'),
@@ -164,3 +167,9 @@ class LostPasswordForm(FlaskForm):
     """ Formulaire de récupération du mot de passe. """    
     mail_field = EmailField('Adresse mail', validators=[DataRequired(), Email()])
     pass_field = HiddenField('hiddenpass')
+
+class ReinitialisationMdpForm(FlaskForm):
+    """ Formulaire de réinitialisation du mot de passe. """
+    email_field = EmailField('Adresse mail', validators=[DataRequired(), Email()])
+    password_field = PasswordField('Mot de passe', validators=[DataRequired()])
+    confirm_password = PasswordField('Confirmation du mot de passe', validators=[DataRequired()])

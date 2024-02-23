@@ -3,7 +3,7 @@ import os
 import json
 from .app import app, db
 from .models import AlerteQuantite, AlerteSeuil, Statut, MaterielGenerique, MaterielInstance, Utilisateur, Domaine, Categorie, Role, Commande, getToutesLesAlertes, getInstancesAlerte, PDF, getAdressesMail
-from .forms import LoginForm, UtilisateurForm, UserForm, CommandeForm, MaterielForm, MaterielModificationForm, MaterielInstanceForm, LostPasswordForm
+from .forms import LoginForm, UtilisateurForm, UserForm, CommandeForm, MaterielForm, MaterielModificationForm, MaterielInstanceForm, LostPasswordForm, ReinitialisationMdpForm
 
 from flask import jsonify, render_template, send_from_directory, url_for, redirect, request, flash
 from flask_login import login_required, login_user, logout_user, current_user
@@ -46,6 +46,7 @@ def lostpassword(default=""):
 @app.route('/login/lostpassword/', methods=['POST'])
 def lostpassword_update():
     f = LostPasswordForm()
+    print(f.pass_field.data)
     if f.mail_field.data in getAdressesMail():
         user_modified = Utilisateur.query.filter(Utilisateur.emailUti == f.mail_field.data).scalar()
         user_modified.mdp = f.pass_field.data
@@ -54,6 +55,26 @@ def lostpassword_update():
     else:
         flash("Utilisateur inconnu !")
     return lostpassword(f.mail_field.data)
+
+@app.route('/reinitialisation_mot_de_passe/')
+def reinitialisation_mdp():
+    f = ReinitialisationMdpForm()
+    return render_template("reinitialisation_mdp.html", form=f)
+
+@app.route('/reinitialisation_mot_de_passe/', methods=['POST'])
+def reinitialisation_mdp_update():
+    f = ReinitialisationMdpForm()
+    if f.email_field.data in getAdressesMail():
+        if f.password_field.data == f.confirm_password.data:
+                user_modified = Utilisateur.query.filter(Utilisateur.emailUti == f.email_field.data).scalar()
+                user_modified.mdp = f.confirm_password.data
+                db.session.commit()
+                flash("Email envoyé avec succès")
+        else:
+            flash("Le mot de passe doit être identique !")
+    else:
+        flash("Utilisateur inconnu !")
+    return reinitialisation_mdp()
 
 @app.route('/logout/')
 def logout():
@@ -169,7 +190,6 @@ def save_material():
         materiel.complements = request.form["description"]
         materiel.codeD = request.form["domaine"]
         materiel.codeC = request.form["categorie"]
-
         db.session.commit()
         return redirect(url_for('consult'))
     return redirect(url_for('consult'))
@@ -355,7 +375,6 @@ def creer_pdf_alertes():
         if (y+10 > monPdf.h-monPdf.b_margin):
             monPdf.add_page()
             y = 20
-
         if type(alertes[i]) == AlerteQuantite:
             materiel = MaterielGenerique.query.get(alertes[i].refMateriel)
         else:
@@ -371,8 +390,6 @@ def creer_pdf_alertes():
     monPdf.output("static/pdf/alertes.pdf")
     return jsonify({'nom_fichier' : 'alertes.pdf'})
 
-
-
 def filtrer(liste, recherche, domaine, categorie, statut=None):
     if (categorie):        
         liste = [commande for commande in liste if commande.materiel.codeC == int(categorie)]
@@ -387,7 +404,6 @@ def filtrer(liste, recherche, domaine, categorie, statut=None):
         liste = [commande for commande in liste if commande.idStatut == int(statut)]
 
     return liste
-
 
 @app.route("/commandes/", methods=("GET", "POST"))
 def delivery():
