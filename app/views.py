@@ -411,7 +411,7 @@ def filtrer(liste, recherche, domaine, categorie, statut=None):
 
     return liste
 
-@app.route("/commandes/", methods=("GET", "POST"))
+@app.route("/commandes/")
 def delivery():
     liste_commandes = Commande.query.all()
     liste_domaines = Domaine.query.order_by(Domaine.nomD).all()
