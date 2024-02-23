@@ -3,7 +3,6 @@ document.addEventListener("DOMContentLoaded", function() {
     document.getElementById('domaine-select').addEventListener('change', update_categorie);
     document.getElementById('categorie-select').addEventListener('change', update_categorie);
     document.getElementById('statut-select').addEventListener('change', update_categorie);
-    document.getElementById('btn-reset').addEventListener('click', reset);
     document.querySelectorAll('.command_button').forEach(button => {
         button.addEventListener('click', function(){
             edit(button.id);
@@ -184,12 +183,3 @@ function validate(validee){
     })
     .catch(error => console.errot('Erreur : ' + error))
 }
-
-function reset(){
-    document.getElementById("recherche").value = "";
-    document.getElementById("domaine").selected = true;
-    document.getElementById("categorie").selected = true;
-    document.getElementById("statut").selected = true;
-    update_categorie();
-}
-
