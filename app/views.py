@@ -343,7 +343,6 @@ def creer_pdf_materiel():
 def creer_pdf_alertes():
     alertes = AlerteQuantite.query.all()
     alertes += AlerteSeuil.query.all()
-    liste_materiel_instance = MaterielInstance.query.all()
     monPdf = PDF()
     monPdf.add_page()
     monPdf.set_font("Arial", size=30)
@@ -389,9 +388,9 @@ def creer_pdf_alertes():
         monPdf.text(x, y, materiel.nomMateriel)
         monPdf.set_font_size(10)
         if type(alertes[i]) == AlerteSeuil:
-            monPdf.text(x, y+10, txt="    Date Peremption : "+str(liste_materiel_instance[i].datePeremption))
+            monPdf.text(x, y+10, txt="    Date Peremption : "+str(alertes[i].materiel.datePeremption))
         else:
-            monPdf.text(x, y+10, txt="    Quantité restante : "+str(liste_materiel_instance[i].qteRestante)) 
+            monPdf.text(x, y+10, txt="    Quantité restante : "+str(alertes[i].materiel.qteMateriel)) 
 
     monPdf.output("static/pdf/alertes.pdf")
     return jsonify({'nom_fichier' : 'alertes.pdf'})
